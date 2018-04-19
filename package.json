@@ -1,0 +1,25 @@
+{
+    "name": "exercise5",
+    "version": "1.0.1",
+    "dependencies": {
+        "http-server": "latest"
+    },
+    "devDependencies": {
+        "eslint": "latest",
+        "less": "latest",
+        "browserify": "latest",
+        "babili-standalone": "latest",
+        "less-plugin-clean-css": "latest"
+    },
+    "scripts": {
+        "clean": "rm -rf dist && rm -rf node_modules",
+        "clean:dist": "rm -rf dist",
+        "dist": "npm run clean:dist && mkdir dist",
+        "lint": "eslint -c .eslintrc.json src/js/**",
+        "html": "cp -r src/index.html dist",
+        "css": "lessc --clean-css src/styles/style.less dist/style.min.css",
+        "js": "npm run lint && browserify ./src/js/Main.js > dist/main.js",
+        "build": "npm run clean && npm install && npm run dist && npm run lint && npm run html && npm run css && npm run js",
+        "start": "http-server ./dist -p 8080 -c 127.0.0.1:8080"
+    }
+}
