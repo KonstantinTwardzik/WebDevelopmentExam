@@ -1,5 +1,7 @@
 {
-    "name": "exercise5",
+    "name": "WebDevelopmentExam",
+    "repository": "https://github.com/KonstantinTwardzik/WebDevelopmentExam",
+    "license": "UNLICENSE",
     "version": "1.0.1",
     "dependencies": {
         "http-server": "latest"
@@ -17,9 +19,10 @@
         "dist": "npm run clean:dist && mkdir dist",
         "lint": "eslint -c .eslintrc.json src/js/**",
         "html": "cp -r src/index.html dist",
+        "assets": "cp -r src/assets/* dist",
         "css": "lessc --clean-css src/styles/style.less dist/style.min.css",
         "js": "npm run lint && browserify ./src/js/Main.js > dist/main.js",
-        "build": "npm run clean && npm install && npm run dist && npm run lint && npm run html && npm run css && npm run js",
+        "build": "npm run clean && npm install && npm run dist && npm run assets && npm run lint && npm run html && npm run css && npm run js",
         "start": "http-server ./dist -p 8080 -c 127.0.0.1:8080"
     }
 }
