@@ -1,19 +1,71 @@
 //Here are the styles that get converted into valid css files
 
 @darkGrey: color(#3f3f3f);
-@grey: color (#7F7F7F);
-@white: color(white);
+@grey: color(#686868);
+@white: color(rgb(252, 252, 252));
 @mainColor: color(#e7c798);
+
+.box-shadow (@x: 0px, @y: 3px, @blur: 5px, @alpha: 0.5) {
+    -webkit-box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
+    -moz-box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
+    box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
+    }
 
 body {
     background-color: @grey;
-    color: @white;
+    color: @grey;
     font-family: 'Roboto', sans-serif;
     font-weight: bolder;
-    font-size: 12px;
+    font-size: 24px;
+    padding: 0px;
+    margin: 0px;
 }
 
-header {
+section {
+    padding: 0px;
+}
+
+.navigation {
+    width: 20%;
+    height: 100vh;
+    float: left;
+
     background-color: @darkGrey;
     color: @white;
+    .box-shadow(2px, 0px, 2px, 0.5);
+}
+
+#logo {
+    margin: 20px;
+    margin-right: 35px;
+}
+
+.list {
+    height: 100vh;
+    margin-left: 20%;
+    background-color: @grey;
+    color: @darkGrey;
+}
+
+li {
+    height: 20vh;
+}
+
+ul {
+    padding: 0px;
+    margin: 0px;
+}
+
+h1 {
+    padding: 0px;
+    margin: 0px;
+    color: @white;
+    background-color: @darkGrey;
+}
+
+.event {
+    padding: 0px;
+    margin: 0px;
+    height: 100%;
+    width: 100%;
 }
