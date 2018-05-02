@@ -1,16 +1,17 @@
 {
     "name": "web_development_exam",
     "repository": "https://github.com/KonstantinTwardzik/WebDevelopmentExam",
-    "license": "UNLICENSE",
+    "license": "UNLICENSED",
     "version": "1.0.1",
     "dependencies": {
-        "http-server": "latest"
+        "http-server": "latest",
+        "npm": "^6.0.0"
     },
     "devDependencies": {
         "eslint": "latest",
         "less": "latest",
         "browserify": "latest",
-        "babili-standalone": "latest",
+        "babel-minify": "latest",
         "less-plugin-clean-css": "latest"
     },
     "scripts": {
@@ -24,8 +25,8 @@
         "css:min": "lessc --clean-css src/styles/style.less dist/style.min.css",
         "js": "npm run lint && browserify src/js/Main.js > dist/main.js",
         "postjs": "cp -r dist/main.js dist/main.min.js && rm -f dist/main.js",
-        "js:min": "npm run js && babili dist/main.js > dist/main.min.js",
-        "postjs:min": "rm -f dist/main.js",
+        "js:min": "npm run lint && browserify src/js/Main.js > dist/main.js && minify dist/main.js > dist/main.min.js",
+        "postjs:min": "cp -r dist/main.js dist/main.min.js && rm -f dist/main.js",
         "debug": "npm run dist && npm run assets && npm run html && npm run css && npm run js",
         "build": "npm run dist && npm run assets && npm run html && npm run css:min && npm run js:min",
         "start": "http-server dist -p 8080 -c 127.0.0.1:8080"
