@@ -1,8 +1,17 @@
 class Meeting {
-	constructor(date, location, objects) {
+	constructor(name, date, location, objects) {
+		this.name = name;
 		this.date = date;
 		this.location = location;
 		this.objects = objects;
+	}
+
+	getName() {
+		return this.name;
+	}
+
+	setName(name) {
+		this.name = name;
 	}
 
 	getDate() {
@@ -43,5 +52,4 @@ class Meeting {
 	}
 }
 
-export { Meeting };
-
+module.exports.Meeting = Meeting;
