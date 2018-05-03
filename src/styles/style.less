@@ -1,5 +1,6 @@
 //Here are the styles that get converted into valid css files
 
+@darkestGrey: color(#2f2f2f);
 @darkGrey: color(#3f3f3f);
 @grey: color(#686868);
 @white: color(rgb(252, 252, 252));
@@ -14,7 +15,7 @@
 body {
     background-color: @grey;
     color: @white;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Muli', sans-serif;
     font-weight: bolder;
     font-size: 24px;
     padding: 0px;
@@ -25,7 +26,7 @@ section {
     padding: 0px;
 }
 
-.navigation {
+.list {
     width: 20%;
     height: 100vh;
     float: left;
@@ -40,7 +41,7 @@ section {
     margin-right: 35px;
 }
 
-.list {
+.detail {
     height: 100vh;
     margin-left: 20%;
     background-color: @grey;
@@ -48,7 +49,10 @@ section {
 }
 
 li {
-    height: 20vh;
+    height: 50px;
+    border: 2px;
+    border-top-style: solid;
+    border-color: @darkestGrey;
 }
 
 ul {
@@ -57,29 +61,12 @@ ul {
     list-style-type: none;
 }
 
-h1 {
+p {
     margin: 0px;
+    padding: 0px;
     padding-left: 20px;
     padding-top: 10px;
-    padding-bottom: 10px;
     color: @white;
-    background-color: @darkGrey;
-    .box-shadow(0px, 2px, 2px, 0.5);
-}
-
-.event {
-    padding: 0px;
-    margin: 0px;
-    height: 100%;
-    width: 100%;
-    //border: 2px;
-    //border-style: solid;
-    //border-color: black;
-}
-
-p {
-    color: @white;
-    font-size: medium;
     font-weight: lighter;
     padding-left: 10px;
 }

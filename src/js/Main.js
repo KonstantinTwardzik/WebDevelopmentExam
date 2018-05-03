@@ -6,21 +6,21 @@ var meetingList;
 
 let initView = function () {
 	let main = document.getElementById("main");
-	let menuSec = document.createElement("section");
 	let listSec = document.createElement("section");
+	let detailSec = document.createElement("section");
 	let logo = document.createElement("img");
 	let list = document.createElement("ul");
 
-	menuSec.classList.add("navigation");
 	listSec.classList.add("list");
+	detailSec.classList.add("detail");
 	logo.id = "logo";
 	logo.src = "comet_logo.svg";
 	logo.alt = "logo_comet";
 	fillList(list);
 
-	main.appendChild(menuSec);
 	main.appendChild(listSec);
-	menuSec.appendChild(logo);
+	main.appendChild(detailSec);
+	listSec.appendChild(logo);
 	listSec.appendChild(list);
 };
 
@@ -28,33 +28,10 @@ let fillList = function (list) {
 	for (let index = 1; index <= 5; index++) {
 		let meeting = meetingList[index - 1];
 		let listElement = document.createElement("li");
-		let eventSec = document.createElement("section");
-		let heading = document.createElement("h1");
-		let date = document.createElement("p");
-		let location = document.createElement("p");
-		let objects = document.createElement("p");
+		let title = document.createElement("p");
 
-		heading.innerHTML = meeting.getName();
-		eventSec.classList.add("event");
-		date.innerHTML = "Date: " + meeting.getDate();
-		location.innerHTML = "Location: " + meeting.getLocation();
-		objects.innerHTML = "Objects: ";
-
-		let objectList = meeting.getObjects();
-		for (let i = 0; i < objectList.length; ++i) {
-			if (i >= objectList.length - 1) {
-				objects.innerHTML += objectList[i];
-			}
-			else {
-				objects.innerHTML += objectList[i] + ", ";
-			}
-		}
-
-		eventSec.appendChild(heading);
-		eventSec.appendChild(date);
-		eventSec.appendChild(location);
-		eventSec.appendChild(objects);
-		listElement.appendChild(eventSec);
+		title.innerHTML = meeting.getName();
+		listElement.appendChild(title);
 		list.appendChild(listElement);
 	}
 };
