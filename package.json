@@ -26,7 +26,7 @@
         "js": "npm run lint && browserify src/js/Main.js > dist/main.js",
         "postjs": "cp -r dist/main.js dist/main.min.js && rm -f dist/main.js",
         "js:min": "npm run lint && browserify src/js/Main.js > dist/main.js && minify dist/main.js > dist/main.min.js",
-        "postjs:min": "cp -r dist/main.js dist/main.min.js && rm -f dist/main.js",
+        "postjs:min": "rm -f dist/main.js",
         "debug": "npm run dist && npm run assets && npm run html && npm run css && npm run js",
         "build": "npm run dist && npm run assets && npm run html && npm run css:min && npm run js:min",
         "start": "http-server dist -p 8080 -c 127.0.0.1:8080"
