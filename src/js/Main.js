@@ -9,19 +9,30 @@ let initView = function () {
 	let listSec = document.createElement("section");
 	let detailSec = document.createElement("section");
 	let logo = document.createElement("img");
+	let leftArrow = document.createElement("img");
+	let rightArrow = document.createElement("img");
 	let list = document.createElement("ul");
+	let menubar = document.createElement("section");
 
 	listSec.classList.add("list");
 	detailSec.classList.add("detail");
+	menubar.classList.add("menubar");
 	logo.id = "logo";
 	logo.src = "comet_logo.svg";
 	logo.alt = "logo_comet";
+	leftArrow.src = "angle-left.svg";
+	rightArrow.src = "angle-right.svg";
+	leftArrow.classList.add("icon");
+	rightArrow.classList.add("icon");
 	fillList(list);
+	menubar.appendChild(leftArrow);
+	menubar.appendChild(rightArrow);
 
 	main.appendChild(listSec);
 	main.appendChild(detailSec);
 	listSec.appendChild(logo);
 	listSec.appendChild(list);
+	listSec.appendChild(menubar);
 };
 
 let fillList = function (list) {

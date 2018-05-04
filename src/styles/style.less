@@ -3,8 +3,11 @@
 @darkestGrey: color(#2f2f2f);
 @darkGrey: color(#3f3f3f);
 @grey: color(#686868);
+@lightGrey: color(#afafaf);
 @white: color(rgb(252, 252, 252));
 @mainColor: color(#e7c798);
+@listWidth: 360px;
+@menubarHeight: 50px;
 
 .box-shadow (@x: 0px, @y: 3px, @blur: 5px, @alpha: 0.5) {
     -webkit-box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
@@ -22,35 +25,45 @@ body {
     margin: 0px;
 }
 
-section {
-    padding: 0px;
-}
-
-.list {
-    width: 20%;
-    height: 100vh;
-    float: left;
-
-    background-color: @darkGrey;
-    color: @white;
-    .box-shadow(2px, 0px, 2px, 0.5);
-}
-
 #logo {
     margin: 20px;
     margin-right: 35px;
 }
 
+.list {
+    left: 0px;
+    top: 0px;
+    width: @listWidth;
+    height: 100vh;
+    float: left;
+
+    background-color: @darkGrey;
+    color: @white;
+    .box-shadow(0px, 0px, 3px, 0.5);
+}
+
+.menubar {
+    left: 0px;
+    bottom: 0px;
+    height: @menubarHeight;
+    width: @listWidth;
+}
+
 .detail {
     height: 100vh;
-    margin-left: 20%;
+    left: @listWidth;
+    right: 0px;
     background-color: @grey;
     color: @darkGrey;
 }
 
+.icon {
+    height: @menubarHeight;
+}
+
 li {
     height: 50px;
-    border: 2px;
+    border: 1px;
     border-top-style: solid;
     border-color: @darkestGrey;
 }
@@ -64,9 +77,9 @@ ul {
 p {
     margin: 0px;
     padding: 0px;
-    padding-left: 20px;
+    padding-left: 5em;
     padding-top: 10px;
-    color: @white;
+    color: @lightGrey;
     font-weight: lighter;
     padding-left: 10px;
 }
