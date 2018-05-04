@@ -9,12 +9,28 @@
     <link rel="stylesheet" href="style.min.css" />
     <link rel="icon" href="comet_icon.png" />
     <link href="https://fonts.googleapis.com/css?family=Muli:200" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>Comet - Astronomie</title>
 </head>
 
 <body>
     <main id="main">
         <script src="main.min.js"></script>
+        <script>
+            function initMap() {
+                var uluru = { lat: 49.749992, lng: 6.6371433 };
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 12,
+                    center: uluru
+                });
+                var marker = new google.maps.Marker({
+                    position: uluru,
+                    map: map
+                });
+            }
+        </script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMF39K1kaJl3vpppbPvHKGoAO78whSuCI&callback=initMap">
+        </script>
     </main>
 </body>
 

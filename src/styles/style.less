@@ -1,9 +1,11 @@
 //Here are the styles that get converted into valid css files
 
 @darkestGrey: color(#2f2f2f);
-@darkGrey: color(#3f3f3f);
-@grey: color(#686868);
+@darkGrey: color(#404040);
+@slightDarkGrey: color(#505050);
+@grey: color(#606060);
 @lightGrey: color(#afafaf);
+@lightestGrey: color(#cccccc);
 @white: color(rgb(252, 252, 252));
 @mainColor: color(#e7c798);
 @listWidth: 360px;
@@ -15,12 +17,22 @@
     box-shadow: @x @y @blur rgba(0, 0, 0, @alpha);
     }
 
+.border-top () {
+    border: 1px;
+    border-top-style: solid;
+    border-color: @darkestGrey;
+}
+
+.border () {
+    border: 1px;
+    border-style: solid;
+    border-color: @darkGrey;
+}
+
+
 body {
     background-color: @grey;
-    color: @white;
     font-family: 'Muli', sans-serif;
-    font-weight: bolder;
-    font-size: 24px;
     padding: 0px;
     margin: 0px;
 }
@@ -30,7 +42,7 @@ body {
     margin-right: 35px;
 }
 
-.list {
+.listSec {
     left: 0px;
     top: 0px;
     width: @listWidth;
@@ -38,34 +50,81 @@ body {
     float: left;
 
     background-color: @darkGrey;
-    color: @white;
     .box-shadow(0px, 0px, 3px, 0.5);
+
+    p {
+        margin: 0px;
+        padding: 0px;
+        padding-left: 5em;
+        padding-top: 10px;
+        color: @white;
+        font-weight: lighter;
+        padding-left: 10px;
+    }
+
+    li {
+        height: 50px;
+        .border-top();
+        font-size: 1.4rem;
+    }
+
+    .menubar {
+        position: fixed;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        left: 0px;
+        bottom: 0px;
+        height: @menubarHeight;
+        width: @listWidth;
+        .border-top();
+        color: @white
+    }
 }
 
-.menubar {
-    left: 0px;
-    bottom: 0px;
-    height: @menubarHeight;
-    width: @listWidth;
-}
 
-.detail {
+
+.detailSec {
     height: 100vh;
     left: @listWidth;
     right: 0px;
     background-color: @grey;
     color: @darkGrey;
-}
+    margin-left: @listWidth;
+    color: @white;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
 
-.icon {
-    height: @menubarHeight;
-}
+    .detailHeadingCon {
+        width: 96%;
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 1rem;
+    
+        p {
+            padding-right: 1rem;
+        }
 
-li {
-    height: 50px;
-    border: 1px;
-    border-top-style: solid;
-    border-color: @darkestGrey;
+        i {
+            font-size: 20px;
+        }
+    }
+    
+    .detailObjectsCon {
+        width: 96%;
+    }
+    
+
+    .menubar {
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        height: @menubarHeight;
+        width: 96%;
+        color: @white;
+        background-color: @darkGrey;
+    }
 }
 
 ul {
@@ -74,12 +133,46 @@ ul {
     list-style-type: none;
 }
 
-p {
-    margin: 0px;
+.details {
     padding: 0px;
-    padding-left: 5em;
-    padding-top: 10px;
-    color: @lightGrey;
-    font-weight: lighter;
-    padding-left: 10px;
+    padding-left: 1vh;
+    height: 98vh;
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    h1 {
+        font-size: 2.5rem;
+        font-weight: lighter;
+        padding: 0px;
+        margin: 0px;
+    }
+
+    p {
+        color: @white;
+        margin: 0px;
+        font-weight: lighter;
+    }
+
+    .even {
+        background-color: @darkGrey;
+    }
+
+    .uneven {
+        background-color: @slightDarkGrey;
+    }
+
+    li {
+        padding: 1rem;
+    }
 }
+
+
+#map {
+    height: 98vh;
+    width: 65%;
+    right: 1vh;
+
+   }
