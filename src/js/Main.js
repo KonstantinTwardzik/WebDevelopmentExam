@@ -1,6 +1,9 @@
 // IIFE as start of the js-part thats needed in the webapplication
 
 var Meeting = require("./Meeting");
+var list;
+var detailObjectList;
+var currentObject;
 
 let initView = function () {
 	let main = document.getElementById("main");
@@ -11,13 +14,15 @@ let initView = function () {
 	let nextPageBtn = document.createElement("i");
 	let addBtn = document.createElement("i");
 	let deleteBtn = document.createElement("i");
-	let list = document.createElement("ul");
+	list = document.createElement("ul");
 	let menubar = document.createElement("section");
 	let mapSec = document.createElement("section");
 
 	listSec.classList.add("listSec");
 	detailSec.classList.add("detailSec");
 	menubar.classList.add("menubar");
+	menubar.id = "menubar";
+	list.id = "list";
 	logo.id = "logo";
 	logo.src = "comet_logo.svg";
 	logo.alt = "logo_comet";
@@ -30,7 +35,6 @@ let initView = function () {
 	prevPageBtn.innerHTML = "keyboard_arrow_left";
 	nextPageBtn.innerHTML = "keyboard_arrow_right";
 	mapSec.setAttribute("id", "map");
-	fillList(list);
 	menubar.appendChild(deleteBtn);
 	menubar.appendChild(addBtn);
 	menubar.appendChild(prevPageBtn);
@@ -43,22 +47,86 @@ let initView = function () {
 	listSec.appendChild(menubar);
 	detailSec.appendChild(initDetailView(createMockData()[0]));
 	detailSec.appendChild(mapSec);
+
+	let size = calculateListSize();
+	fillList(list, size);
+	fillDetailList(detailObjectList, calculateDetailListSize(), currentObject);
 };
 
-let fillList = function (list) {
+window.onresize = function (event) {
+	let size = calculateListSize();
+	let detailSize = calculateDetailListSize();
+	clearLists();
+	fillList(list, size);
+	fillDetailList(detailObjectList, detailSize, currentObject);
+};
+
+let calculateListSize = function () {
+	let windowHeight = window.innerHeight;
+	let logoHeight = document.getElementById("logo").offsetHeight;
+	let NavBarHeight = document.getElementById("menubar").offsetHeight;
+	let listSize = (windowHeight - (logoHeight + NavBarHeight)) / 51;
+	return listSize - 1;
+};
+
+let calculateDetailListSize = function () {
+	let windowHeight = window.innerHeight;
+	let listSize = (windowHeight - 130) / 51;
+	return listSize - 1;
+};
+
+let fillList = function (list, size) {
 	let mockData = createMockData();
-	for (let index = 1; index <= mockData.length; index++) {
+	for (let index = 1; index <= size; index++) {
 		let meeting = mockData[index - 1];
 		let listElement = document.createElement("li");
 		let title = document.createElement("p");
 
+		listElement.id = "listElement" + index;
 		title.innerHTML = meeting.getName();
 		listElement.appendChild(title);
 		list.appendChild(listElement);
 	}
 };
 
+let fillDetailList = function (list, size, object) {
+	for (let index = 1; index <= size; index++) {
+		let detailListElement = document.createElement("li");
+		let detailObject = document.createElement("p");
+
+		detailObject.innerHTML += object.getObjects()[index];
+		detailListElement.id = "detailListElement" + index;
+
+		if (index % 2 <= 0) {
+			detailListElement.className = ("even");
+		}
+		else {
+			detailListElement.className = ("uneven");
+		}
+
+		detailListElement.appendChild(detailObject);
+		list.appendChild(detailListElement);
+	}
+};
+
+let clearLists = function () {
+	let list = document.getElementById("list");
+	let length = list.childElementCount;
+	for (let index = 0; index < length; ++index) {
+		let listElement = document.getElementById("listElement" + (index + 1));
+		list.removeChild(listElement);
+	}
+
+	let detailObjectList = document.getElementById("detailObjectList");
+	let detailLength = detailObjectList.childElementCount;
+	for (let index = 0; index < detailLength; ++index) {
+		let detailListElement = document.getElementById("detailListElement" + (index + 1));
+		detailObjectList.removeChild(detailListElement);
+	}
+};
+
 let initDetailView = function (object) {
+	currentObject = object;
 	let details = document.createElement("section");
 	let detailHeadingCon = document.createElement("section");
 	let detailObjectsCon = document.createElement("section");
@@ -66,7 +134,7 @@ let initDetailView = function (object) {
 	let detailDate = document.createElement("p");
 	let detailLocation = document.createElement("p");
 	let editBtn = document.createElement("i");
-	let detailObjectList = document.createElement("ul");
+	detailObjectList = document.createElement("ul");
 	let detailMenubar = document.createElement("section");
 	let detailPrevPageBtn = document.createElement("i");
 	let detailNextPageBtn = document.createElement("i");
@@ -82,6 +150,7 @@ let initDetailView = function (object) {
 	detailAddBtn.classList.add("material-icons");
 	detailPrevPageBtn.classList.add("material-icons");
 	detailNextPageBtn.classList.add("material-icons");
+	detailObjectList.id = ("detailObjectList");
 
 	detailDeleteBtn.innerHTML = "delete_forever";
 	detailAddBtn.innerHTML = "add";
@@ -92,22 +161,6 @@ let initDetailView = function (object) {
 	detailDate.innerHTML = object.getDate();
 	detailLocation.innerHTML = object.getLocation();
 	editBtn.innerHTML = "mode_edit";
-	for (let index = 0; index < object.getObjects().length; index++) {
-		let detailListElement = document.createElement("li");
-		let detailObject = document.createElement("p");
-
-		detailObject.innerHTML += object.getObjects()[index];
-
-		if (index % 2 <= 0) {
-			detailListElement.className = ("even");
-		}
-		else {
-			detailListElement.className = ("uneven");
-		}
-
-		detailListElement.appendChild(detailObject);
-		detailObjectList.appendChild(detailListElement);
-	}
 
 	detailMenubar.appendChild(detailDeleteBtn);
 	detailMenubar.appendChild(detailAddBtn);
@@ -121,6 +174,7 @@ let initDetailView = function (object) {
 	details.appendChild(detailHeadingCon);
 	details.appendChild(detailObjectsCon);
 	details.appendChild(detailMenubar);
+
 	return details;
 };
 
@@ -131,7 +185,7 @@ let createMockData = function () {
 	let meeting3 = new Meeting.Meeting("Trierer Clubtreffen Oktober", "12.10.2018", "Konz", ["Komet2", "Komet3"]);
 	let meeting4 = new Meeting.Meeting("Sondertreffen", "18.11.2018", "Saarbrücken", ["Asteroid1", "Komet1", "Komet2"]);
 	let meeting5 = new Meeting.Meeting("Trierer Clubtreffen Dezember", "03.12.2018", "Trier", ["Komet1", "Asteroid2"]);
-	meetingList = [meeting1, meeting2, meeting3, meeting4, meeting5, meeting1, meeting2, meeting3, meeting4, meeting5, meeting1, meeting2, meeting3, meeting4, meeting5, meeting1];
+	meetingList = [meeting1, meeting2, meeting3, meeting4, meeting5, meeting1, meeting2, meeting3, meeting4, meeting5, meeting1, meeting2, meeting3, meeting2, meeting3, meeting4, meeting5, meeting1, meeting2, meeting3, meeting4, meeting5, meeting1];
 	return meetingList;
 };
 

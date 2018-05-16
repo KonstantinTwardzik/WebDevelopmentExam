@@ -5,6 +5,7 @@
     "version": "1.0.1",
     "dependencies": {
         "http-server": "latest",
+        "express": "4.16.3",
         "npm": "^6.0.0"
     },
     "devDependencies": {
