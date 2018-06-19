@@ -1,175 +1,120 @@
 // IIFE as start of the js-part thats needed in the webapplication
-
+var List = require("./Lists");
 var Meeting = require("./Meeting");
-var list;
 var detailObjectList;
+var list;
 var currentObject;
+var ListObject;
+var Mockdata;
 
 let initView = function () {
 	let main = document.getElementById("main");
-	let listSec = document.createElement("section");
-	let detailSec = document.createElement("section");
-	let logo = document.createElement("img");
-	let prevPageBtn = document.createElement("i");
-	let nextPageBtn = document.createElement("i");
-	let addBtn = document.createElement("i");
-	let deleteBtn = document.createElement("i");
-	list = document.createElement("ul");
-	let menubar = document.createElement("section");
-	let mapSec = document.createElement("section");
+	let leftList = createLeftList();
+	let rightList = createRightList();
 
-	listSec.classList.add("listSec");
-	detailSec.classList.add("detailSec");
-	menubar.classList.add("menubar");
-	menubar.id = "menubar";
-	list.id = "list";
+	main.appendChild(leftList);
+	main.appendChild(rightList);
+
+	//First pagination
+	window.onresize();
+};
+
+let createLeftList = function () {
+	let logo = document.createElement("img");
 	logo.id = "logo";
 	logo.src = "comet_logo.svg";
 	logo.alt = "logo_comet";
-	deleteBtn.classList.add("material-icons");
-	addBtn.classList.add("material-icons");
+
+	list = document.createElement("ul");
+	list.id = "list";
+
+	let menubar = createMenuBar();
+
+	let listSec = document.createElement("section");
+	listSec.classList.add("listSec");
+	listSec.appendChild(logo);
+	listSec.appendChild(list);
+	listSec.appendChild(menubar);
+
+	return listSec;
+};
+
+let createMenuBar = function () {
+	let prevPageBtn = document.createElement("i");
 	prevPageBtn.classList.add("material-icons");
-	nextPageBtn.classList.add("material-icons");
-	deleteBtn.innerHTML = "delete_forever";
-	addBtn.innerHTML = "add";
 	prevPageBtn.innerHTML = "keyboard_arrow_left";
+
+	let nextPageBtn = document.createElement("i");
+	nextPageBtn.classList.add("material-icons");
 	nextPageBtn.innerHTML = "keyboard_arrow_right";
-	mapSec.setAttribute("id", "map");
+
+	let addBtn = document.createElement("i");
+	addBtn.classList.add("material-icons");
+	addBtn.innerHTML = "add";
+
+	let deleteBtn = document.createElement("i");
+	deleteBtn.classList.add("material-icons");
+	deleteBtn.innerHTML = "delete_forever";
+
+	let menubar = document.createElement("section");
+	menubar.classList.add("menubar");
+	menubar.id = "menubar";
 	menubar.appendChild(deleteBtn);
 	menubar.appendChild(addBtn);
 	menubar.appendChild(prevPageBtn);
 	menubar.appendChild(nextPageBtn);
 
-	main.appendChild(listSec);
-	main.appendChild(detailSec);
-	listSec.appendChild(logo);
-	listSec.appendChild(list);
-	listSec.appendChild(menubar);
-	detailSec.appendChild(initDetailView(createMockData()[0]));
+	return menubar;
+};
+
+let createRightList = function () {
+	let mapSec = document.createElement("section");
+	mapSec.setAttribute("id", "map");
+
+	let detailView = createDetailView(currentObject);
+
+	let detailSec = document.createElement("section");
 	detailSec.appendChild(mapSec);
+	detailSec.appendChild(detailView);
+	detailSec.classList.add("detailSec");
 
-	let size = calculateListSize();
-	fillList(list, size);
-	fillDetailList(detailObjectList, calculateDetailListSize(), currentObject);
+	return detailSec;
 };
 
-window.onresize = function (event) {
-	let size = calculateListSize();
-	let detailSize = calculateDetailListSize();
-	clearLists();
-	fillList(list, size);
-	fillDetailList(detailObjectList, detailSize, currentObject);
-};
-
-let calculateListSize = function () {
-	let windowHeight = window.innerHeight;
-	let logoHeight = document.getElementById("logo").offsetHeight;
-	let NavBarHeight = document.getElementById("menubar").offsetHeight;
-	let listSize = (windowHeight - (logoHeight + NavBarHeight)) / 51;
-	return listSize - 1;
-};
-
-let calculateDetailListSize = function () {
-	let windowHeight = window.innerHeight;
-	let listSize = (windowHeight - 130) / 51;
-	return listSize - 1;
-};
-
-let fillList = function (list, size) {
-	let mockData = createMockData();
-	for (let index = 1; index <= size; index++) {
-		let meeting = mockData[index - 1];
-		let listElement = document.createElement("li");
-		let title = document.createElement("p");
-
-		listElement.id = "listElement" + index;
-		title.innerHTML = meeting.getName();
-		listElement.appendChild(title);
-		list.appendChild(listElement);
-	}
-};
-
-let fillDetailList = function (list, size, object) {
-	for (let index = 1; index <= size; index++) {
-		let detailListElement = document.createElement("li");
-		let detailObject = document.createElement("p");
-
-		detailObject.innerHTML += object.getObjects()[index];
-		detailListElement.id = "detailListElement" + index;
-
-		if (index % 2 <= 0) {
-			detailListElement.className = ("even");
-		}
-		else {
-			detailListElement.className = ("uneven");
-		}
-
-		detailListElement.appendChild(detailObject);
-		list.appendChild(detailListElement);
-	}
-};
-
-let clearLists = function () {
-	let list = document.getElementById("list");
-	let length = list.childElementCount;
-	for (let index = 0; index < length; ++index) {
-		let listElement = document.getElementById("listElement" + (index + 1));
-		list.removeChild(listElement);
-	}
-
-	let detailObjectList = document.getElementById("detailObjectList");
-	let detailLength = detailObjectList.childElementCount;
-	for (let index = 0; index < detailLength; ++index) {
-		let detailListElement = document.getElementById("detailListElement" + (index + 1));
-		detailObjectList.removeChild(detailListElement);
-	}
-};
-
-let initDetailView = function (object) {
+let createDetailView = function (object) {
 	currentObject = object;
-	let details = document.createElement("section");
-	let detailHeadingCon = document.createElement("section");
-	let detailObjectsCon = document.createElement("section");
-	let detailTitle = document.createElement("h1");
-	let detailDate = document.createElement("p");
-	let detailLocation = document.createElement("p");
-	let editBtn = document.createElement("i");
-	detailObjectList = document.createElement("ul");
-	let detailMenubar = document.createElement("section");
-	let detailPrevPageBtn = document.createElement("i");
-	let detailNextPageBtn = document.createElement("i");
-	let detailAddBtn = document.createElement("i");
-	let detailDeleteBtn = document.createElement("i");
 
-	details.className = ("details");
-	detailHeadingCon.className = ("detailHeadingCon");
-	detailObjectsCon.className = ("detailObjectsCon");
-	editBtn.className = ("material-icons");
-	detailMenubar.classList.add("menubar");
-	detailDeleteBtn.classList.add("material-icons");
-	detailAddBtn.classList.add("material-icons");
-	detailPrevPageBtn.classList.add("material-icons");
-	detailNextPageBtn.classList.add("material-icons");
+	detailObjectList = document.createElement("ul");
 	detailObjectList.id = ("detailObjectList");
 
-	detailDeleteBtn.innerHTML = "delete_forever";
-	detailAddBtn.innerHTML = "add";
-	detailPrevPageBtn.innerHTML = "keyboard_arrow_left";
-	detailNextPageBtn.innerHTML = "keyboard_arrow_right";
+	let detailObjectsCon = document.createElement("section");
+	detailObjectsCon.className = ("detailObjectsCon");
+	detailObjectsCon.appendChild(detailObjectList);
 
+	let detailTitle = document.createElement("h1");
 	detailTitle.innerHTML = object.getName();
+
+	let detailDate = document.createElement("p");
 	detailDate.innerHTML = object.getDate();
+
+	let detailLocation = document.createElement("p");
 	detailLocation.innerHTML = object.getLocation();
+
+	let editBtn = document.createElement("i");
+	editBtn.className = ("material-icons");
 	editBtn.innerHTML = "mode_edit";
 
-	detailMenubar.appendChild(detailDeleteBtn);
-	detailMenubar.appendChild(detailAddBtn);
-	detailMenubar.appendChild(detailPrevPageBtn);
-	detailMenubar.appendChild(detailNextPageBtn);
+	let detailMenubar = createMenuBar();
+	detailMenubar.classList.add("menubar");
+
+	let detailHeadingCon = document.createElement("section");
+	detailHeadingCon.className = ("detailHeadingCon");
 	detailHeadingCon.appendChild(detailDate);
 	detailHeadingCon.appendChild(detailLocation);
 	detailHeadingCon.appendChild(editBtn);
-	detailObjectsCon.appendChild(detailObjectList);
+
+	let details = document.createElement("section");
+	details.className = ("details");
 	details.appendChild(detailTitle);
 	details.appendChild(detailHeadingCon);
 	details.appendChild(detailObjectsCon);
@@ -189,8 +134,20 @@ let createMockData = function () {
 	return meetingList;
 };
 
+// Pagination on windo-resize
+window.onresize = function () {
+	let size = ListObject.calculateListSize();
+	let detailSize = ListObject.calculateDetailListSize();
+	ListObject.clearLists();
+	ListObject.fillList(list, size, Mockdata);
+	ListObject.fillDetailList(detailObjectList, detailSize, currentObject);
+};
+
+// IIFE as start
 (function () {
-	createMockData();
+	ListObject = new List.Lists();
+	Mockdata = createMockData();
+	currentObject = Mockdata[0];
 	initView();
 })();
 

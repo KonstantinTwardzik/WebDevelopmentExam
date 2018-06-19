@@ -4,6 +4,7 @@ class Meeting {
 		this.date = date;
 		this.location = location;
 		this.objects = objects;
+		console.log("Meeting initialized");
 	}
 
 	getName() {
