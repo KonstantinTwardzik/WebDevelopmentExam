@@ -13,23 +13,26 @@
         "less": "latest",
         "browserify": "latest",
         "babel-minify": "latest",
-        "less-plugin-clean-css": "latest"
+        "less-plugin-clean-css": "latest",
+        "express": "4.16."
     },
     "scripts": {
         "clean": "rm -rf dist && rm -rf node_modules",
         "clean:dist": "rm -rf dist",
-        "dist": "npm run clean:dist && mkdir dist",
+        "express": "cp -r src/express.js dist/express.js",
+        "dist": "npm run clean:dist && mkdir dist && cd ./dist && mkdir public && cd ../",
         "lint": "eslint -c .eslintrc.json src/js/**",
-        "html": "cp -r src/index.html dist",
-        "assets": "cp -r src/assets/* dist",
+        "html": "cp -r src/index.html dist/public",
+        "assets": "cp -r src/assets/* dist/public",
         "css": "lessc src/styles/style.less dist/style.min.css",
-        "css:min": "lessc --clean-css src/styles/style.less dist/style.min.css",
-        "js": "npm run lint && browserify src/js/Main.js > dist/main.js",
-        "postjs": "cp -r dist/main.js dist/main.min.js && rm -f dist/main.js",
-        "js:min": "npm run lint && browserify src/js/Main.js > dist/main.js && minify dist/main.js > dist/main.min.js",
-        "postjs:min": "rm -f dist/main.js",
-        "debug": "npm run dist && npm run assets && npm run html && npm run css && npm run js",
-        "build": "npm run dist && npm run assets && npm run html && npm run css:min && npm run js:min",
-        "start": "http-server dist -p 8080 -c 127.0.0.1:8080"
+        "css:min": "lessc --clean-css src/styles/style.less dist/public/style.min.css",
+        "js": "npm run lint && browserify src/js/Main.js > dist/public/main.js",
+        "postjs": "cp -r dist/public/main.js dist/public/main.min.js && rm -f dist/main.js",
+        "js:min": "npm run lint && browserify src/js/Main.js > dist/public/main.js && minify dist/public/main.js > dist/public/main.min.js",
+        "postjs:min": "rm -f dist/public/main.js",
+        "debug": "npm run dist && npm run assets && npm run html && npm run css && npm run js && npm run express",
+        "build": "npm run dist && npm run assets && npm run html && npm run css:min && npm run js:min && npm run express",
+        "start": "cd ./dist && node express.js"
+        
     }
 }
