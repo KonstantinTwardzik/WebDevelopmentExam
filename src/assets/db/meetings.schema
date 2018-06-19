@@ -1,0 +1,56 @@
+{
+"$schema":"http://jason-schema.org/schema#/",
+"type": "object",
+"title": "meetings",
+"properties":{
+    "meetings": {
+        "type": "array",
+        "description": "List of Meetings retrieved from server",
+        "items":{
+            "type": "object",
+            "properties":{
+                "id": {
+                    "type":"number",
+                    "uniqueItems":true,
+                    "description":"id of meeting"
+                },
+                "name":{
+                    "type": "string",
+                    "description": "Sessionname"
+                },
+                "date":{
+                    "tpye":"string",
+                    "description": "Date of planned session in DD.MM.YYYY"
+                },
+                "location":{
+                    "type":"array",
+                    "description":"GPS Coords in latitude & Longitude",
+                    "minItems":2,
+                    "maxItems":2,
+                    "items":{
+                        "type":"number",
+                        "description":"degrees"
+                    }
+                },
+                "objects":{
+                    "type":"array",
+                    "description":"Sorted list of observed objects",
+                    "minItems":1,
+                    "uniqueItems":true,
+                    "items":{
+                        "type":"string",
+                        "description":"observated object"
+                    }
+                }
+            },
+            "required":[
+                "id",
+                "date",
+                "name",
+                "location",
+                "objects"
+            ]
+            }
+        }
+    }
+}

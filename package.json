@@ -23,16 +23,16 @@
         "dist": "npm run clean:dist && mkdir dist && cd ./dist && mkdir public && cd ../",
         "lint": "eslint -c .eslintrc.json src/js/**",
         "html": "cp -r src/index.html dist/public",
-        "assets": "cp -r src/assets/* dist/public",
+        "assets": "cp -r src/assets/public/* dist/public",
+        "db": "cp -r src/assets/db/* dist",
         "css": "lessc src/styles/style.less dist/style.min.css",
         "css:min": "lessc --clean-css src/styles/style.less dist/public/style.min.css",
         "js": "npm run lint && browserify src/js/Main.js > dist/public/main.js",
         "postjs": "cp -r dist/public/main.js dist/public/main.min.js && rm -f dist/main.js",
         "js:min": "npm run lint && browserify src/js/Main.js > dist/public/main.js && minify dist/public/main.js > dist/public/main.min.js",
         "postjs:min": "rm -f dist/public/main.js",
-        "debug": "npm run dist && npm run assets && npm run html && npm run css && npm run js && npm run express",
-        "build": "npm run dist && npm run assets && npm run html && npm run css:min && npm run js:min && npm run express",
+        "debug": "npm run dist && npm run assets && npm run html && npm run css && npm run js && npm run db &&npm run express",
+        "build": "npm run dist && npm run assets && npm run html && npm run css:min && npm run js:min && npm run db && npm run express",
         "start": "cd ./dist && node express.js"
-        
     }
 }
