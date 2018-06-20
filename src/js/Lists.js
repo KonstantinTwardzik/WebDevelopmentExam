@@ -1,19 +1,20 @@
 class Lists {
 	constructor() {
-		// Standardkonstruktor
+		this.realOffset = 0;
 	}
 
 	calculateListSize() {
 		let windowHeight = window.innerHeight;
 		let listSize = (windowHeight - 126) / 51;
-		return listSize - 1;
+		return Math.ceil(listSize - 2);
 	}
 
 	clearLists() {
 		let list = document.getElementById("leftList");
 		let length = list.childElementCount;
+
 		for (let index = 0; index < length; ++index) {
-			let listElement = document.getElementById("" + index);
+			let listElement = document.getElementById("" + (index + this.realOffset));
 			list.removeChild(listElement);
 		}
 
@@ -25,12 +26,21 @@ class Lists {
 		}
 	}
 
-	fillLeftList(list, data) {
-		let maxSize = this.calculateListSize();
-		let dataSize = data.length;
-		let size = Math.min(maxSize, dataSize);
-		for (let index = 1; index <= size; index++) {
-			let meeting = data[index - 1];
+	fillLeftList(list, offset, data) {
+		// sets regular page listsize
+		let currentPageSize = this.calculateListSize();
+
+		// calculates the offset of the page
+		this.realOffset = ((offset - 1) * currentPageSize);
+
+		// sets last page listsize
+		if ((offset * currentPageSize) >= data.length) {
+			currentPageSize = data.length - (((offset - 1) * currentPageSize));
+		}
+
+		// fills left list
+		for (let index = 1; index <= currentPageSize; index++) {
+			let meeting = data[(index - 1) + this.realOffset];
 			let listElement = document.createElement("li");
 			let title = document.createElement("p");
 

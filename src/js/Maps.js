@@ -18,7 +18,7 @@ class Maps {
 		GoogleMapsLoader.load(function (google) {
 			var map = new google.maps.Map(mapSec, {
 				center: coordinates,
-				zoom: 10,
+				zoom: 12,
 				styles: [
 					{
 						elementType: "geometry",

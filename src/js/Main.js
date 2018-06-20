@@ -1,7 +1,10 @@
 // IIFE as start of the js-part thats needed in the webapplication
 var Lists = require("./Lists");
-var Meeting = require("./Meeting");
 var Maps = require("./Maps");
+var Mockdata = require("./Mockdata");
+var dbSize;
+var leftCurrentPage;
+var leftAllPages;
 var leftList;
 var rightList;
 var curMeeting;
@@ -44,21 +47,28 @@ let createLeftList = function () {
 };
 
 let createLeftMenuBar = function () {
+	let deleteBtn = document.createElement("i");
+	deleteBtn.id = "leftDeleteBtn";
+	deleteBtn.className = "material-icons";
+	deleteBtn.innerHTML = "delete_forever";
+
+	let addBtn = document.createElement("i");
+	addBtn.id = "leftAddBtn";
+	addBtn.className = "material-icons";
+	addBtn.innerHTML = "add";
+
 	let prevPageBtn = document.createElement("i");
+	prevPageBtn.id = "leftPrevPageBtnDisabled";
 	prevPageBtn.className = "material-icons";
 	prevPageBtn.innerHTML = "keyboard_arrow_left";
 
 	let nextPageBtn = document.createElement("i");
+	nextPageBtn.id = "leftNextPageBtn";
 	nextPageBtn.className = "material-icons";
 	nextPageBtn.innerHTML = "keyboard_arrow_right";
 
-	let addBtn = document.createElement("i");
-	addBtn.className = "material-icons";
-	addBtn.innerHTML = "add";
-
-	let deleteBtn = document.createElement("i");
-	deleteBtn.className = "material-icons";
-	deleteBtn.innerHTML = "delete_forever";
+	let pageIndicator = document.createElement("p");
+	pageIndicator.id = "leftPageIndicator";
 
 	let menubar = document.createElement("section");
 	menubar.className = "menubar";
@@ -66,6 +76,7 @@ let createLeftMenuBar = function () {
 	menubar.appendChild(deleteBtn);
 	menubar.appendChild(addBtn);
 	menubar.appendChild(prevPageBtn);
+	menubar.appendChild(pageIndicator);
 	menubar.appendChild(nextPageBtn);
 
 	return menubar;
@@ -144,56 +155,91 @@ window.onresize = function () {
 };
 
 let updateLists = function () {
-	//Erstellt Listen neu
+	//redraw all lists
 	ListObject.clearLists();
-	ListObject.fillLeftList(leftList, data);
+	ListObject.fillLeftList(leftList, leftCurrentPage, data);
 	ListObject.fillRightList(rightList, curMeeting);
 
-	//Markiert ausgewähltes Objekt in linker Liste
-	if (ListObject.calculateListSize() >= curMeeting.getId()) {
+	//calculate how many pages there are
+	let currentPageSize = ListObject.calculateListSize();
+	leftAllPages = Math.ceil(dbSize / currentPageSize);
+
+	//redraw which page is selected
+	let leftPageIndicator = document.getElementById("leftPageIndicator");
+	leftPageIndicator.innerHTML = leftCurrentPage + " of " + leftAllPages;
+
+	//mark selected item (if it is visible)
+	if (curMeeting.getId() >= (leftCurrentPage - 1) * currentPageSize && curMeeting.getId() <= leftCurrentPage * currentPageSize) {
 		let active = document.getElementById(curMeeting.getId());
 		active.className = "active";
 	}
-};
 
-let initHandlers = function () {
-	let listListener = document.getElementById("leftList");
-	listListener.addEventListener("click", event => updateRightList(event.target.id));
+	//if the leftAllPages size is smaller then the leftCurrentPage
+	if (leftAllPages < leftCurrentPage) {
+		prevPage();
+	}
+
+	//if the leftCurrentPage gets smaller then the leftAllPage
+	if (leftCurrentPage === (leftAllPages - 1) && document.getElementById("leftNextPageBtnDisabled")) {
+		let leftNextPageListener = document.getElementById("leftNextPageBtnDisabled");
+		leftNextPageListener.addEventListener("click", nextPage);
+		leftNextPageListener.id = "leftNextPageBtn";
+	}
 };
 
 let updateCurMeeting = function (target) {
 	curMeeting = data[parseInt(target)];
 };
 
-let createMockData = function () {
-	let meetingList;
-	let meeting1 = new Meeting.Meeting("Trierer Clubtreffen April", "20.04.2018", "Trier", ["Komet1", "Komet2", "Asteroid2", "Komet1", "Komet1", "Komet2", "Asteroid1", "Asteroid2", "Komet1", "Komet2", "Asteroid1", "Asteroid2", "Komet1", "Komet2", "Asteroid1", "Asteroid2"], 0, { lat: 52.521918, lng: 13.413215 });
-	let meeting2 = new Meeting.Meeting("Sondertreffen", "26.06.2018", "Konz", ["Asteroid1", "Asteroid2"], 1, { lat: 49.749992, lng: 6.6371433 });
-	let meeting3 = new Meeting.Meeting("Trierer Clubtreffen Oktober", "12.10.2018", "Konz", ["Komet2", "Komet3"], 2, { lat: 48.856614, lng: 2.3522219 });
-	let meeting4 = new Meeting.Meeting("Sondertreffen", "18.11.2018", "Saarbrücken", ["Asteroid1", "Komet1", "Komet2"], 3, { lat: 49.749992, lng: 6.6371433 });
-	let meeting5 = new Meeting.Meeting("Trierer Clubtreffen Dezember", "03.12.2018", "Trier", ["Komet1", "Asteroid2"], 4, { lat: 52.521918, lng: 13.413215 });
-	let meeting6 = new Meeting.Meeting("Trierer Clubtreffen April", "20.04.2018", "Trier", ["Komet1", "Komet2", "Asteroid2", "Komet1", "Komet1", "Komet2", "Asteroid1", "Asteroid2", "Komet1", "Komet2", "Asteroid1", "Asteroid2", "Komet1", "Komet2", "Asteroid1", "Asteroid2"], 5, { lat: 48.856614, lng: 2.3522219 });
-	let meeting7 = new Meeting.Meeting("Sondertreffen", "26.06.2018", "Konz", ["Asteroid1", "Asteroid2"], 6, { lat: 48.856614, lng: 2.3522219 });
-	let meeting8 = new Meeting.Meeting("Trierer Clubtreffen Oktober", "12.10.2018", "Konz", ["Komet2", "Komet3"], 7, { lat: 52.521918, lng: 13.413215 });
-	let meeting9 = new Meeting.Meeting("Sondertreffen", "18.11.2018", "Saarbrücken", ["Asteroid1", "Komet1", "Komet2"], 8, { lat: 49.749992, lng: 6.6371433 });
-	let meeting10 = new Meeting.Meeting("Trierer Clubtreffen Dezember", "03.12.2018", "Trier", ["Komet1", "Asteroid2"], 9, { lat: 52.521918, lng: 13.413215 });
-	let meeting11 = new Meeting.Meeting("Trierer Clubtreffen April", "20.04.2018", "Trier", ["Komet1", "Komet2", "Asteroid2", "Komet1", "Komet1", "Komet2", "Asteroid1", "Asteroid2", "Komet1", "Komet2", "Asteroid1", "Asteroid2", "Komet1", "Komet2", "Asteroid1", "Asteroid2"], 10, { lat: 6.6371433, lng: 49.749992 });
-	let meeting12 = new Meeting.Meeting("Sondertreffen", "26.06.2018", "Konz", ["Asteroid1", "Asteroid2"], 11, { lat: 48.856614, lng: 2.3522219 });
-	let meeting13 = new Meeting.Meeting("Trierer Clubtreffen Oktober", "12.10.2018", "Konz", ["Komet2", "Komet3"], 12, { lat: 49.749992, lng: 6.6371433 });
-	let meeting14 = new Meeting.Meeting("Sondertreffen", "18.11.2018", "Saarbrücken", ["Asteroid1", "Komet1", "Komet2"], 13, { lat: 52.521918, lng: 13.413215 });
-	let meeting15 = new Meeting.Meeting("Trierer Clubtreffen Dezember", "03.12.2018", "Trier", ["Komet1", "Asteroid2"], 14, { lat: 49.749992, lng: 6.6371433 });
-	meetingList = [meeting1, meeting2, meeting3, meeting4, meeting5, meeting6, meeting7, meeting8, meeting9, meeting10, meeting11, meeting12, meeting13, meeting14, meeting15];
-	return meetingList;
+let nextPage = function () {
+	leftCurrentPage++;
+	if (leftCurrentPage === 2) {
+		let leftPrevPageListener = document.getElementById("leftPrevPageBtnDisabled");
+		leftPrevPageListener.addEventListener("click", prevPage);
+		leftPrevPageListener.id = "leftPrevPageBtn";
+	}
+	if (leftCurrentPage === leftAllPages) {
+		let leftNextPageListener = document.getElementById("leftNextPageBtn");
+		leftNextPageListener.removeEventListener("click", nextPage);
+		leftNextPageListener.id = "leftNextPageBtnDisabled";
+	}
+	updateLists();
+};
+
+let prevPage = function () {
+	leftCurrentPage--;
+	if (leftCurrentPage === 1) {
+		let leftPrevPageListener = document.getElementById("leftPrevPageBtn");
+		leftPrevPageListener.removeEventListener("click", prevPage);
+		leftPrevPageListener.id = "leftPrevPageBtnDisabled";
+	}
+	if (leftCurrentPage === (leftAllPages - 1)) {
+		let leftNextPageListener = document.getElementById("leftNextPageBtnDisabled");
+		leftNextPageListener.addEventListener("click", nextPage);
+		leftNextPageListener.id = "leftNextPageBtn";
+	}
+	updateLists();
+};
+
+// Initiates all Click-handlers
+let initHandlers = function () {
+	let listListener = document.getElementById("leftList");
+	listListener.addEventListener("click", event => updateRightList(event.target.id));
+
+	let leftNextPageListener = document.getElementById("leftNextPageBtn");
+	leftNextPageListener.addEventListener("click", nextPage);
 };
 
 // IIFE as start
 (function () {
 	map = new Maps.Maps();
 	ListObject = new Lists.Lists();
-	data = createMockData();
+	data = new Mockdata.Mockdata();
+	dbSize = 30;
+	leftCurrentPage = 1;
 	curMeeting = data[0];
 	initView();
-	window.onresize();
+	updateLists();
 	initHandlers();
 })();
 
