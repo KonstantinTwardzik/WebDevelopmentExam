@@ -1,5 +1,4 @@
-//Here are the styles that get converted into valid css files
-
+//Here the styles are described, that get converted into a valid css file
 
 @darkestGrey: color(#2f2f2f);
 @darkGrey: color(#404040);
@@ -30,9 +29,7 @@
     border-color: @darkGrey;
 }
 
-
 body {
-    background-color: @grey;
     font-family: 'Muli', sans-serif;
     padding: 0px;
     margin: 0px;
@@ -43,13 +40,19 @@ body {
     margin-right: 35px;
 }
 
+ul {
+    padding: 0px;
+    margin: 0px;
+    list-style-type: none;
+}
+
+
+
 .listSec {
-    left: 0px;
+    position: fixed;
     top: 0px;
     width: @listWidth;
     height: 100vh;
-    float: left;
-
     background-color: @darkGrey;
     .box-shadow(0px, 0px, 3px, 0.5);
 
@@ -74,7 +77,6 @@ body {
         display: flex;
         justify-content: space-evenly;
         align-items: center;
-        left: 0px;
         bottom: 0px;
         height: @menubarHeight;
         width: @listWidth;
@@ -83,96 +85,40 @@ body {
     }
 }
 
-
-
-.detailSec {
-    height: 100vh;
-    left: @listWidth;
-    right: 0px;
-    background-color: @grey;
-    color: @darkGrey;
-    margin-left: @listWidth;
-    color: @white;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-
-    .detailHeadingCon {
-        width: 96%;
-        display: flex;
-        justify-content: flex-start;
-        margin-bottom: 1rem;
-    
-        p {
-            padding-right: 1rem;
-        }
-
-        i {
-            font-size: 20px;
-        }
-    }
-    
-    .detailObjectsCon {
-        width: 96%;
-    }
-    
-
+#leftListSec {
+    left: 0px;
     .menubar {
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        height: @menubarHeight;
-        width: 96%;
-        color: @white;
-        background-color: @darkGrey;
+        left: 0px;
     }
 }
 
-ul {
-    padding: 0px;
-    margin: 0px;
-    list-style-type: none;
-}
-
-.details {
-    padding: 0px;
-    padding-left: 1vh;
-    height: 98vh;
-    width: 500px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+#rightListSec {
+    right: 0px;
+    #rightHeader {
+        height: 125px;
+        padding: 10px;
+        p {
+            padding-left: 0px;
+            padding-top: 5px;
+        }
+    }
 
     h1 {
-        font-size: 2.5rem;
-        font-weight: lighter;
         padding: 0px;
         margin: 0px;
-    }
-
-    p {
+        font-size: 2rem;
         color: @white;
-        margin: 0px;
-        font-weight: lighter;
     }
 
-    .even {
-        background-color: @darkGrey;
-    }
-
-    .uneven {
-        background-color: @slightDarkGrey;
-    }
-
-    li {
-        padding: 1rem;
+    .menubar {
+        right: 0px;
     }
 }
 
-
 #map {
+    position: fixed;
+    top: 0px;
+    left: @listWidth;
+    width: 65%;
     height: 100vh;
-    width: 100% - (2*@listWidth);
-
    }

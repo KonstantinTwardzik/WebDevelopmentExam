@@ -1,8 +1,8 @@
 // IIFE as start of the js-part thats needed in the webapplication
 var List = require("./Lists");
 var Meeting = require("./Meeting");
-var detailObjectList;
-var list;
+var leftList;
+var rightList;
 var currentObject;
 var ListObject;
 var Mockdata;
@@ -10,13 +10,12 @@ var Mockdata;
 let initView = function () {
 	let main = document.getElementById("main");
 	let leftList = createLeftList();
+	let mapSec = createMap();
 	let rightList = createRightList();
 
 	main.appendChild(leftList);
+	main.appendChild(mapSec);
 	main.appendChild(rightList);
-
-	//First pagination
-	window.onresize();
 };
 
 let createLeftList = function () {
@@ -25,39 +24,41 @@ let createLeftList = function () {
 	logo.src = "comet_logo.svg";
 	logo.alt = "logo_comet";
 
-	list = document.createElement("ul");
-	list.id = "list";
+	leftList = document.createElement("ul");
+	leftList.id = "leftList";
 
-	let menubar = createMenuBar();
+	let menubar = createLeftMenuBar();
 
-	let listSec = document.createElement("section");
-	listSec.classList.add("listSec");
-	listSec.appendChild(logo);
-	listSec.appendChild(list);
-	listSec.appendChild(menubar);
+	let leftListSec = document.createElement("section");
+	leftListSec.className = "listSec";
+	leftListSec.id = "leftListSec";
 
-	return listSec;
+	leftListSec.appendChild(logo);
+	leftListSec.appendChild(leftList);
+	leftListSec.appendChild(menubar);
+
+	return leftListSec;
 };
 
-let createMenuBar = function () {
+let createLeftMenuBar = function () {
 	let prevPageBtn = document.createElement("i");
-	prevPageBtn.classList.add("material-icons");
+	prevPageBtn.className = "material-icons";
 	prevPageBtn.innerHTML = "keyboard_arrow_left";
 
 	let nextPageBtn = document.createElement("i");
-	nextPageBtn.classList.add("material-icons");
+	nextPageBtn.className = "material-icons";
 	nextPageBtn.innerHTML = "keyboard_arrow_right";
 
 	let addBtn = document.createElement("i");
-	addBtn.classList.add("material-icons");
+	addBtn.className = "material-icons";
 	addBtn.innerHTML = "add";
 
 	let deleteBtn = document.createElement("i");
-	deleteBtn.classList.add("material-icons");
+	deleteBtn.className = "material-icons";
 	deleteBtn.innerHTML = "delete_forever";
 
 	let menubar = document.createElement("section");
-	menubar.classList.add("menubar");
+	menubar.className = "menubar";
 	menubar.id = "menubar";
 	menubar.appendChild(deleteBtn);
 	menubar.appendChild(addBtn);
@@ -67,60 +68,62 @@ let createMenuBar = function () {
 	return menubar;
 };
 
-let createRightList = function () {
-	let mapSec = document.createElement("section");
-	mapSec.setAttribute("id", "map");
+let createRightMenuBar = function () {
+	let prevPageBtn = document.createElement("i");
+	prevPageBtn.className = "material-icons";
+	prevPageBtn.innerHTML = "keyboard_arrow_left";
 
-	let detailView = createDetailView(currentObject);
-
-	let detailSec = document.createElement("section");
-	detailSec.appendChild(mapSec);
-	detailSec.appendChild(detailView);
-	detailSec.classList.add("detailSec");
-
-	return detailSec;
-};
-
-let createDetailView = function (object) {
-	currentObject = object;
-
-	detailObjectList = document.createElement("ul");
-	detailObjectList.id = ("detailObjectList");
-
-	let detailObjectsCon = document.createElement("section");
-	detailObjectsCon.className = ("detailObjectsCon");
-	detailObjectsCon.appendChild(detailObjectList);
-
-	let detailTitle = document.createElement("h1");
-	detailTitle.innerHTML = object.getName();
-
-	let detailDate = document.createElement("p");
-	detailDate.innerHTML = object.getDate();
-
-	let detailLocation = document.createElement("p");
-	detailLocation.innerHTML = object.getLocation();
+	let nextPageBtn = document.createElement("i");
+	nextPageBtn.className = "material-icons";
+	nextPageBtn.innerHTML = "keyboard_arrow_right";
 
 	let editBtn = document.createElement("i");
 	editBtn.className = ("material-icons");
 	editBtn.innerHTML = "mode_edit";
 
-	let detailMenubar = createMenuBar();
-	detailMenubar.classList.add("menubar");
+	let menubar = document.createElement("section");
+	menubar.className = "menubar";
+	menubar.id = "menubar";
+	menubar.appendChild(editBtn);
+	menubar.appendChild(prevPageBtn);
+	menubar.appendChild(nextPageBtn);
 
-	let detailHeadingCon = document.createElement("section");
-	detailHeadingCon.className = ("detailHeadingCon");
-	detailHeadingCon.appendChild(detailDate);
-	detailHeadingCon.appendChild(detailLocation);
-	detailHeadingCon.appendChild(editBtn);
+	return menubar;
+};
 
-	let details = document.createElement("section");
-	details.className = ("details");
-	details.appendChild(detailTitle);
-	details.appendChild(detailHeadingCon);
-	details.appendChild(detailObjectsCon);
-	details.appendChild(detailMenubar);
+let createRightList = function () {
+	rightList = document.createElement("ul");
+	rightList.id = "rightList";
 
-	return details;
+	let detailTitle = document.createElement("h1");
+	detailTitle.innerHTML = currentObject.getName();
+
+	let detailTimeLoc = document.createElement("p");
+	detailTimeLoc.innerHTML = currentObject.getDate() + ", " + currentObject.getLocation();
+
+	let detailMenubar = createRightMenuBar();
+	detailMenubar.className = "menubar";
+
+	let rightHeader = document.createElement("section");
+	rightHeader.id = "rightHeader";
+	rightHeader.appendChild(detailTitle);
+	rightHeader.appendChild(detailTimeLoc);
+
+	let rightListSec = document.createElement("section");
+	rightListSec.className = "listSec";
+	rightListSec.id = "rightListSec";
+	rightListSec.appendChild(rightHeader);
+	rightListSec.appendChild(rightList);
+	rightListSec.appendChild(detailMenubar);
+
+	return rightListSec;
+};
+
+let createMap = function () {
+	let mapSec = document.createElement("section");
+	mapSec.id = "map";
+
+	return mapSec;
 };
 
 let createMockData = function () {
@@ -134,13 +137,12 @@ let createMockData = function () {
 	return meetingList;
 };
 
-// Pagination on windo-resize
+// Pagination on window-resize
 window.onresize = function () {
 	let size = ListObject.calculateListSize();
-	let detailSize = ListObject.calculateDetailListSize();
 	ListObject.clearLists();
-	ListObject.fillList(list, size, Mockdata);
-	ListObject.fillDetailList(detailObjectList, detailSize, currentObject);
+	ListObject.fillList(leftList, size, Mockdata);
+	ListObject.fillDetailList(rightList, size, currentObject);
 };
 
 // IIFE as start
@@ -149,5 +151,6 @@ window.onresize = function () {
 	Mockdata = createMockData();
 	currentObject = Mockdata[0];
 	initView();
+	window.onresize();
 })();
 
