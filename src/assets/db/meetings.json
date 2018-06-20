@@ -2,7 +2,7 @@
     "$schema": "./.meetings.schema",
     "meetings": [
         {
-            "id": 1,
+            "id": 0,
             "name": "Trierer Sternentreff",
             "date": "2018-12-03",
             "location": [
@@ -30,7 +30,7 @@
             ]
         },
         {
-            "id": 1,
+            "id": 2,
             "name": "Trierer Sternentreff",
             "date": "2018-12-03",
             "location": [
@@ -44,7 +44,133 @@
             ]
         },
         {
-            "id": 1,
+            "id": 3,
+            "name": "Trierer Sternentreff",
+            "date": "2018-12-03",
+            "location": [
+                49.749992, 
+                6.6371433
+            ],
+            "objects": [
+                "Solaris",
+                "Stars",
+                "Luna"
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Trierer Sternentreff",
+            "date": "2018-12-03",
+            "location": [
+                49.749992, 
+                6.6371433
+            ],
+            "objects": [
+                "Solaris",
+                "Stars",
+                "Luna"
+            ]
+        },
+        {
+            "id": 5,
+            "name": "Trierer Sternentreff",
+            "date": "2018-12-03",
+            "location": [
+                49.749992, 
+                6.6371433
+            ],
+            "objects": [
+                "Solaris",
+                "Stars",
+                "Luna"
+            ]
+        },
+        {
+            "id": 6,
+            "name": "Trierer Sternentreff",
+            "date": "2018-12-03",
+            "location": [
+                49.749992, 
+                6.6371433
+            ],
+            "objects": [
+                "Solaris",
+                "Stars",
+                "Luna"
+            ]
+        },
+        {
+            "id": 7,
+            "name": "Trierer Sternentreff",
+            "date": "2018-12-03",
+            "location": [
+                49.749992, 
+                6.6371433
+            ],
+            "objects": [
+                "Solaris",
+                "Stars",
+                "Luna"
+            ]
+        },
+        {
+            "id": 8,
+            "name": "Trierer Sternentreff",
+            "date": "2018-12-03",
+            "location": [
+                49.749992, 
+                6.6371433
+            ],
+            "objects": [
+                "Solaris",
+                "Stars",
+                "Luna"
+            ]
+        },
+        {
+            "id": 9,
+            "name": "Trierer Sternentreff",
+            "date": "2018-12-03",
+            "location": [
+                49.749992, 
+                6.6371433
+            ],
+            "objects": [
+                "Solaris",
+                "Stars",
+                "Luna"
+            ]
+        },
+        {
+            "id": 10,
+            "name": "Trierer Sternentreff",
+            "date": "2018-12-03",
+            "location": [
+                49.749992, 
+                6.6371433
+            ],
+            "objects": [
+                "Solaris",
+                "Stars",
+                "Luna"
+            ]
+        },
+        {
+            "id": 11,
+            "name": "Trierer Sternentreff",
+            "date": "2018-12-03",
+            "location": [
+                49.749992, 
+                6.6371433
+            ],
+            "objects": [
+                "Solaris",
+                "Stars",
+                "Luna"
+            ]
+        },
+        {
+            "id": 12,
             "name": "Trierer Sternentreff",
             "date": "2018-12-03",
             "location": [
