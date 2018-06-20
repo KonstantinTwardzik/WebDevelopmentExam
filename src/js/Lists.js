@@ -1,6 +1,6 @@
 class Lists {
 	constructor() {
-		console.log("Lists initialized");
+		// Standardkonstruktor
 	}
 
 	calculateListSize() {
@@ -13,7 +13,7 @@ class Lists {
 		let list = document.getElementById("leftList");
 		let length = list.childElementCount;
 		for (let index = 0; index < length; ++index) {
-			let listElement = document.getElementById("listElement" + (index + 1));
+			let listElement = document.getElementById("" + index);
 			list.removeChild(listElement);
 		}
 
@@ -25,25 +25,32 @@ class Lists {
 		}
 	}
 
-	fillList(list, size, data) {
+	fillLeftList(list, data) {
+		let maxSize = this.calculateListSize();
+		let dataSize = data.length;
+		let size = Math.min(maxSize, dataSize);
 		for (let index = 1; index <= size; index++) {
 			let meeting = data[index - 1];
 			let listElement = document.createElement("li");
 			let title = document.createElement("p");
 
-			listElement.id = "listElement" + index;
+			listElement.id = meeting.getId();
+			title.id = meeting.getId();
 			title.innerHTML = meeting.getName();
 			listElement.appendChild(title);
 			list.appendChild(listElement);
 		}
 	}
 
-	fillDetailList(list, size, object) {
+	fillRightList(list, object) {
+		let maxSize = this.calculateListSize();
+		let listSize = object.getObjects().length;
+		let size = Math.min(maxSize, listSize);
 		for (let index = 1; index <= size; index++) {
 			let detailListElement = document.createElement("li");
 			let detailObject = document.createElement("p");
 
-			detailObject.innerHTML += object.getObjects()[index];
+			detailObject.innerHTML += object.getObjects()[index - 1];
 			detailListElement.id = "rightListElement" + index;
 
 			detailListElement.appendChild(detailObject);

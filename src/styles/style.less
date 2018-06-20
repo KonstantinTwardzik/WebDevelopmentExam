@@ -46,8 +46,6 @@ ul {
     list-style-type: none;
 }
 
-
-
 .listSec {
     position: fixed;
     top: 0px;
@@ -70,6 +68,12 @@ ul {
         height: 50px;
         .border-top();
         font-size: 1.4rem;
+        &:hover {
+            background-color: @grey;
+        }
+        #active {
+            background-color: @grey;
+        }
     }
 
     .menubar {
@@ -90,6 +94,9 @@ ul {
     .menubar {
         left: 0px;
     }
+    .active {
+        background-color: @grey;
+    }
 }
 
 #rightListSec {
@@ -97,17 +104,17 @@ ul {
     #rightHeader {
         height: 125px;
         padding: 10px;
+        h1 {
+            padding: 0px;
+            margin: 0px;
+            font-size: 2rem;
+            color: @white;
+        }
+    
         p {
             padding-left: 0px;
             padding-top: 5px;
         }
-    }
-
-    h1 {
-        padding: 0px;
-        margin: 0px;
-        font-size: 2rem;
-        color: @white;
     }
 
     .menubar {
