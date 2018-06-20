@@ -1,10 +1,19 @@
 class Meeting {
-	constructor(name, date, location, objects) {
+	constructor(name, date, location, objects, id, coordinates) {
+		this.id = id;
 		this.name = name;
 		this.date = date;
 		this.location = location;
 		this.objects = objects;
-		console.log("Meeting initialized");
+		this.coordinates = coordinates;
+	}
+
+	getId() {
+		return this.id;
+	}
+
+	getCoordinates() {
+		return this.coordinates;
 	}
 
 	getName() {
