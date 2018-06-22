@@ -16,12 +16,16 @@ var map;
 
 let initView = function () {
 	let main = document.getElementById("main");
+	let mapWrapper = document.createElement("section");
 	let mapSec = map.updateMap(curMeeting);
 	let leftList = createLeftList();
-
 	let rightList = createRightList();
 
-	main.appendChild(mapSec);
+	// needed for correct gmaps-integration
+	mapWrapper.id = "mapWrapper";
+
+	mapWrapper.appendChild(mapSec);
+	main.appendChild(mapWrapper);
 	main.appendChild(leftList);
 	main.appendChild(rightList);
 };
@@ -143,12 +147,36 @@ let createRightList = function () {
 	return rightListSec;
 };
 
+let createDialogue = function () {
+	let main = document.getElementById("main");
+
+	let plane = document.createElement("section");
+	plane.id = "plane";
+
+	let window = document.createElement("section");
+	window.id = "window";
+
+	let toolbar = document.createElement("section");
+	toolbar.id = "toolbar";
+
+	let header = document.createElement("section");
+	header.id = "header";
+
+	window.appendChild(header);
+	window.appendChild(toolbar);
+
+	main.appendChild(plane);
+	main.appendChild(window);
+
+	plane.addEventListener("click", closeDialogue);
+};
+
 let updateRightList = function (target) {
 	updateCurMeeting(target);
 	updateLists();
 
-	let main = document.getElementById("main");
-	main.replaceChild(map.updateMap(curMeeting), document.getElementById("map"));
+	let mapWrapper = document.getElementById("mapWrapper");
+	mapWrapper.replaceChild(map.updateMap(curMeeting), document.getElementById("map"));
 
 	let MeetingTitle = document.getElementById("MeetingTitle");
 	MeetingTitle.innerHTML = curMeeting.getName();
@@ -300,7 +328,22 @@ let rightPrevPage = function () {
 	updateLists();
 };
 
-// Initiates all Click-handlers
+let showDialogue = function () {
+	createDialogue();
+};
+
+let closeDialogue = function () {
+	let main = document.getElementById("main");
+	let deletableItem = document.getElementById("window");
+
+	main.removeChild(deletableItem);
+
+	deletableItem = document.getElementById("plane");
+
+	main.removeChild(deletableItem);
+};
+
+// Initiates most of the click-handlers
 let initHandlers = function () {
 	let listListener = document.getElementById("leftList");
 	listListener.addEventListener("click", event => updateRightList(event.target.id));
@@ -310,6 +353,9 @@ let initHandlers = function () {
 
 	let rightNextPageListener = document.getElementById("rightNextPageBtn");
 	rightNextPageListener.addEventListener("click", rightNextPage);
+
+	let newMeetingListener = document.getElementById("leftAddBtn");
+	newMeetingListener.addEventListener("click", showDialogue);
 };
 
 // IIFE as start
@@ -325,6 +371,3 @@ let initHandlers = function () {
 	updateLists();
 	initHandlers();
 })();
-
-//TODO: Abfangen, wenn fenster so klein wird das selektiertes Element nicht mehr sichtbar ist
-
