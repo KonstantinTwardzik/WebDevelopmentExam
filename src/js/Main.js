@@ -188,22 +188,19 @@ let updateRightList = function (target) {
 // Pagination on window-resize
 
 //TODO: calculate those two variables:
-// let start = 14;	// Dummywert
-// let end = 17;	// Dummywert
-
-// let pagesize = require("./Lists").pagesize;
-
 window.onresize = function () {
 	updateLists();
 	//THOMAS:
-	// let request = new XMLHttpRequest();
-	// request.addEventListener("error", error => { console.error(error.toString()); });
-	// request.addEventListener("load", () => { if (request.status === 200) { console.log("asdf"); } });
+	let start = ListObject.getLeftRealOffset();
+	let end = start + ListObject.getCurrentPageSize();
+	let request = new XMLHttpRequest();
+	request.addEventListener("error", error => { console.error(error.toString()); });
+	request.addEventListener("load", () => { if (request.status === 200) { console.log("requestStatus: success"); } });
 	//TODO: insert calculated start and end variable here:
-	// request.open("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end);	//übergibt parameter start = pagesize und end = 5
-	// request.setRequestHeader("Accept", "application/json");
-	// request.responseType = "json";
-	// request.send();
+	request.open("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end);	//übergibt parameter start = pagesize und end = 5
+	request.setRequestHeader("Accept", "application/json");
+	request.responseType = "json";
+	request.send();
 	//:THOMAS
 };
 

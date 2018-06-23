@@ -9,6 +9,11 @@ class Lists {
 		this.calculateListSize();
 		return this.currentPageSize;
 	}
+	//THOMAS:
+	getLeftRealOffset() {
+		return this.leftRealOffset;
+	}
+	//:THOMAS
 
 	// sets regular page listsize
 	calculateListSize() {
