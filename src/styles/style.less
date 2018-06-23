@@ -66,7 +66,7 @@ ul {
     width: @listWidth;
     height: 100vh;
     background-color: @darkGrey;
-    .box-shadow(0px, 0px, 10px, 1);
+    .box-shadow(0px, 0px, 5px, 1);
 
     p {
         margin: 0px;
@@ -82,12 +82,6 @@ ul {
         height: 50px;
         .border-top();
         font-size: 1.4rem;
-        &:hover {
-            background-color: @grey;
-        }
-        #active {
-            background-color: @darkGrey;
-        }
     }
 
     .menubar {
@@ -99,7 +93,9 @@ ul {
         height: @menubarHeight;
         width: @listWidth;
         .border-top();
-        color: @white
+        color: @white;
+        background-color:@darkestGrey;
+        .box-shadow(0px, 0px, 5px, 1);
     }
 
     #leftPrevPageBtnDisabled {
@@ -118,6 +114,25 @@ ul {
 
 #leftListSec {
     left: 0px;
+
+    li {
+        &:hover {
+            background-color: @grey;
+        }
+        #active {
+            background-color: @darkGrey;
+        }
+    }
+
+    #logoWrapper {
+        left: 0px;
+        right: @listWidth;
+        top: 0px;
+        height: 150px;
+        background-color: @darkestGrey;
+        .box-shadow(0px, 0px, 5px, 1);
+    }
+
     .menubar {
         left: 0px;
         p {
@@ -140,8 +155,10 @@ ul {
     right: 0px;
     #rightHeader {
         height: 100px;
-        margin:20px;
-        margin-top: 30px;
+        padding:20px;
+        padding-top: 30px;
+        background-color: @darkestGrey;
+        .box-shadow(0px, 0px, 5px, 1);
         h1 {
             padding: 0px;
             margin: 0px;
@@ -202,14 +219,40 @@ ul {
     right: 150px;
     bottom: 100px;
     background-color: @darkGrey;
+    color: @white;
+    .box-shadow(0px, 0px, 10px, 1);
+    border-radius: 10px;
+    p {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .button {
+        &:hover {
+            font-weight: bolder;
+            font-size: 1.1rem;
+        }
+    }
+
+    .input {
+        width: 100%;
+        height: 100%;
+        border-radius: 3px;
+        font-size: 1.2rem;
+        color: @darkestGrey;
+    }
 
     #header {
         position: fixed;
         top: 100px;
         left: 150px;
         right: 150px;
-        height: 150px;
+        height: 250px;
         .border-bottom();
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        background-color: @darkestGrey;
+        .box-shadow(0px, 0px, 5px, 1);
     }
 
     #toolbar {
@@ -219,5 +262,91 @@ ul {
         right: 150px;
         height: @menubarHeight;
         .border-top();
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        background-color: @darkestGrey;
+        .box-shadow(0px, 0px, 5px, 1);
+    }
+
+    #title {
+        position: fixed;
+        top: 120px;
+        left: 180px;
+    }
+
+    #titleDiv {
+        position: fixed;
+        top: 145px;
+        height: 25px;
+        left: 180px;
+        right: 180px;
+    }
+
+    #date {
+        position: fixed;
+        top: 190px;
+        left: 180px;
+    }
+
+    #dateDiv {
+        position: fixed;
+        top: 220px;
+        height: 25px;
+        left: 180px;
+        right: 50%;
+    }
+
+    #location {
+        position: fixed;
+        top: 190px;
+        left: 52%;
+    }
+
+    #locationDiv {
+        position: fixed;
+        top: 220px;
+        height: 25px;
+        left: 52%;
+        right: 180px;
+    }
+
+    #latitude {
+        position: fixed;
+        top: 265px;
+        left: 180px;
+    }
+
+    #latitudeDiv {
+        position: fixed;
+        top: 290px;
+        height: 25px;
+        left: 180px;
+        right: 50%;
+    }
+
+    #longitude {
+        position: fixed;
+        top: 265px;
+        left: 52%;
+    }
+
+    #longitudeDiv {
+        position: fixed;
+        top: 290px;
+        height: 25px;
+        left: 52%;
+        right: 180px;
+    }
+
+    #okBtn {
+        position: fixed;
+        bottom: 115px;
+        right: 180px;
+    }
+
+    #cancelBtn {
+        position: fixed;
+        bottom: 115px;
+        right: 230px;
     }
 }

@@ -31,6 +31,9 @@ let initView = function () {
 };
 
 let createLeftList = function () {
+	let logoWrapper = document.createElement("div");
+	logoWrapper.id = "logoWrapper";
+
 	let logo = document.createElement("img");
 	logo.id = "logo";
 	logo.src = "comet_logo.svg";
@@ -45,7 +48,8 @@ let createLeftList = function () {
 	leftListSec.className = "listSec";
 	leftListSec.id = "leftListSec";
 
-	leftListSec.appendChild(logo);
+	logoWrapper.appendChild(logo);
+	leftListSec.appendChild(logoWrapper);
 	leftListSec.appendChild(leftList);
 	leftListSec.appendChild(menubar);
 
@@ -162,6 +166,89 @@ let createDialogue = function () {
 	let header = document.createElement("section");
 	header.id = "header";
 
+	let title = document.createElement("p");
+	title.id = "title";
+	title.innerHTML = "Titel:";
+
+	let titleDiv = document.createElement("div");
+	titleDiv.id = "titleDiv";
+
+	let titleTF = document.createElement("input");
+	titleTF.className = "input";
+
+	let date = document.createElement("p");
+	date.id = "date";
+	date.innerHTML = "Datum: (dd.mm.yyyy)";
+
+	let dateDiv = document.createElement("div");
+	dateDiv.id = "dateDiv";
+
+	let dateTF = document.createElement("input");
+	dateTF.className = "input";
+
+	let location = document.createElement("p");
+	location.id = "location";
+	location.innerHTML = "Ort:";
+
+	let locationDiv = document.createElement("div");
+	locationDiv.id = "locationDiv";
+
+	let locationTF = document.createElement("input");
+	locationTF.className = "input";
+
+	let latitude = document.createElement("p");
+	latitude.id = "latitude";
+	latitude.innerHTML = "Breitengrad:";
+
+	let latitudeDiv = document.createElement("div");
+	latitudeDiv.id = "latitudeDiv";
+
+	let latitudeTF = document.createElement("input");
+	latitudeTF.className = "input";
+
+	let longitude = document.createElement("p");
+	longitude.id = "longitude";
+	longitude.innerHTML = "Längengrad:";
+
+	let longitudeDiv = document.createElement("div");
+	longitudeDiv.id = "longitudeDiv";
+
+	let longitudeTF = document.createElement("input");
+	longitudeTF.className = "input";
+
+	let okBtn = document.createElement("p");
+	okBtn.className = "button";
+	okBtn.id = "okBtn";
+	okBtn.innerHTML = "Ok";
+
+	let cancelBtn = document.createElement("p");
+	cancelBtn.className = "button";
+	cancelBtn.id = "cancelBtn";
+	cancelBtn.innerHTML = "Abbrechen";
+
+	header.appendChild(title);
+	titleDiv.appendChild(titleTF);
+	header.appendChild(titleDiv);
+
+	header.appendChild(date);
+	dateDiv.appendChild(dateTF);
+	header.appendChild(dateDiv);
+
+	header.appendChild(location);
+	locationDiv.appendChild(locationTF);
+	header.appendChild(locationDiv);
+
+	header.appendChild(latitude);
+	latitudeDiv.appendChild(latitudeTF);
+	header.appendChild(latitudeDiv);
+
+	header.appendChild(longitude);
+	longitudeDiv.appendChild(longitudeTF);
+	header.appendChild(longitudeDiv);
+
+	toolbar.appendChild(cancelBtn);
+	toolbar.appendChild(okBtn);
+
 	window.appendChild(header);
 	window.appendChild(toolbar);
 
@@ -169,6 +256,8 @@ let createDialogue = function () {
 	main.appendChild(window);
 
 	plane.addEventListener("click", closeDialogue);
+	cancelBtn.addEventListener("click", closeDialogue);
+	okBtn.addEventListener("click", closeDialogue);
 };
 
 let updateRightList = function (target) {
