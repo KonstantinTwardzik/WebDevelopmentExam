@@ -274,22 +274,70 @@ let updateRightList = function (target) {
 	MeetingTimeLoc.innerHTML = curMeeting.getDate() + ", " + curMeeting.getLocation();
 };
 
-// Pagination on window-resize
+//THOMAS:
+function makeRequest(method, url) {
+	return new Promise(function (resolve, reject) {
+		let request = new XMLHttpRequest();
+		request.open(method, url);
+		request.onload = function () {
+			if (this.status >= 200 && this.status < 300) {
+				resolve(request.response);
+			}
+			else {
+				reject({
+					status: this.status,
+					statusText: request.statusText
+				});
+			}
+		};
+		request.onerror = function () {
+			reject({
+				status: this.status,
+				statusText: request.statusText
+			});
+		};
+		request.send();
+	});
+}
+//THOMAS:
+function getRetunRange() {
+	makeRequest("GET", "http://localhost:8080/returnRange")
+		.then(function (value) {	//IS AN EMPRY ARRAY ATM
+			let start = ListObject.getLeftRealOffset();
+			let end = start + ListObject.getCurrentPageSize();
+			// console.log("Value: " + value);
+			return makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end);
+		})
+		.then(function (value) {	//value is the json string from start to end
+			// makeDataSet(moreValue); //3.
+			value = JSON.parse(value);	//value must me JSON.parsed to be an object
+			//TODO: assign to using variable @Konsti
+			for (let index = 0; index < value.length; index++) {	//control loop
+				console.log("id: " + value[index].id);		//console loggs the id of every object inside value
+			}
+			console.log("\n_______________main.js____________________");
+		})
+		.catch(function (err) {
+			console.error("returnRange Error: ", err.statusText);
+		});
+}
+//THOMAS:
+function getArraySize() {
+	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left list
+		.then(function (value) {					//its actually a string but it works
+			//TODO: assign value to a variable
+		})
+		.catch(function (err) {
+			console.error("returnArraySize Error: ", err.statusText);
+		});
+}
 
-//TODO: calculate those two variables:
+// Pagination on window-resize
 window.onresize = function () {
 	updateLists();
 	//THOMAS:
-	let start = ListObject.getLeftRealOffset();
-	let end = start + ListObject.getCurrentPageSize();
-	let request = new XMLHttpRequest();
-	request.addEventListener("error", error => { console.error(error.toString()); });
-	request.addEventListener("load", () => { if (request.status === 200) { console.log("requestStatus: success"); } });
-	//TODO: insert calculated start and end variable here:
-	request.open("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end);	//übergibt parameter start = pagesize und end = 5
-	request.setRequestHeader("Accept", "application/json");
-	request.responseType = "json";
-	request.send();
+	getRetunRange();	//@Konsti: Bitte mal drüber gucken
+	getArraySize();		//@Konsti: Bitte mal drüber gucken
 	//:THOMAS
 };
 
