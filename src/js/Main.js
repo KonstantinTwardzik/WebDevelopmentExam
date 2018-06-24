@@ -301,11 +301,29 @@ function makeRequest(method, url) {
 }
 //THOMAS:
 function getRetunRange() {
+	//demsonstration of promises chaining
+	//should work with this snippet aswell:
+
+	// let start = ListObject.getLeftRealOffset();
+	// let end = start + ListObject.getCurrentPageSize();
+	// makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
+	// 	.then(function (value) {	//value is the json string from start to end
+	// 		// makeDataSet(moreValue); //3.
+	// 		value = JSON.parse(value);	//value must me JSON.parsed to be an object
+	// 		//TODO: assign to using variable @Konsti
+	// 		for (let index = 0; index < value.length; index++) {	//control loop
+	// 			console.log("id: " + value[index].id);		//console loggs the id of every object inside value
+	// 		}
+	// 		console.log("\n_______________main.js____________________");
+	// 	})
+	// 	.catch(function (err) {
+	// 		console.error("returnRange Error: ", err.statusText);
+	// 	});
+
 	makeRequest("GET", "http://localhost:8080/returnRange")
 		.then(function (value) {	//IS AN EMPRY ARRAY ATM
 			let start = ListObject.getLeftRealOffset();
 			let end = start + ListObject.getCurrentPageSize();
-			// console.log("Value: " + value);
 			return makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end);
 		})
 		.then(function (value) {	//value is the json string from start to end
@@ -325,7 +343,7 @@ function getRetunRange() {
 function getArraySize() {
 	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left list
 		.then(function (value) {					//its actually a string but it works
-			//TODO: assign value to a variable
+			//TODO: assign value to a variable @Konsti
 		})
 		.catch(function (err) {
 			console.error("returnArraySize Error: ", err.statusText);
@@ -336,8 +354,9 @@ function getArraySize() {
 window.onresize = function () {
 	updateLists();
 	//THOMAS:
-	getRetunRange();	//@Konsti: Bitte mal drüber gucken
-	getArraySize();		//@Konsti: Bitte mal drüber gucken
+	//TODO: wo setzt man die denn am besten hin?
+	getRetunRange();	//TODO: @Konsti: Bitte mal drüber gucken
+	getArraySize();		//TODO: @Konsti: Bitte mal drüber gucken
 	//:THOMAS
 };
 
