@@ -271,7 +271,13 @@ let createDialogue = function (fill) {
 
 	plane.addEventListener("click", closeDialogue);
 	cancelBtn.addEventListener("click", closeDialogue);
-	okBtn.addEventListener("click", closeDialogue);
+	if (fill) {
+		okBtn.addEventListener("click", editExistingMeeting);
+	} 
+	else {
+		okBtn.addEventListener("click", addEntriesToMeetingList);
+	}
+
 
 	if (fill) {
 		titleTF.value = curMeeting.getName();
@@ -354,10 +360,31 @@ function initiateData() {
 		});
 }
 
-function addNewMeeting(name, date, location, latitude, longitude, objects) {
-	makeRequest("GET", "http://localhost:8080/addNewMeeting?name=" + name + "&date=" + date + "&latitude="
-		+ latitude + "&longitude=" + longitude + "&objects=" + objects)
-		.then(loadData);
+function addNewMeeting() {
+	//zugriff auf die werte über .value, also z.b title.value
+	let id = dbSize;
+	let title = document.getElementById("titleTF");
+	let date = document.getElementById("dateTF");
+	let location = document.getElementById("locationTF");
+	let latitude = document.getElementById("latitudeTF");
+	let longitude = document.getElementById("longitudeTF");
+	let coordinates = [latitude.value, longitude.value];
+	let objects = [];
+	for (let i = 0; i < 99; i++) {
+		let object = document.getElementById("popupListElement" + i);
+		if (object) {
+			objects.push(object);
+		}
+	}
+
+	// dann serverseitig hinzufügen
+
+	dbSize++;
+	closeDialogue();
+}
+
+function editExistingMeeting() {
+	// edit blabla.
 }
 
 function loadData() {
@@ -544,8 +571,10 @@ let initHandlers = function () {
 	let leftNextPageListener = document.getElementById("leftNextPageBtn");
 	leftNextPageListener.addEventListener("click", leftNextPage);
 
-	// let rightNextPageListener = document.getElementById("rightNextPageBtn");
-	// rightNextPageListener.addEventListener("click", rightNextPage);
+	if (rightCurrentPage < curMeeting.objects.length) {
+		let rightNextPageListener = document.getElementById("rightNextPageBtn");
+		rightNextPageListener.addEventListener("click", rightNextPage);
+	}
 
 	let newMeetingListener = document.getElementById("leftAddBtn");
 	newMeetingListener.addEventListener("click", showEmptyDialogue);
