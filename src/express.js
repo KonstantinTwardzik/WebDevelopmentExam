@@ -47,29 +47,21 @@ server.get("", (req, res) => {
 server.get("/addNewMeeting", (request, response) => {
 	let stringToConvert;	//object, created as string is easier than creating a JSON object instantly
 	//Attributes for the object:
-	let id = request.query.id;	//increasing
+	let id = Object.keys(db.meetings).length + 1;	//increasing
 	let name = request.query.name;	//name of the meeting
 	let date = request.query.date;	//YYYY-MM-DD
 	let latitude = request.query.latitude;
 	let longitude = request.query.longitude;
-	let objects;	// array of multiple objects possible
 
-	// {
-	// 	"id": 0,
-	// 	"name": "Voltsillam",
-	// 	"date": "2018-03-24",
-	// 	"location": [
-	// 		89.931037,
-	// 		-9.222734
-	// 	],
-	// 	"objects": [
-	// 		"Cordylus giganteus",
-	// 		"Phalacrocorax niger",
-	// 		"Libellula quadrimaculata"
-	// 	]
-	// }
+	let object1 = "a";
+	let object2 = "b";
+	let object3 = "c";
+
+	stringToConvert = "{\"id\": " + id + ",\"name\": \"" + name + "\",\"date\": \"" + date + "\",\"location\": [	" + latitude + ", " + longitude + " ],\"objects\": [	\"" + object1 + "\",\"" + object2 + "\",	\"" + object3 + "\"]	}\"";
 
 	let objectToAdd = JSON.parse(stringToConvert);
+	db.push(objectToAdd);
+	console.log(Object.keys(db.meetings).length);
 });
 
 server.get("/returnRange", (request, response) => {

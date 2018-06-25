@@ -354,6 +354,12 @@ function initiateData() {
 		});
 }
 
+function addNewMeeting(name, date, latitude, longitude, objects) {
+	makeRequest("GET", "http://localhost:8080/addNewMeeting?name=" + name + "&date=" + date + "&latitude="
+		+ latitude + "&longitude=" + longitude + "&objects=" + objects)
+		.then(loadData);
+}
+
 function loadData() {
 	let start = currentArraySize;
 	currentArraySize += 99;
