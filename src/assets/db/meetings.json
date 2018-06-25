@@ -1,7 +1,48 @@
 {
     "$schema": "./.meetings.schema",
     "meetings": [
-        [
+        {
+            "id": 0,
+            "name": "Lord Jesus Finally",
+            "date": "2018-04-16",
+            "location": "Ýdra",
+            "coordinates": [
+                -37.631544,
+                -25.780678
+            ],
+            "objects": [
+                "Albatross, waved",
+                "Crested barbet",
+                "Bear, polar",
+                "Seal, southern elephant",
+                "Mountain duck",
+                "Raccoon, crab-eating",
+                "Hyena, striped",
+                "African lion",
+                "Rhinoceros, square-lipped",
+                "Yak",
+                "Cat, civet",
+                "Common waterbuck",
+                "Square-lipped rhinoceros",
+                "Wild water buffalo",
+                "Stork, white",
+                "Snowy owl",
+                "Stork, black-necked",
+                "Grey fox",
+                "Monster, gila",
+                "Cape wild cat",
+                "Cockatoo, sulfur-crested",
+                "Vulture, turkey",
+                "Yellow-billed stork",
+                "Prairie falcon",
+                "Barbet, crested",
+                "Langur, hanuman",
+                "Macaw, green-winged",
+                "Possum, ring-tailed",
+                "Jungle kangaroo",
+                "Bat, little brown"
+            ]
+        },
             {
                 "id": 1,
                 "name": "Bamity",
@@ -12603,5 +12644,4 @@
                 ]
             }
         ]
-    ]
 }

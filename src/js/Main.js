@@ -182,7 +182,7 @@ let createDialogue = function (fill) {
 
 	let date = document.createElement("p");
 	date.id = "date";
-	date.innerHTML = "Datum: (dd.mm.yyyy)";
+	date.innerHTML = "Datum: (yyyy-mm-dd)";
 
 	let dateDiv = document.createElement("div");
 	dateDiv.id = "dateDiv";
@@ -278,8 +278,8 @@ let createDialogue = function (fill) {
 		dateTF.value = curMeeting.getDate();
 		locationTF.value = curMeeting.getLocation();
 		let coordinates = curMeeting.getCoordinates();
-		latitudeTF.value = coordinates.lat;
-		longitudeTF.value = coordinates.lng;
+		latitudeTF.value = coordinates[0];
+		longitudeTF.value = coordinates[1];
 		let objects = curMeeting.getObjects();
 		for (let i = 0; i < objects.length; i++) {
 			let lE = document.getElementById("popupListElement" + i);
@@ -559,7 +559,7 @@ let createMeetingList = function () {
 	let meetingList = [];
 	let meeting;
 	for (let i = 0; i < serverItems.length; i++) {
-		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, serverItems[i].location, serverItems[i].objects);
+		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, serverItems[i].coordinates, serverItems[i].objects);
 		meetingList.push(meeting);
 	}
 	return meetingList;
@@ -569,7 +569,7 @@ let addEntriesToMeetingList = function () {
 	let serverItems = displayingItems;
 	let meeting;
 	for (let i = 0; i < serverItems.length; i++) {
-		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, serverItems[i].location, serverItems[i].objects);
+		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, serverItems[i].coordinates, serverItems[i].objects);
 		data.push(meeting);
 	}
 };
