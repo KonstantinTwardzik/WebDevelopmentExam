@@ -373,6 +373,7 @@ function getRetunRange() {
 			console.error("returnRange Error: ", err.statusText);
 		});
 	console.log(displayingItems);
+	return displayingItems();
 }
 let arraySize;
 //THOMAS:
