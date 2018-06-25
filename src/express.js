@@ -72,10 +72,11 @@ server.get("/editMeeting", (request, response) => {
 
 server.get("/addNewMeeting", (request, response) => {
 	//Attributes for the object:
-	let id = Object.keys(db.meetings).length + 1;	//increasing
+	let id = request.query.id;	//increasing
 	let name = request.query.name;	//name of the meeting
 	let date = request.query.date;	//YYYY-MM-DD
 	let latitude = request.query.latitude;
+	let coordinates = request.query.coordinates;
 	let longitude = request.query.longitude;
 	let location = request.query.location;
 	let objects = request.query.objects;
@@ -88,16 +89,16 @@ server.get("/addNewMeeting", (request, response) => {
 		coordinates: {
 			latitude, longitude
 		},
-		objects: []
+		objects: objects
 	};
-	for (let index = 0; index < objects.length; index++) {
-		objectToAdd.objects.push = objects[index];
-	}
 
-	console.log("objectToAdd: " + objectToAdd);
-	console.log("Länge vor db.push: " + Object.keys(db.meetings).length);
-	db.push(objectToAdd);
-	console.log("Länge nach db.push: " + Object.keys(db.meetings).length);
+	// console.log(id + ", " + name + ", " + date + ", " + coordinates + ", " + objects);
+
+	// console.log("objectToAdd.name: " + objectToAdd.name);
+	// console.log("Länge vor db.push: " + Object.keys(db.meetings).length);
+	// db.push(objectToAdd);
+	db.meetings[id] = objectToAdd;	//Y U WORK!?
+	// console.log("Länge nach db.push: " + db.meetings.length);
 });
 
 server.get("/returnRange", (request, response) => {

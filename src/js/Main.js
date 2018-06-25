@@ -377,14 +377,13 @@ function addNewMeeting() {
 	console.log(id + ", " + title.value + ", " + date.value + ", " + location.value + ", " + coordinates[0] + ", " + coordinates[1]);
 	for (let i = 0; i < 99; i++) {
 		let object = document.getElementById("popupListElement" + i);
-		if (object) {
+		if (object.value !== "") {
 			objects.push(object.value);
 		}
 	}
-	for (let i = 0; i < objects.length; i++) {
-		console.log(objects[i]);
-	}
 	// dann serverseitig hinzufügen
+	makeRequest("GET", "http://localhost:8080/addNewMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
+    + location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects);
 
 	dbSize++;
 	closeDialogue();
