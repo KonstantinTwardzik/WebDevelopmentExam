@@ -54,7 +54,7 @@ server.get("/editMeeting", (request, response) => {
 	let location = request.query.location;
 	let objects = request.query.objects;
 
-	let objectToAdd = {
+	let objectToEdit = {
 		id: id,
 		name: name,
 		date: date,
@@ -65,9 +65,9 @@ server.get("/editMeeting", (request, response) => {
 		objects: []
 	};
 	for (let index = 0; index < objects.length; index++) {
-		objectToAdd.objects.push = objects[index];
+		objectToEdit.objects.push = objects[index];
 	}
-	db[id] = objectToAdd;	//
+	db[id] = objectToEdit;	//
 });
 
 server.get("/addNewMeeting", (request, response) => {
