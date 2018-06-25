@@ -91,14 +91,7 @@ server.get("/addNewMeeting", (request, response) => {
 		},
 		objects: objects
 	};
-
-	// console.log(id + ", " + name + ", " + date + ", " + coordinates + ", " + objects);
-
-	// console.log("objectToAdd.name: " + objectToAdd.name);
-	// console.log("Länge vor db.push: " + Object.keys(db.meetings).length);
-	// db.push(objectToAdd);
 	db.meetings[id] = objectToAdd;	//Y U WORK!?
-	// console.log("Länge nach db.push: " + db.meetings.length);
 });
 
 server.get("/returnRange", (request, response) => {
