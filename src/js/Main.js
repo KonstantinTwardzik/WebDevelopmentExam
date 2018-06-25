@@ -354,7 +354,7 @@ function initiateData() {
 		});
 }
 
-function addNewMeeting(name, date, latitude, longitude, objects) {
+function addNewMeeting(name, date, location, latitude, longitude, objects) {
 	makeRequest("GET", "http://localhost:8080/addNewMeeting?name=" + name + "&date=" + date + "&latitude="
 		+ latitude + "&longitude=" + longitude + "&objects=" + objects)
 		.then(loadData);
