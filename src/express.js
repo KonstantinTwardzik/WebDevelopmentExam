@@ -67,7 +67,7 @@ server.get("/editMeeting", (request, response) => {
 	for (let index = 0; index < objects.length; index++) {
 		objectToAdd.objects.push = objects[index];
 	}
-	db[id].push(objectToAdd);	//Won't work
+	db[id] = objectToAdd;	//
 });
 
 server.get("/addNewMeeting", (request, response) => {
