@@ -339,48 +339,23 @@ function setDisplayingItems(value) {
 	displayingItems = value;
 }
 
-function getReturnRange() {
-	//demsonstration of promises chaining
-	//should work with this snippet aswell:
-
-	// let start = ListObject.getLeftRealOffset();
-	// let end = start + ListObject.getCurrentPageSize();
-	// makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
-	// 	.then(function (value) {	//value is the json string from start to end
-	// 		// makeDataSet(moreValue); //3.
-	// 		value = JSON.parse(value);	//value must me JSON.parsed to be an object
-	// 		//TODO: assign to using variable @Konsti
-	// 		for (let index = 0; index < value.length; index++) {	//control loop
-	// 			console.log("id: " + value[index].id);		//console loggs the id of every object inside value
-	// 		}
-	// 		console.log("\n_______________main.js____________________");
-	// 	})
-	// 	.catch(function (err) {
-	// 		console.error("returnRange Error: ", err.statusText);
-	// 	});
-
-	makeRequest("GET", "http://localhost:8080/returnRange")
-		.then(function (value) {	//IS AN EMPRY ARRAY ATM
-			let start = ListObject.getLeftRealOffset();
-			let end = start + ListObject.getCurrentPageSize();
-			console.log(start + " : " + end);
-			return makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end);
-		})
+function getRetunRange() {
+	updateData();
+	console.log(displayingItems);
+	return displayingItems;
+}
+function updateData() {
+	let start = ListObject.getLeftRealOffset();
+	let end = start + ListObject.getCurrentPageSize();
+	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 		.then(function (value) {	//value is the json string from start to end
 			value = JSON.parse(value);	//value must me JSON.parsed to be an object
 			setDisplayingItems(value);
-			displayingItems = value;
-			// for (let index = 0; index < value.length; index++) {	//control loop
-			// 	console.log("id: " + value[index].id);		//console loggs the id of every object inside value
-			// }
-
-			console.log("\n_______________main.js____________________");
+			// console.log("\n_______________main.js____________________");
 		})
 		.catch(function (err) {
 			console.error("returnRange Error: ", err.statusText);
 		});
-	console.log(displayingItems);
-	return displayingItems;
 }
 
 //THOMAS:
@@ -388,7 +363,7 @@ function getArraySize() {
 	// getFeed().then(data => vm.feed = data);
 	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left lis
 		.then((value) => {					//its actually a string but it works
-			// dbSize = value;					//assign value to a variable
+			// dbSize = value;				//assign value to a variable
 			arraySize = value;
 		})
 		.catch(function (err) {
@@ -397,7 +372,7 @@ function getArraySize() {
 	// console.log("arraySize: " + arraySize);		//at first it's undefined, but after a bit, it will be assigned with the right value
 	// dbSize = arraySize;								// overrides the initial dummyvalue of 30 with the actual database size
 	// console.log("dbSize: " + dbSize);			//control log
-	console.log("returnsize: " + arraySize);
+	// console.log("returnsize: " + arraySize);
 	return arraySize;
 }
 
