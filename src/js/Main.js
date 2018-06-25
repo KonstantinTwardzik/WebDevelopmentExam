@@ -312,11 +312,11 @@ function makeRequest(method, url) {
 	return new Promise(function (resolve, reject) {
 		let request = new XMLHttpRequest();
 		request.open(method, url);
-		request.onload = function () {
-			if (this.status >= 200 && this.status < 300) {
+		request.onreadystatechange = function () {
+			if (this.readyState === 4) {
 				resolve(request.response);
 			}
-			else {
+			else if ((this.status < 200 && this.status >= 300)) {
 				reject({
 					status: this.status,
 					statusText: request.statusText
@@ -334,6 +334,11 @@ function makeRequest(method, url) {
 }
 //THOMAS:
 let displayingItems;	//use this @Konsti
+
+function setDisplayingItems(value) {
+	displayingItems = value;
+}
+
 function getRetunRange() {
 	//demsonstration of promises chaining
 	//should work with this snippet aswell:
@@ -361,28 +366,26 @@ function getRetunRange() {
 			return makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end);
 		})
 		.then(function (value) {	//value is the json string from start to end
-			// makeDataSet(moreValue); //3.
 			value = JSON.parse(value);	//value must me JSON.parsed to be an object
-			displayingItems = value;
-			// for (let index = 0; index < value.length; index++) {	//control loop
-			// 	console.log("id: " + value[index].id);		//console loggs the id of every object inside value
-			// }
+			setDisplayingItems(value);
 			console.log("\n_______________main.js____________________");
 		})
 		.catch(function (err) {
 			console.error("returnRange Error: ", err.statusText);
 		});
 	console.log(displayingItems);
-	return displayingItems();
+
+	return displayingItems;
 }
-let arraySize;
+
 //THOMAS:
+let arraySize;
 function getArraySize() {
 	// getFeed().then(data => vm.feed = data);
-
-	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left list
+	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left lis
 		.then((value) => {					//its actually a string but it works
-			dbSize = value;				//assign value to a variable
+			// dbSize = value;					//assign value to a variable
+			arraySize = value;
 		})
 		.catch(function (err) {
 			console.error("returnArraySize Error: ", err.statusText);
@@ -390,6 +393,8 @@ function getArraySize() {
 	// console.log("arraySize: " + arraySize);		//at first it's undefined, but after a bit, it will be assigned with the right value
 	// dbSize = arraySize;								// overrides the initial dummyvalue of 30 with the actual database size
 	// console.log("dbSize: " + dbSize);			//control log
+	console.log("returnsize: " + arraySize);
+	return arraySize;
 }
 
 // Pagination on window-resize

@@ -54,6 +54,21 @@ server.get("/addNewMeeting", (request, response) => {
 	let longitude = request.query.longitude;
 	let objects;	// array of multiple objects possible
 
+	// {
+	// 	"id": 0,
+	// 	"name": "Voltsillam",
+	// 	"date": "2018-03-24",
+	// 	"location": [
+	// 		89.931037,
+	// 		-9.222734
+	// 	],
+	// 	"objects": [
+	// 		"Cordylus giganteus",
+	// 		"Phalacrocorax niger",
+	// 		"Libellula quadrimaculata"
+	// 	]
+	// }
+
 	let objectToAdd = JSON.parse(stringToConvert);
 });
 
