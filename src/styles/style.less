@@ -208,8 +208,6 @@ ul {
     height: 100%;
     opacity: 0.75;
     background-color: black;
-
-
 }
 
 #window {
@@ -240,6 +238,15 @@ ul {
         border-radius: 3px;
         font-size: 1.2rem;
         color: @darkestGrey;
+    }
+
+    #listDiv {
+        position: fixed;
+        top: 350px;
+        left: 150px;
+        right: 150px;
+        bottom: 100px + @menubarHeight;
+        overflow: auto;
     }
 
     #header {

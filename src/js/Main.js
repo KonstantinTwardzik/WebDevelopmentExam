@@ -226,6 +226,15 @@ let createDialogue = function () {
 	cancelBtn.id = "cancelBtn";
 	cancelBtn.innerHTML = "Abbrechen";
 
+	let listDiv = document.createElement("div");
+	listDiv.id = "listDiv";
+
+	let list = document.createElement("ul");
+	ListObject.fillPopupList(list);
+
+	listDiv.appendChild(list);
+	window.appendChild(listDiv);
+
 	header.appendChild(title);
 	titleDiv.appendChild(titleTF);
 	header.appendChild(titleDiv);

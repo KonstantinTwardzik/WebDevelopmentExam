@@ -87,6 +87,19 @@ class Lists {
 			list.appendChild(detailListElement);
 		}
 	}
+
+	fillPopupList(list) {
+		for (let index = 0; index <= 100; index++) {
+			let listElement = document.createElement("li");
+			let detailObject = document.createElement("input");
+
+			detailObject.innerHTML += "";
+			listElement.id = "" + index;
+
+			listElement.appendChild(detailObject);
+			list.appendChild(listElement);
+		}
+	}
 }
 
 module.exports.Lists = Lists;
