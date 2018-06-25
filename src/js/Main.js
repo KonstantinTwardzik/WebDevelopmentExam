@@ -387,7 +387,7 @@ function addNewMeeting() {
 		.then(function (value) {	//value = db.meetings
 			dbSize++;
 			closeDialogue();
-			//TODO: update database with value
+			//TODO: update database with value HERE
 		});
 }
 
@@ -413,7 +413,7 @@ function editExistingMeeting() {
 		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)
 		.then(function (value) {	//value = db.meetings
 			closeDialogue();
-			//TODO: update database with value
+			//TODO: update database with value HERE
 		});
 }
 
