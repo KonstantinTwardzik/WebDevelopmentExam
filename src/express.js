@@ -27,7 +27,7 @@ else {
 }
 
 //URLs definieren:
-server.get("", (req, res) =>{
+server.get("", (req, res) => {
 	res.send({
 		__links: {
 			returnArraySize: { href: "${BASE_URI}/returnArraySize" },
@@ -37,8 +37,24 @@ server.get("", (req, res) =>{
 		__links: {
 			self: { href: "${BASE_URI}" },
 			returnRange: { href: "${BASE_URI}/returnRange" },			//definiert die URL, die angesprochen werden kann "localhost:8080/returnRange"
+			addNewMeeting: { href: "${BASE_URI}/addNewMeeting" },		//TODO:
+			addNewObjectToMeeting: { href: "${BASE_URI}/addNewObjectToMeeting" },	//TODO:
+			removeMeeting: { href: "${BASE_URI}/removeMeeting" },	//TODO:
 		}
 	});
+});
+
+server.get("/addNewMeeting", (request, response) => {
+	let stringToConvert;	//object, created as string is easier than creating a JSON object instantly
+	//Attributes for the object:
+	let id = request.query.id;	//increasing
+	let name = request.query.name;	//name of the meeting
+	let date = request.query.date;	//YYYY-MM-DD
+	let latitude = request.query.latitude;
+	let longitude = request.query.longitude;
+	let objects;	// array of multiple objects possible
+
+	let objectToAdd = JSON.parse(stringToConvert);
 });
 
 server.get("/returnRange", (request, response) => {

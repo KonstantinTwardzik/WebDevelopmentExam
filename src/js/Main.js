@@ -333,6 +333,7 @@ function makeRequest(method, url) {
 	});
 }
 //THOMAS:
+let displayingItems;	//use this @Konsti
 function getRetunRange() {
 	//demsonstration of promises chaining
 	//should work with this snippet aswell:
@@ -362,25 +363,32 @@ function getRetunRange() {
 		.then(function (value) {	//value is the json string from start to end
 			// makeDataSet(moreValue); //3.
 			value = JSON.parse(value);	//value must me JSON.parsed to be an object
-			//TODO: assign to using variable @Konsti
-			for (let index = 0; index < value.length; index++) {	//control loop
-				console.log("id: " + value[index].id);		//console loggs the id of every object inside value
-			}
+			displayingItems = value;
+			// for (let index = 0; index < value.length; index++) {	//control loop
+			// 	console.log("id: " + value[index].id);		//console loggs the id of every object inside value
+			// }
 			console.log("\n_______________main.js____________________");
 		})
 		.catch(function (err) {
 			console.error("returnRange Error: ", err.statusText);
 		});
+	console.log(displayingItems);
 }
+let arraySize;
 //THOMAS:
 function getArraySize() {
+	// getFeed().then(data => vm.feed = data);
+
 	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left list
-		.then(function (value) {					//its actually a string but it works
-			//TODO: assign value to a variable @Konsti
+		.then((value) => {					//its actually a string but it works
+			dbSize = value;				//assign value to a variable
 		})
 		.catch(function (err) {
 			console.error("returnArraySize Error: ", err.statusText);
 		});
+	// console.log("arraySize: " + arraySize);		//at first it's undefined, but after a bit, it will be assigned with the right value
+	// dbSize = arraySize;								// overrides the initial dummyvalue of 30 with the actual database size
+	// console.log("dbSize: " + dbSize);			//control log
 }
 
 // Pagination on window-resize
