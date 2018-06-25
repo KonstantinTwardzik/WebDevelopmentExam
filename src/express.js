@@ -92,6 +92,7 @@ server.get("/addNewMeeting", (request, response) => {
 		objects: objects
 	};
 	db.meetings[id] = objectToAdd;	//Y U WORK!?
+	response.json(db.meetings);
 });
 
 server.get("/returnRange", (request, response) => {

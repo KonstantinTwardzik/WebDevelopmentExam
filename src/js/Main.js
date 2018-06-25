@@ -383,10 +383,12 @@ function addNewMeeting() {
 	}
 	// dann serverseitig hinzufügen
 	makeRequest("GET", "http://localhost:8080/addNewMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
-    + location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects);
-
-	dbSize++;
-	closeDialogue();
+		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)
+		.then(function (value) {	//value = db.meetings
+			dbSize++;
+			closeDialogue();
+			//TODO: update database with value
+		});
 }
 
 function editExistingMeeting() {
