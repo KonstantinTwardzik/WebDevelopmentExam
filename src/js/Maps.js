@@ -8,7 +8,10 @@ class Maps {
 	updateMap(curMeeting) {
 		GoogleMapsLoader.release();
 
-		let coordinates = curMeeting.getCoordinates();
+		let coordinates = {
+			lat: curMeeting.getCoordinates()[0],
+			lng: curMeeting.getCoordinates()[1]
+		};
 
 		let mapSec = document.createElement("section");
 		mapSec.id = "map";

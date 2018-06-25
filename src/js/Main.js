@@ -13,8 +13,9 @@ var curMeeting;
 var ListObject;
 var data;
 var map;
-var displayingItems;
+let displayingItems;
 let arraySize;
+let currentArraySize;
 
 let initView = function () {
 	let main = document.getElementById("main");
@@ -335,26 +336,36 @@ function makeRequest(method, url) {
 	});
 }
 
-function setDisplayingItems(value) {
-	displayingItems = value;
-}
-
-function getRetunRange() {
-	updateData();
-	console.log(displayingItems);
-	return displayingItems;
-}
-function updateData() {
-	let start = ListObject.getLeftRealOffset();
-	let end = start + ListObject.getCurrentPageSize();
+function initiateData() {
+	let start = 0;
+	let end = 99;
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 		.then(function (value) {	//value is the json string from start to end
-			value = JSON.parse(value);	//value must me JSON.parsed to be an object
-			setDisplayingItems(value);
-			// console.log("\n_______________main.js____________________");
+			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
+			data = createMeetingList();
+			curMeeting = data[0];
+			initView();
+			updateLists();
+			initHandlers();
+			currentArraySize = 100;
 		})
 		.catch(function (err) {
-			console.error("returnRange Error: ", err.statusText);
+			console.error("updateDataError: ", err.statusText);
+		});
+}
+
+function loadData() {
+	let start = currentArraySize;
+	currentArraySize += 99;
+	let end = currentArraySize;
+	++currentArraySize;
+	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
+		.then(function (value) {	//value is the json string from start to end
+			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
+			addEntriesToMeetingList();
+		})
+		.catch(function (err) {
+			console.error("updateDataError: ", err.statusText);
 		});
 }
 
@@ -363,8 +374,7 @@ function getArraySize() {
 	// getFeed().then(data => vm.feed = data);
 	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left lis
 		.then((value) => {					//its actually a string but it works
-			// dbSize = value;				//assign value to a variable
-			arraySize = value;
+			dbSize = value;		//assign value to a variable
 		})
 		.catch(function (err) {
 			console.error("returnArraySize Error: ", err.statusText);
@@ -378,6 +388,9 @@ function getArraySize() {
 
 // Pagination on window-resize
 window.onresize = function () {
+	while (ListObject.getCurrentPageSize() * leftCurrentPage > currentArraySize - 20) {
+		loadData();
+	}
 	updateLists();
 };
 
@@ -454,6 +467,10 @@ let leftNextPage = function () {
 		leftNextPageListener.removeEventListener("click", leftNextPage);
 		leftNextPageListener.id = "leftNextPageBtnDisabled";
 	}
+	if (ListObject.getCurrentPageSize() * leftCurrentPage > currentArraySize - 20) {
+		loadData();
+		console.log("ausgeführt");
+	}
 	updateLists();
 };
 
@@ -521,8 +538,8 @@ let initHandlers = function () {
 	let leftNextPageListener = document.getElementById("leftNextPageBtn");
 	leftNextPageListener.addEventListener("click", leftNextPage);
 
-	let rightNextPageListener = document.getElementById("rightNextPageBtn");
-	rightNextPageListener.addEventListener("click", rightNextPage);
+	// let rightNextPageListener = document.getElementById("rightNextPageBtn");
+	// rightNextPageListener.addEventListener("click", rightNextPage);
 
 	let newMeetingListener = document.getElementById("leftAddBtn");
 	newMeetingListener.addEventListener("click", showEmptyDialogue);
@@ -532,30 +549,31 @@ let initHandlers = function () {
 };
 
 let createMeetingList = function () {
-	let serverItems = getReturnRange();
-	let meetingList;
+	let serverItems = displayingItems;
+	let meetingList = [];
 	let meeting;
-	for (let i = 0; i < serverItems; i++) {
-		let coordinates = {
-			lat: serverItems[i].coordinates[0],
-			lng: serverItems[i].coordinates[1]
-		};
-		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, coordinates, serverItems[i].objects);
+	for (let i = 0; i < serverItems.length; i++) {
+		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, serverItems[i].location, serverItems[i].objects);
 		meetingList.push(meeting);
 	}
 	return meetingList;
+};
+
+let addEntriesToMeetingList = function () {
+	let serverItems = displayingItems;
+	let meeting;
+	for (let i = 0; i < serverItems.length; i++) {
+		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, serverItems[i].location, serverItems[i].objects);
+		data.push(meeting);
+	}
 };
 
 // IIFE as start
 (function () {
 	leftCurrentPage = 1;
 	rightCurrentPage = 1;
+	getArraySize();
 	map = new Maps.Maps();
 	ListObject = new Lists.Lists();
-	data = createMeetingList();
-	getArraySize();
-	curMeeting = data[0];
-	initView();
-	updateLists();
-	initHandlers();
+	initiateData();
 })();

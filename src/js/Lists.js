@@ -28,6 +28,7 @@ class Lists {
 
 		for (let index = 0; index < length; ++index) {
 			let listElement = document.getElementById("" + (index + this.leftRealOffset));
+			console.log(index + this.leftRealOffset);
 			list.removeChild(listElement);
 		}
 
