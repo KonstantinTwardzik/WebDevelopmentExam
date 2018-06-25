@@ -1,11 +1,11 @@
 class Meeting {
-	constructor(name, date, location, objects, id, coordinates) {
+	constructor(id, name, date, location, coordinates, objects) {
 		this.id = id;
 		this.name = name;
 		this.date = date;
 		this.location = location;
-		this.objects = objects;
 		this.coordinates = coordinates;
+		this.objects = objects;
 	}
 
 	getId() {

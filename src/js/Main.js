@@ -1,7 +1,7 @@
 // IIFE as start of the js-part thats needed in the webapplication
 var Lists = require("./Lists");
 var Maps = require("./Maps");
-var Mockdata = require("./Mockdata");
+var Meeting = require("./Meeting");
 var dbSize;
 var leftCurrentPage;
 var rightCurrentPage;
@@ -13,6 +13,8 @@ var curMeeting;
 var ListObject;
 var data;
 var map;
+var displayingItems;
+let arraySize;
 
 let initView = function () {
 	let main = document.getElementById("main");
@@ -332,6 +334,11 @@ function makeRequest(method, url) {
 		request.send();
 	});
 }
+
+function setDisplayingItems(value) {
+	displayingItems = value;
+}
+
 //THOMAS:
 let displayingItems;	//use this @Konsti
 
@@ -363,6 +370,7 @@ function getRetunRange() {
 		.then(function (value) {	//IS AN EMPRY ARRAY ATM
 			let start = ListObject.getLeftRealOffset();
 			let end = start + ListObject.getCurrentPageSize();
+			console.log(start + " : " + end);
 			return makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end);
 		})
 		.then(function (value) {	//value is the json string from start to end
@@ -400,11 +408,6 @@ function getArraySize() {
 // Pagination on window-resize
 window.onresize = function () {
 	updateLists();
-	//THOMAS:
-	//TODO: wo setzt man die denn am besten hin?
-	getRetunRange();	//TODO: @Konsti: Bitte mal drüber gucken
-	getArraySize();		//TODO: @Konsti: Bitte mal drüber gucken
-	//:THOMAS
 };
 
 let updateLists = function () {
@@ -557,14 +560,29 @@ let initHandlers = function () {
 	editMeetingListener.addEventListener("click", showFilledDialogue);
 };
 
+let createMeetingList = function () {
+	let serverItems = getReturnRange();
+	let meetingList;
+	let meeting;
+	for (let i = 0; i < serverItems; i++) {
+		let coordinates = {
+			lat: serverItems[i].coordinates[0],
+			lng: serverItems[i].coordinates[1]
+		};
+		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, coordinates, serverItems[i].objects);
+		meetingList.push(meeting);
+	}
+	return meetingList;
+};
+
 // IIFE as start
 (function () {
-	map = new Maps.Maps();
-	ListObject = new Lists.Lists();
-	data = new Mockdata.Mockdata();
-	dbSize = 30;
 	leftCurrentPage = 1;
 	rightCurrentPage = 1;
+	map = new Maps.Maps();
+	ListObject = new Lists.Lists();
+	data = createMeetingList();
+	getArraySize();
 	curMeeting = data[0];
 	initView();
 	updateLists();
