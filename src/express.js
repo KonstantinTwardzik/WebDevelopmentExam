@@ -45,23 +45,31 @@ server.get("", (req, res) => {
 });
 
 server.get("/addNewMeeting", (request, response) => {
-	let stringToConvert;	//object, created as string is easier than creating a JSON object instantly
 	//Attributes for the object:
 	let id = Object.keys(db.meetings).length + 1;	//increasing
 	let name = request.query.name;	//name of the meeting
 	let date = request.query.date;	//YYYY-MM-DD
 	let latitude = request.query.latitude;
 	let longitude = request.query.longitude;
+	let location = request.query.location;
+	let objects = request.query.objects;
 
-	let object1 = "a";
-	let object2 = "b";
-	let object3 = "c";
+	let objectToAdd = {
+		id: id,
+		name: name,
+		date: date,
+		latitude: latitude,
+		longitude: longitude,
+		objects: []
+	};
+	for (let index = 0; index < objects.length; index++) {
+		objectToAdd.objects.push = objects[index];
+	}
 
-	stringToConvert = "{\"id\": " + id + ",\"name\": \"" + name + "\",\"date\": \"" + date + "\",\"location\": [	" + latitude + ", " + longitude + " ],\"objects\": [	\"" + object1 + "\",\"" + object2 + "\",	\"" + object3 + "\"]	}\"";
-
-	let objectToAdd = JSON.parse(stringToConvert);
+	console.log("objectToAdd: " + objectToAdd);
+	console.log("Länge vor db.push: " + Object.keys(db.meetings).length);
 	db.push(objectToAdd);
-	console.log(Object.keys(db.meetings).length);
+	console.log("Länge nach db.push: " + Object.keys(db.meetings).length);
 });
 
 server.get("/returnRange", (request, response) => {
