@@ -178,6 +178,7 @@ let createDialogue = function (fill) {
 	titleDiv.id = "titleDiv";
 
 	let titleTF = document.createElement("input");
+	titleTF.id = "titleTF";
 	titleTF.className = "input";
 
 	let date = document.createElement("p");
@@ -188,6 +189,7 @@ let createDialogue = function (fill) {
 	dateDiv.id = "dateDiv";
 
 	let dateTF = document.createElement("input");
+	dateTF.id = "dateTF";
 	dateTF.className = "input";
 
 	let location = document.createElement("p");
@@ -198,6 +200,7 @@ let createDialogue = function (fill) {
 	locationDiv.id = "locationDiv";
 
 	let locationTF = document.createElement("input");
+	locationTF.id = "locationTF";
 	locationTF.className = "input";
 
 	let latitude = document.createElement("p");
@@ -208,6 +211,7 @@ let createDialogue = function (fill) {
 	latitudeDiv.id = "latitudeDiv";
 
 	let latitudeTF = document.createElement("input");
+	latitudeTF.id = "latitudeTF";
 	latitudeTF.className = "input";
 
 	let longitude = document.createElement("p");
@@ -218,6 +222,7 @@ let createDialogue = function (fill) {
 	longitudeDiv.id = "longitudeDiv";
 
 	let longitudeTF = document.createElement("input");
+	longitudeTF.id = "longitudeTF";
 	longitudeTF.className = "input";
 
 	let okBtn = document.createElement("p");
@@ -273,11 +278,10 @@ let createDialogue = function (fill) {
 	cancelBtn.addEventListener("click", closeDialogue);
 	if (fill) {
 		okBtn.addEventListener("click", editExistingMeeting);
-	} 
-	else {
-		okBtn.addEventListener("click", addEntriesToMeetingList);
 	}
-
+	else {
+		okBtn.addEventListener("click", addNewMeeting);
+	}
 
 	if (fill) {
 		titleTF.value = curMeeting.getName();
@@ -362,7 +366,7 @@ function initiateData() {
 
 function addNewMeeting() {
 	//zugriff auf die werte über .value, also z.b title.value
-	let id = dbSize;
+	let id = dbSize; // bei id gilt das nicht
 	let title = document.getElementById("titleTF");
 	let date = document.getElementById("dateTF");
 	let location = document.getElementById("locationTF");
@@ -370,13 +374,16 @@ function addNewMeeting() {
 	let longitude = document.getElementById("longitudeTF");
 	let coordinates = [latitude.value, longitude.value];
 	let objects = [];
+	console.log(id + ", " + title.value + ", " + date.value + ", " + location.value + ", " + coordinates[0] + ", " + coordinates[1]);
 	for (let i = 0; i < 99; i++) {
 		let object = document.getElementById("popupListElement" + i);
 		if (object) {
-			objects.push(object);
+			objects.push(object.value);
 		}
 	}
-
+	for (let i = 0; i < objects.length; i++) {
+		console.log(objects[i]);
+	}
 	// dann serverseitig hinzufügen
 
 	dbSize++;
