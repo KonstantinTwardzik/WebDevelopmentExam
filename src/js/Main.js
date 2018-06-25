@@ -104,6 +104,7 @@ let createRightMenuBar = function () {
 	nextPageBtn.innerHTML = "keyboard_arrow_right";
 
 	let editBtn = document.createElement("i");
+	editBtn.id = "rightEditBtn";
 	editBtn.className = ("material-icons");
 	editBtn.innerHTML = "mode_edit";
 
@@ -151,7 +152,7 @@ let createRightList = function () {
 	return rightListSec;
 };
 
-let createDialogue = function () {
+let createDialogue = function (fill) {
 	let main = document.getElementById("main");
 
 	let plane = document.createElement("section");
@@ -229,7 +230,8 @@ let createDialogue = function () {
 	let listDiv = document.createElement("div");
 	listDiv.id = "listDiv";
 
-	let list = document.createElement("ul");
+	let list = document.createElement("ol");
+	list.id = "objectList";
 	ListObject.fillPopupList(list);
 
 	listDiv.appendChild(list);
@@ -267,6 +269,28 @@ let createDialogue = function () {
 	plane.addEventListener("click", closeDialogue);
 	cancelBtn.addEventListener("click", closeDialogue);
 	okBtn.addEventListener("click", closeDialogue);
+
+	if (fill) {
+		titleTF.value = curMeeting.getName();
+		dateTF.value = curMeeting.getDate();
+		locationTF.value = curMeeting.getLocation();
+		let coordinates = curMeeting.getCoordinates();
+		latitudeTF.value = coordinates.lat;
+		longitudeTF.value = coordinates.lng;
+		let objects = curMeeting.getObjects();
+		for (let i = 0; i < objects.length; i++) {
+			let lE = document.getElementById("popupListElement" + i);
+			lE.value = objects[i];
+		}
+	}
+};
+
+let showFilledDialogue = function () {
+	createDialogue(true);
+};
+
+let showEmptyDialogue = function () {
+	createDialogue(false);
 };
 
 let updateRightList = function (target) {
@@ -490,10 +514,6 @@ let rightPrevPage = function () {
 	updateLists();
 };
 
-let showDialogue = function () {
-	createDialogue();
-};
-
 let closeDialogue = function () {
 	let main = document.getElementById("main");
 	let deletableItem = document.getElementById("window");
@@ -517,7 +537,10 @@ let initHandlers = function () {
 	rightNextPageListener.addEventListener("click", rightNextPage);
 
 	let newMeetingListener = document.getElementById("leftAddBtn");
-	newMeetingListener.addEventListener("click", showDialogue);
+	newMeetingListener.addEventListener("click", showEmptyDialogue);
+
+	let editMeetingListener = document.getElementById("rightEditBtn");
+	editMeetingListener.addEventListener("click", showFilledDialogue);
 };
 
 // IIFE as start
