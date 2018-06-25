@@ -58,8 +58,10 @@ server.get("/addNewMeeting", (request, response) => {
 		id: id,
 		name: name,
 		date: date,
-		latitude: latitude,
-		longitude: longitude,
+		location: location,
+		coordinates: {
+			latitude, longitude
+		},
 		objects: []
 	};
 	for (let index = 0; index < objects.length; index++) {
