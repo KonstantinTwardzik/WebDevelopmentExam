@@ -40,8 +40,34 @@ server.get("", (req, res) => {
 			addNewMeeting: { href: "${BASE_URI}/addNewMeeting" },		//TODO:
 			addNewObjectToMeeting: { href: "${BASE_URI}/addNewObjectToMeeting" },	//TODO:
 			removeMeeting: { href: "${BASE_URI}/removeMeeting" },	//TODO:
+			editMeeting: { href: "${BASE_URI}/editMeeting" },
 		}
 	});
+});
+
+server.get("/editMeeting", (request, response) => {
+	let id = Object.keys(db.meetings).length + 1;	//increasing
+	let name = request.query.name;	//name of the meeting
+	let date = request.query.date;	//YYYY-MM-DD
+	let latitude = request.query.latitude;
+	let longitude = request.query.longitude;
+	let location = request.query.location;
+	let objects = request.query.objects;
+
+	let objectToAdd = {
+		id: id,
+		name: name,
+		date: date,
+		location: location,
+		coordinates: {
+			latitude, longitude
+		},
+		objects: []
+	};
+	for (let index = 0; index < objects.length; index++) {
+		objectToAdd.objects.push = objects[index];
+	}
+	db[id].push(objectToAdd);	//Won't work
 });
 
 server.get("/addNewMeeting", (request, response) => {
