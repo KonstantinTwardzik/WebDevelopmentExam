@@ -3,7 +3,6 @@ let server = express();
 var path = require("path");
 var db = require("./meetings.json");
 var bodyParser = require("body-parser");
-var Meeting = require(".Meeting.js");
 
 let port = process.argv[2];
 // argv[0] = node
@@ -76,8 +75,6 @@ server.get("/returnRange", (request, response) => {
 	for (let index = start; index <= end; index++) {	//For loop läuft von start bis end
 		responseArray.push(db.meetings[index]);			//füllt das responseArray mit den entsprechenden meetings.json's
 	}
-
-	//Lieber meeting objecte zurückliefern
 	let responseString = JSON.stringify(responseArray);	//zum übnertragen wird das JSON Array in einen String umgewandelt, mit JSON.parse(string) kann es zurückgewandelt werden
 	// response.send(responseString);				//Als response wird der responseString gewählt
 	response.json(responseArray);				//Alternativ das responseArray
