@@ -314,13 +314,8 @@ function makeRequest(method, url) {
 	return new Promise(function (resolve, reject) {
 		let request = new XMLHttpRequest();
 		request.open(method, url);
-<<<<<<< Updated upstream
 		request.onreadystatechange = function () {
 			if (this.readyState === 4) {
-=======
-		request.onload = function () {
-			if (this.status < 200 && this.status >= 300) {
->>>>>>> Stashed changes
 				resolve(request.response);
 			}
 			else if ((this.status < 200 && this.status >= 300)) {
@@ -344,18 +339,7 @@ function setDisplayingItems(value) {
 	displayingItems = value;
 }
 
-//THOMAS:
-<<<<<<< Updated upstream
-let displayingItems;	//use this @Konsti
-
-function setDisplayingItems(value) {
-	displayingItems = value;
-}
-
-function getRetunRange() {
-=======
 function getReturnRange() {
->>>>>>> Stashed changes
 	//demsonstration of promises chaining
 	//should work with this snippet aswell:
 
@@ -385,33 +369,21 @@ function getReturnRange() {
 		.then(function (value) {	//value is the json string from start to end
 			value = JSON.parse(value);	//value must me JSON.parsed to be an object
 			setDisplayingItems(value);
-<<<<<<< Updated upstream
-=======
 			displayingItems = value;
 			// for (let index = 0; index < value.length; index++) {	//control loop
 			// 	console.log("id: " + value[index].id);		//console loggs the id of every object inside value
 			// }
->>>>>>> Stashed changes
+
 			console.log("\n_______________main.js____________________");
 		})
 		.catch(function (err) {
 			console.error("returnRange Error: ", err.statusText);
 		});
 	console.log(displayingItems);
-<<<<<<< Updated upstream
-
 	return displayingItems;
-=======
-<<<<<<< Updated upstream
-	return displayingItems();
-=======
-	return displayingItems;
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 }
 
 //THOMAS:
-let arraySize;
 function getArraySize() {
 	// getFeed().then(data => vm.feed = data);
 	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left lis
