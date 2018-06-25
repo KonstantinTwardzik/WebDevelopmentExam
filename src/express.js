@@ -46,7 +46,7 @@ server.get("", (req, res) => {
 });
 
 server.get("/editMeeting", (request, response) => {
-	let id = Object.keys(db.meetings).length + 1;	//increasing
+	let id = request.query.id;	//increasing
 	let name = request.query.name;	//name of the meeting
 	let date = request.query.date;	//YYYY-MM-DD
 	let latitude = request.query.latitude;
@@ -67,7 +67,9 @@ server.get("/editMeeting", (request, response) => {
 	for (let index = 0; index < objects.length; index++) {
 		objectToEdit.objects.push = objects[index];
 	}
-	db[id] = objectToEdit;	//
+	console.log("objectToEdit.name: " + objectToEdit.name);
+	db.meetings[id] = objectToEdit;	//
+	response.json(db.meetings);
 });
 
 server.get("/addNewMeeting", (request, response) => {

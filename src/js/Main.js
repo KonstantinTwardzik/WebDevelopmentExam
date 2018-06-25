@@ -392,7 +392,29 @@ function addNewMeeting() {
 }
 
 function editExistingMeeting() {
-	// edit blabla.
+	//zugriff auf die werte über .value, also z.b title.value
+	let id = document.getElementById(curMeeting.getId()); 	//TODO: add currently seleted id here.
+	let title = document.getElementById("titleTF");
+	let date = document.getElementById("dateTF");
+	let location = document.getElementById("locationTF");
+	let latitude = document.getElementById("latitudeTF");
+	let longitude = document.getElementById("longitudeTF");
+	let coordinates = [latitude.value, longitude.value];
+	let objects = [];
+
+	console.log(id + ", " + title.value + ", " + date.value + ", " + location.value + ", " + coordinates[0] + ", " + coordinates[1]);
+	for (let i = 0; i < 99; i++) {
+		let object = document.getElementById("popupListElement" + i);
+		if (object.value !== "") {
+			objects.push(object.value);
+		}
+	}
+	makeRequest("GET", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
+		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)
+		.then(function (value) {	//value = db.meetings
+			closeDialogue();
+			//TODO: update database with value
+		});
 }
 
 function loadData() {
