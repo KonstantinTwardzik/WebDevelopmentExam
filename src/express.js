@@ -47,7 +47,7 @@ server.get("", (req, res) => {
 
 server.get("/editMeeting", (request, response) => {
 	//Attributes for the object:
-	let id = request.query.id;	//increasing
+	let id = parseInt(request.query.id);
 	let name = request.query.name;	//name of the meeting
 	let date = request.query.date;	//YYYY-MM-DD
 	let coordinates = [];
@@ -71,7 +71,7 @@ server.get("/editMeeting", (request, response) => {
 
 server.get("/addNewMeeting", (request, response) => {
 	//Attributes for the object:
-	let id = request.query.id;	//increasing
+	let id = parseInt(request.query.id);	//increasing
 	let name = request.query.name;	//name of the meeting
 	let date = request.query.date;	//YYYY-MM-DD
 	let coordinates = [];
