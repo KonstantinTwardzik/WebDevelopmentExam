@@ -382,7 +382,7 @@ function addNewMeeting() {
 			objects.push(object.value);
 		}
 	}
-	console.log(objects);
+	console.log(coordinates);
 	// dann serverseitig hinzufügen
 	makeRequest("GET", "http://localhost:8080/addNewMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
 		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)

@@ -77,11 +77,11 @@ server.get("/addNewMeeting", (request, response) => {
 	let id = request.query.id;	//increasing
 	let name = request.query.name;	//name of the meeting
 	let date = request.query.date;	//YYYY-MM-DD
-	let latitude = request.query.latitude;
-	let coordinates = request.query.coordinates;
-	let longitude = request.query.longitude;
+	let coordinates = [];
+	coordinates[0] = parseFloat(request.query.coordinates.split(",")[0]);
+	coordinates[1] = parseFloat(request.query.coordinates.split(",")[1]);
 	let location = request.query.location;
-	let objects = request.query.objects;
+	let objects = request.query.objects.split(",");
 
 	let objectToAdd = {
 		id: id,
@@ -92,7 +92,7 @@ server.get("/addNewMeeting", (request, response) => {
 		objects: objects
 	};
 	db.meetings[id] = objectToAdd;	//Y U WORK!?
-	console.log("objekt: " + db.meetings[id].coordinates[0]);	//doesn't work with id?
+	console.log(db.meetings[id].coordinates);	//doesn't work with id?
 	response.json(db.meetings);
 });
 
