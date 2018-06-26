@@ -16,6 +16,7 @@ var map;
 let displayingItems;
 let arraySize;
 let currentArraySize;
+let targetHelper = 0;
 
 let initView = function () {
 	let main = document.getElementById("main");
@@ -427,6 +428,8 @@ function editExistingMeeting() {
 
 			updateLists();
 			closeDialogue();
+		}).catch(function (err) {
+			console.error("editMeetingError: ", err.statusText);
 		});
 }
 
@@ -435,12 +438,16 @@ function removeElement() {
 		.then((value) => {
 			data.length = 0;
 			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
-			console.log(displayingItems);
 			createData();
+			if (parseInt(targetHelper) === parseInt(data.length)) {
+				--targetHelper;
+			}
+			updateRightList(targetHelper);
+			dbSize--;
 			updateLists();
 		})
 		.catch(function (err) {
-			console.error("returnArraySize Error: ", err.statusText);
+			console.error("DeleteError: ", err.statusText);
 		});
 }
 
@@ -455,7 +462,7 @@ function loadData() {
 			createData();
 		})
 		.catch(function (err) {
-			console.error("updateDataError: ", err.statusText);
+			console.error("loadDataError: ", err.statusText);
 		});
 }
 
@@ -470,7 +477,7 @@ function loadLastMeeting() {
 				updateLists();
 			})
 			.catch(function (err) {
-				console.error("updateDataError: ", err.statusText);
+				console.error("loadLastMeetingError: ", err.statusText);
 			});
 	}
 }
@@ -484,10 +491,6 @@ function getArraySize() {
 		.catch(function (err) {
 			console.error("returnArraySize Error: ", err.statusText);
 		});
-	// console.log("arraySize: " + arraySize);		//at first it's undefined, but after a bit, it will be assigned with the right value
-	// dbSize = arraySize;								// overrides the initial dummyvalue of 30 with the actual database size
-	// console.log("dbSize: " + dbSize);			//control log
-	// console.log("returnsize: " + arraySize);
 	return arraySize;
 }
 
@@ -518,8 +521,8 @@ let updateLists = function () {
 	rightPageIndicator.innerHTML = rightCurrentPage + " of " + rightAllPages;
 
 	//mark selected item (if it is visible)
-	if (document.getElementById(curMeeting.getId())) {
-		let active = document.getElementById(curMeeting.getId());
+	if (document.getElementById(targetHelper)) {
+		let active = document.getElementById("" + targetHelper);
 		active.className = "active";
 	}
 
@@ -554,10 +557,23 @@ let updateLists = function () {
 		rightNextPageListener.addEventListener("click", rightNextPage);
 		rightNextPageListener.id = "rightNextPageBtn";
 	}
+
+	//if the leftAllPage is as big as the leftCurrentPage disable nextBtn - same for rightList
+	if (leftAllPages === leftCurrentPage && document.getElementById("leftNextPageBtn")) {
+		let leftNextPageListener = document.getElementById("leftNextPageBtn");
+		leftNextPageListener.removeEventListener("click", leftNextPage);
+		leftNextPageListener.id = "leftNextPageBtnDisabled";
+	}
+	if (rightAllPages === rightCurrentPage && document.getElementById("rightNextPageBtn")) {
+		let rightNextPageListener = document.getElementById("rightNextPageBtn");
+		rightNextPageListener.removeEventListener("click", rightNextPage);
+		rightNextPageListener.id = "rightNextPageBtnDisabled";
+	}
 };
 
 let updateCurMeeting = function (target) {
 	curMeeting = data[parseInt(target)];
+	targetHelper = target;
 };
 
 let leftNextPage = function () {
@@ -675,3 +691,15 @@ let createData = function () {
 	ListObject = new Lists.Lists();
 	initiateData();
 })();
+
+//TODO
+//Druckansicht
+//Datum handeln
+//Regex - formular
+
+//Code beautifien
+//Namensgebung
+//Firefox testen
+//Einheitliche funktionen
+//+ und -1 überall ausbessern
+//packages.json und files ordnen

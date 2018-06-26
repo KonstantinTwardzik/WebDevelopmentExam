@@ -14,7 +14,6 @@ const BASE_URI = "http://localhost:${port}";
 server.use(bodyParser.json());
 
 var dateLogger = function (req, res, next) {	//wird immer getriggert, wenn eine getanfrage kommt
-	//console.log(Date.now());					//atm noch datum
 	next();										//damit nicht hiernach abgebrochen wird
 };
 
@@ -50,19 +49,28 @@ server.delete("/deleteMeeting", (request, response) => {
 	let id = parseInt(request.query.id);
 	let start = 0;
 	let end = parseInt(request.query.end);
-	console.log(id);
+	if (end > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
+		end = Object.keys(db.meetings).length - 1;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
+	}
+	if (start > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
+		start = Object.keys(db.meetings).length - 1;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
+	}
+	if (start === end) {
+		response.sendStatus(404);
+		return;
+	}
+
 	for (let i = 0; i < db.meetings.length; i++) {
 		if (parseInt(db.meetings[i].id) === id) {
-			console.log("delete " + db.meetings[i].name);
 			db.meetings.splice(i, 1);
 			makePersistent();
 			var responseArray = [];						//neues leeres Array erstellen, das letztendlich an den client zurückgegeben wird
 			let controlString = "";						//neuen leeren ControlString definieren
-			for (let index = start; index <= end; index++) {	//For loop läuft von start bis end
+			for (let index = start; index < end; index++) {	//For loop läuft von start bis end
 				responseArray.push(db.meetings[index]);			//füllt das responseArray mit den entsprechenden meetings.json's
 			}
+			// response.sendStatus(200);
 			response.json(responseArray);
-			response.sendStatus(200);
 			return;
 		}
 	}
@@ -89,15 +97,14 @@ server.get("/editMeeting", (request, response) => {
 		objects: objects
 	};
 	db.meetings[id] = objectToAdd;	//Y U WORK!?
-	// console.log(db.meetings[id].coordinates);	//doesn't work with id?
 	makePersistent();
 	response.json(db.meetings[id]);
 });
 
 function makePersistent() {
 	fs.writeFile("./meetings.json", JSON.stringify(db),
-		//TODO:
-		// eslint-disable-next-line
+	//TODO:
+	// eslint-disable-next-line
 		function (err) {
 			//eslint-disable-next-line
 			if (err) return console.log(err);
@@ -124,7 +131,6 @@ server.get("/addNewMeeting", (request, response) => {
 		objects: objects
 	};
 	db.meetings[id] = objectToAdd;	//Y U WORK!?
-	console.log(db.meetings[id].coordinates);	//doesn't work with id?
 	makePersistent();
 	response.json(db.meetings);
 });
@@ -135,12 +141,13 @@ server.get("/returnRange", (request, response) => {
 	if (end > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
 		end = Object.keys(db.meetings).length - 1;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
 	}
+	if (start > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
+		start = Object.keys(db.meetings).length - 1;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
+	}
 	var responseArray = [];						//neues leeres Array erstellen, das letztendlich an den client zurückgegeben wird
-	let controlString = "";						//neuen leeren ControlString definieren
 	for (let index = start; index <= end; index++) {	//For loop läuft von start bis end
 		responseArray.push(db.meetings[index]);			//füllt das responseArray mit den entsprechenden meetings.json's
 	}
-	let responseString = JSON.stringify(responseArray);	//zum übnertragen wird das JSON Array in einen String umgewandelt, mit JSON.parse(string) kann es zurückgewandelt werden
 	// response.send(responseString);				//Als response wird der responseString gewählt
 	// Persitenz
 	fs.writeFile("./meetings.json", JSON.stringify(db),

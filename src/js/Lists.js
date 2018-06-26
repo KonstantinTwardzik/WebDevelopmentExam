@@ -27,8 +27,10 @@ class Lists {
 		let length = list.childElementCount;
 
 		for (let index = 0; index < length; ++index) {
-			let listElement = document.getElementById("" + (index + this.leftRealOffset));
-			list.removeChild(listElement);
+			let listElement = document.getElementById("arr" + (index + this.leftRealOffset));
+			if (listElement) {
+				list.removeChild(listElement);
+			}
 		}
 
 		let detailObjectList = document.getElementById("rightList");
@@ -53,13 +55,17 @@ class Lists {
 		}
 
 		// fills left list
-		for (let index = 1; index <= currentLeftPageSize; index++) {
-			let meeting = data[(index - 1) + this.leftRealOffset];
+		for (let index = 0; index < currentLeftPageSize; index++) {
+			let meeting = data[(index) + this.leftRealOffset];
 			let listElement = document.createElement("li");
 			let title = document.createElement("p");
-
-			listElement.id = meeting.getId();
-			title.id = meeting.getId();
+			listElement.id = "arr" + (index + this.leftRealOffset);
+			// for (let index2 = 0; index2 < data.length; index++) {
+			// 	if (data[index2].id === listElement.id) {
+			// 		title.id = "" + index2;
+			// 	}
+			// }
+			title.id = (index + this.leftRealOffset);
 			title.innerHTML = meeting.getName();
 			listElement.appendChild(title);
 			list.appendChild(listElement);
