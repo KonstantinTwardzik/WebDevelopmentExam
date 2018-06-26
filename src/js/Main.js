@@ -375,19 +375,20 @@ function addNewMeeting() {
 	let longitude = document.getElementById("longitudeTF");
 	let coordinates = [latitude.value, longitude.value];
 	let objects = [];
-	console.log(id + ", " + title.value + ", " + date.value + ", " + location.value + ", " + coordinates[0] + ", " + coordinates[1]);
+
 	for (let i = 0; i < 99; i++) {
 		let object = document.getElementById("popupListElement" + i);
 		if (object.value !== "") {
 			objects.push(object.value);
 		}
 	}
-	// console.log(objects);
+
 	// dann serverseitig hinzufügen
 	makeRequest("GET", "http://localhost:8080/addNewMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
 		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)
 		.then(function (value) {	//value = db.meetings
 			dbSize++;
+			loadLastMeeting();
 			closeDialogue();
 			//TODO: update database with value HERE
 		});
@@ -432,12 +433,27 @@ function loadData() {
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 		.then(function (value) {	//value is the json string from start to end
 			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
-			console.log("ausgeführt:" + start + " - " + end);
 			addEntriesToMeetingList();
 		})
 		.catch(function (err) {
 			console.error("updateDataError: ", err.statusText);
 		});
+}
+
+function loadLastMeeting() {
+	if ((data.length + 1) === dbSize) {
+		let start = data.length;
+		let end = dbSize;
+		makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
+			.then(function (value) {	//value is the json string from start to end
+				displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
+				addEntriesToMeetingList();
+				updateLists();
+			})
+			.catch(function (err) {
+				console.error("updateDataError: ", err.statusText);
+			});
+	}
 }
 
 //THOMAS:
