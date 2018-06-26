@@ -481,6 +481,33 @@ function getArraySize() {
 	return arraySize;
 }
 
+function updateData() {
+	let start = 0;
+	let end = currentArraySize;
+
+	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
+		.then(function (value) {	//value is the json string from start to end
+			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
+			addEntriesToMeetingList();
+		})
+		.catch(function (err) {
+			console.error("updateDataError: ", err.statusText);
+		});
+}
+
+function removeElement() {
+	makeRequest("DELETE", "http://localhost:8080/deleteMeeting")	//get the actual Array Size for paginating the left lis
+		.then(() => {
+			meetingList = [];
+			updateData();
+			createMeetingList();
+			updateLists();
+		})
+		.catch(function (err) {
+			console.error("returnArraySize Error: ", err.statusText);
+		});
+}
+
 // Pagination on window-resize
 window.onresize = function () {
 	while (ListObject.getCurrentPageSize() * leftCurrentPage > currentArraySize - 20) {
@@ -564,7 +591,6 @@ let leftNextPage = function () {
 	}
 	if (ListObject.getCurrentPageSize() * leftCurrentPage > currentArraySize - 20) {
 		loadData();
-		console.log("ausgeführt");
 	}
 	updateLists();
 };
@@ -643,6 +669,9 @@ let initHandlers = function () {
 
 	let editMeetingListener = document.getElementById("rightEditBtn");
 	editMeetingListener.addEventListener("click", showFilledDialogue);
+
+	let removeMeetingListener = document.getElementById("leftDeleteBtn");
+	removeMeetingListener.addEventListener("click", removeElement);
 };
 
 let createMeetingList = function () {
