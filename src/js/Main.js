@@ -382,7 +382,7 @@ function addNewMeeting() {
 			objects.push(object.value);
 		}
 	}
-	console.log(coordinates);
+	// console.log(objects);
 	// dann serverseitig hinzufügen
 	makeRequest("GET", "http://localhost:8080/addNewMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
 		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)
@@ -410,6 +410,7 @@ function editExistingMeeting() {
 			objects.push(object.value);
 		}
 	}
+	objects = JSON.stringify(objects);
 	// console.log(id + ", " + title.value + ", " + date.value + ", " + location.value + ", " + coordinates[0] + ", " + coordinates[1] + ", " + objects);
 	makeRequest("GET", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
 		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)

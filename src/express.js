@@ -46,30 +46,27 @@ server.get("", (req, res) => {
 });
 
 server.get("/editMeeting", (request, response) => {
+	//Attributes for the object:
 	let id = request.query.id;	//increasing
 	let name = request.query.name;	//name of the meeting
 	let date = request.query.date;	//YYYY-MM-DD
-	let latitude = request.query.latitude;
-	let longitude = request.query.longitude;
+	let coordinates = [];
+	coordinates[0] = parseFloat(request.query.coordinates.split(",")[0]);
+	coordinates[1] = parseFloat(request.query.coordinates.split(",")[1]);
 	let location = request.query.location;
-	let objects = request.query.objects;
+	let objects = request.query.objects.split(",");
 
-	let objectToEdit = {
+	let objectToAdd = {
 		id: id,
 		name: name,
 		date: date,
 		location: location,
-		coordinates: {
-			latitude, longitude
-		},
-		objects: []
+		coordinates: coordinates,
+		objects: objects
 	};
-	for (let index = 0; index < objects.length; index++) {
-		objectToEdit.objects.push = objects[index];
-	}
-	db.meetings[id] = objectToEdit;	//
-	console.log("objekt: " + db.meetings[id].id);	//doesn't work with id?
-	response.json(db.meetings[id]);
+	db.meetings[id] = objectToAdd;	//Y U WORK!?
+	// console.log(db.meetings[id].coordinates);	//doesn't work with id?
+	response.json(db.meetings);
 });
 
 server.get("/addNewMeeting", (request, response) => {
