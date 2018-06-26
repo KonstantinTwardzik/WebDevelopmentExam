@@ -385,7 +385,7 @@ function addNewMeeting() {
 
 	// dann serverseitig hinzufügen
 	makeRequest("GET", "http://localhost:8080/addNewMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
-		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)
+		+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
 		.then(function (value) {	//value = db.meetings
 			dbSize++;
 			loadLastMeeting();
@@ -496,9 +496,10 @@ function updateData() {
 }
 
 function removeElement() {
-	makeRequest("DELETE", "http://localhost:8080/deleteMeeting")	//get the actual Array Size for paginating the left lis
+	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId())	//get the actual Array Size for paginating the left lis
 		.then(() => {
 			meetingList = [];
+			console.log(meetingList);
 			updateData();
 			createMeetingList();
 			updateLists();

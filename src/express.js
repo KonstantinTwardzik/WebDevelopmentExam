@@ -3,6 +3,7 @@ let server = express();
 var path = require("path");
 var db = require("./meetings.json");
 var bodyParser = require("body-parser");
+const fs = require("fs");
 
 let port = process.argv[2];
 // argv[0] = node
@@ -31,6 +32,7 @@ server.get("", (req, res) => {
 	res.send({
 		__links: {
 			returnArraySize: { href: "${BASE_URI}/returnArraySize" },
+			deleteMeeting: { href: "${BASE_URI}/deleteMeeting" },
 		}
 	});
 	res.json({
@@ -40,15 +42,29 @@ server.get("", (req, res) => {
 			addNewMeeting: { href: "${BASE_URI}/addNewMeeting" },
 			addNewObjectToMeeting: { href: "${BASE_URI}/addNewObjectToMeeting" },
 			removeMeeting: { href: "${BASE_URI}/removeMeeting" },
-			deleteMEeting: { href: "${BASE_URI}/deleteMeeting" },
 		}
 	});
 });
 
-server.get("/deleteMeeting", (request, response) => {
+server.delete("/deleteMeeting", (request, response) => {
 	let id = parseInt(request.query.id);
-	db.meetings.splice(id, 1);
-	// response.json(db.meetings);
+	console.log(id);
+	for (let i = 0; i < db.meetings.length; i++) {
+		if (parseInt(db.meetings[i].id) === id) {
+			console.log("delete " + db.meetings[i].toString());
+			db.meetings.splice(i, 1);
+			// Persitenz
+			fs.writeFile("./meetings.json", JSON.stringify(db),
+			//eslint-disable-next-line
+				function (err) {
+					//eslint-disable-next-line
+					if (err) return console.log(err);
+				});
+			response.sendStatus(200);
+			return;
+		}
+	}
+	response.sendStatus(404);
 });
 
 server.get("/editMeeting", (request, response) => {
