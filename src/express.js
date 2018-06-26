@@ -48,18 +48,20 @@ server.get("", (req, res) => {
 
 server.delete("/deleteMeeting", (request, response) => {
 	let id = parseInt(request.query.id);
+	let start = 0;
+	let end = parseInt(request.query.end);
 	console.log(id);
 	for (let i = 0; i < db.meetings.length; i++) {
 		if (parseInt(db.meetings[i].id) === id) {
 			console.log("delete " + db.meetings[i].name);
 			db.meetings.splice(i, 1);
-			// Persitenz
-			fs.writeFile("./meetings.json", JSON.stringify(db),
-				//eslint-disable-next-line
-				function (err) {
-					//eslint-disable-next-line
-					if (err) return console.log(err);
-				});
+			makePersistent();
+			var responseArray = [];						//neues leeres Array erstellen, das letztendlich an den client zurückgegeben wird
+			let controlString = "";						//neuen leeren ControlString definieren
+			for (let index = start; index <= end; index++) {	//For loop läuft von start bis end
+				responseArray.push(db.meetings[index]);			//füllt das responseArray mit den entsprechenden meetings.json's
+			}
+			response.json(responseArray);
 			response.sendStatus(200);
 			return;
 		}
@@ -88,15 +90,19 @@ server.get("/editMeeting", (request, response) => {
 	};
 	db.meetings[id] = objectToAdd;	//Y U WORK!?
 	// console.log(db.meetings[id].coordinates);	//doesn't work with id?
-	// Persitenz
+	makePersistent();
+	response.json(db.meetings[id]);
+});
+
+function makePersistent() {
 	fs.writeFile("./meetings.json", JSON.stringify(db),
-		//eslint-disable-next-line
+		//TODO:
+		// eslint-disable-next-line
 		function (err) {
 			//eslint-disable-next-line
 			if (err) return console.log(err);
 		});
-	response.json(db.meetings[id]);
-});
+}
 
 server.get("/addNewMeeting", (request, response) => {
 	//Attributes for the object:
@@ -119,13 +125,7 @@ server.get("/addNewMeeting", (request, response) => {
 	};
 	db.meetings[id] = objectToAdd;	//Y U WORK!?
 	console.log(db.meetings[id].coordinates);	//doesn't work with id?
-	// Persitenz
-	fs.writeFile("./meetings.json", JSON.stringify(db),
-		//eslint-disable-next-line
-		function (err) {
-			//eslint-disable-next-line
-			if (err) return console.log(err);
-		});
+	makePersistent();
 	response.json(db.meetings);
 });
 
