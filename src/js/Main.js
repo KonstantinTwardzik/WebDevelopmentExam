@@ -11,12 +11,11 @@ var leftList;
 var rightList;
 var curMeeting;
 var ListObject;
-var data;
+var data = [];
 var map;
 let displayingItems;
 let arraySize;
 let currentArraySize;
-let meetingList = [];
 
 let initView = function () {
 	let main = document.getElementById("main");
@@ -321,7 +320,6 @@ let updateRightList = function (target) {
 	MeetingTimeLoc.innerHTML = curMeeting.getDate() + ", " + curMeeting.getLocation();
 };
 
-//THOMAS:
 function makeRequest(method, url) {
 	return new Promise(function (resolve, reject) {
 		let request = new XMLHttpRequest();
@@ -353,7 +351,7 @@ function initiateData() {
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 		.then(function (value) {	//value is the json string from start to end
 			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
-			data = createMeetingList();
+			createData();
 			curMeeting = data[0];
 			initView();
 			updateLists();
@@ -427,9 +425,22 @@ function editExistingMeeting() {
 				curMeeting = meeting;
 			}
 
-			meetingList.splice(value.id, 1, meeting);
 			updateLists();
 			closeDialogue();
+		});
+}
+
+function removeElement() {
+	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId() + "&end=" + (currentArraySize - 1))	//get the actual Array Size for paginating the left lis
+		.then((value) => {
+			data.length = 0;
+			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
+			console.log(displayingItems);
+			createData();
+			updateLists();
+		})
+		.catch(function (err) {
+			console.error("returnArraySize Error: ", err.statusText);
 		});
 }
 
@@ -441,7 +452,7 @@ function loadData() {
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 		.then(function (value) {	//value is the json string from start to end
 			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
-			addEntriesToMeetingList();
+			createData();
 		})
 		.catch(function (err) {
 			console.error("updateDataError: ", err.statusText);
@@ -455,7 +466,7 @@ function loadLastMeeting() {
 		makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 			.then(function (value) {	//value is the json string from start to end
 				displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
-				addEntriesToMeetingList();
+				createData();
 				updateLists();
 			})
 			.catch(function (err) {
@@ -464,7 +475,6 @@ function loadLastMeeting() {
 	}
 }
 
-//THOMAS:
 function getArraySize() {
 	// getFeed().then(data => vm.feed = data);
 	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left lis
@@ -479,34 +489,6 @@ function getArraySize() {
 	// console.log("dbSize: " + dbSize);			//control log
 	// console.log("returnsize: " + arraySize);
 	return arraySize;
-}
-
-function updateData() {
-	let start = 0;
-	let end = currentArraySize;
-
-	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
-		.then(function (value) {	//value is the json string from start to end
-			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
-			addEntriesToMeetingList();
-		})
-		.catch(function (err) {
-			console.error("updateDataError: ", err.statusText);
-		});
-}
-
-function removeElement() {
-	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId())	//get the actual Array Size for paginating the left lis
-		.then(() => {
-			meetingList = [];
-			console.log(meetingList);
-			updateData();
-			createMeetingList();
-			updateLists();
-		})
-		.catch(function (err) {
-			console.error("returnArraySize Error: ", err.statusText);
-		});
 }
 
 // Pagination on window-resize
@@ -675,17 +657,7 @@ let initHandlers = function () {
 	removeMeetingListener.addEventListener("click", removeElement);
 };
 
-let createMeetingList = function () {
-	let serverItems = displayingItems;
-	let meeting;
-	for (let i = 0; i < serverItems.length; i++) {
-		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, serverItems[i].coordinates, serverItems[i].objects);
-		meetingList.push(meeting);
-	}
-	return meetingList;
-};
-
-let addEntriesToMeetingList = function () {
+let createData = function () {
 	let serverItems = displayingItems;
 	let meeting;
 	for (let i = 0; i < serverItems.length; i++) {

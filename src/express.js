@@ -14,7 +14,7 @@ const BASE_URI = "http://localhost:${port}";
 server.use(bodyParser.json());
 
 var dateLogger = function (req, res, next) {	//wird immer getriggert, wenn eine getanfrage kommt
-	console.log(Date.now());					//atm noch datum
+	//console.log(Date.now());					//atm noch datum
 	next();										//damit nicht hiernach abgebrochen wird
 };
 
