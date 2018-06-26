@@ -37,12 +37,18 @@ server.get("", (req, res) => {
 		__links: {
 			self: { href: "${BASE_URI}" },
 			returnRange: { href: "${BASE_URI}/returnRange" },			//definiert die URL, die angesprochen werden kann "localhost:8080/returnRange"
-			addNewMeeting: { href: "${BASE_URI}/addNewMeeting" },		//TODO:
-			addNewObjectToMeeting: { href: "${BASE_URI}/addNewObjectToMeeting" },	//TODO:
-			removeMeeting: { href: "${BASE_URI}/removeMeeting" },	//TODO:
-			editMeeting: { href: "${BASE_URI}/editMeeting" },
+			addNewMeeting: { href: "${BASE_URI}/addNewMeeting" },
+			addNewObjectToMeeting: { href: "${BASE_URI}/addNewObjectToMeeting" },
+			removeMeeting: { href: "${BASE_URI}/removeMeeting" },
+			deleteMEeting: { href: "${BASE_URI}/deleteMeeting" },
 		}
 	});
+});
+
+server.get("/deleteMeeting", (request, response) => {
+	let id = parseInt(request.query.id);
+	db.meetings.splice(id, 1);
+	// response.json(db.meetings);
 });
 
 server.get("/editMeeting", (request, response) => {
@@ -108,6 +114,7 @@ server.get("/returnRange", (request, response) => {
 	// response.send(responseString);				//Als response wird der responseString gewählt
 	response.json(responseArray);				//Alternativ das responseArray
 });
+
 //send size ob meetings.json object to client:
 server.get("/returnArraySize", (request, response) => {
 	let arraySize = Object.keys(db.meetings).length;
