@@ -51,11 +51,11 @@ server.delete("/deleteMeeting", (request, response) => {
 	console.log(id);
 	for (let i = 0; i < db.meetings.length; i++) {
 		if (parseInt(db.meetings[i].id) === id) {
-			console.log("delete " + db.meetings[i].toString());
+			console.log("delete " + db.meetings[i].name);
 			db.meetings.splice(i, 1);
 			// Persitenz
 			fs.writeFile("./meetings.json", JSON.stringify(db),
-			//eslint-disable-next-line
+				//eslint-disable-next-line
 				function (err) {
 					//eslint-disable-next-line
 					if (err) return console.log(err);
@@ -88,6 +88,13 @@ server.get("/editMeeting", (request, response) => {
 	};
 	db.meetings[id] = objectToAdd;	//Y U WORK!?
 	// console.log(db.meetings[id].coordinates);	//doesn't work with id?
+	// Persitenz
+	fs.writeFile("./meetings.json", JSON.stringify(db),
+		//eslint-disable-next-line
+		function (err) {
+			//eslint-disable-next-line
+			if (err) return console.log(err);
+		});
 	response.json(db.meetings[id]);
 });
 
@@ -112,6 +119,13 @@ server.get("/addNewMeeting", (request, response) => {
 	};
 	db.meetings[id] = objectToAdd;	//Y U WORK!?
 	console.log(db.meetings[id].coordinates);	//doesn't work with id?
+	// Persitenz
+	fs.writeFile("./meetings.json", JSON.stringify(db),
+		//eslint-disable-next-line
+		function (err) {
+			//eslint-disable-next-line
+			if (err) return console.log(err);
+		});
 	response.json(db.meetings);
 });
 
@@ -128,6 +142,13 @@ server.get("/returnRange", (request, response) => {
 	}
 	let responseString = JSON.stringify(responseArray);	//zum übnertragen wird das JSON Array in einen String umgewandelt, mit JSON.parse(string) kann es zurückgewandelt werden
 	// response.send(responseString);				//Als response wird der responseString gewählt
+	// Persitenz
+	fs.writeFile("./meetings.json", JSON.stringify(db),
+		//eslint-disable-next-line
+		function (err) {
+			//eslint-disable-next-line
+			if (err) return console.log(err);
+		});
 	response.json(responseArray);				//Alternativ das responseArray
 });
 
