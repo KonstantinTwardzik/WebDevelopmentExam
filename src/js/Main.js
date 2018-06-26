@@ -396,7 +396,7 @@ function addNewMeeting() {
 
 function editExistingMeeting() {
 	//zugriff auf die werte über .value, also z.b title.value
-	let id = document.getElementById(curMeeting.getId()); 	//TODO: add currently seleted id here.
+	let id = curMeeting.getId(); 	//TODO: add currently seleted id here.
 	let title = document.getElementById("titleTF");
 	let date = document.getElementById("dateTF");
 	let location = document.getElementById("locationTF");
@@ -411,17 +411,25 @@ function editExistingMeeting() {
 			objects.push(object.value);
 		}
 	}
-	objects = JSON.stringify(objects);
-	// console.log(id + ", " + title.value + ", " + date.value + ", " + location.value + ", " + coordinates[0] + ", " + coordinates[1] + ", " + objects);
+
 	makeRequest("GET", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
-		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)
-		.then(function (value) { //value = db.meetings
+		+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
+		.then(function (value) {
+			value = JSON.parse(value);
 			let meeting = new Meeting.Meeting(value.id, value.name, value.date, value.location, value.coordinates, value.objects);
-			curMeeting = meeting;
-			meetingList.splice(value.id - 1, 0, meeting);
+
+			if (parseFloat(value.coordinates[0]) !== parseFloat(curMeeting.getCoordinates()[0]) || parseFloat(value.coordinates[1]) !== parseFloat(curMeeting.getCoordinates()[1])) {
+				curMeeting = meeting;
+				let mapWrapper = document.getElementById("mapWrapper");
+				mapWrapper.replaceChild(map.updateMap(curMeeting), document.getElementById("map"));
+			}
+			else {
+				curMeeting = meeting;
+			}
+
+			meetingList.splice(value.id, 1, meeting);
+			updateLists();
 			closeDialogue();
-			console.log("loadData");
-			//TODO: update database with value HERE
 		});
 }
 

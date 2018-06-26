@@ -66,7 +66,7 @@ server.get("/editMeeting", (request, response) => {
 	};
 	db.meetings[id] = objectToAdd;	//Y U WORK!?
 	// console.log(db.meetings[id].coordinates);	//doesn't work with id?
-	response.json(db.meetings);
+	response.json(db.meetings[id]);
 });
 
 server.get("/addNewMeeting", (request, response) => {
