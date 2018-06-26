@@ -16,6 +16,7 @@ var map;
 let displayingItems;
 let arraySize;
 let currentArraySize;
+let meetingList = [];
 
 let initView = function () {
 	let main = document.getElementById("main");
@@ -381,6 +382,7 @@ function addNewMeeting() {
 			objects.push(object.value);
 		}
 	}
+	console.log(objects);
 	// dann serverseitig hinzufügen
 	makeRequest("GET", "http://localhost:8080/addNewMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
 		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)
@@ -411,7 +413,10 @@ function editExistingMeeting() {
 	// console.log(id + ", " + title.value + ", " + date.value + ", " + location.value + ", " + coordinates[0] + ", " + coordinates[1] + ", " + objects);
 	makeRequest("GET", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
 		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)
-		.then(function (value) {	//value = db.meeting[id]
+		.then(function (value) { //value = db.meetings
+			let meeting = new Meeting.Meeting(value.id, value.name, value.date, value.location, value.coordinates, value.objects);
+			curMeeting = meeting;
+			meetingList.splice(value.id - 1, 0, meeting);
 			closeDialogue();
 			console.log("loadData");
 			//TODO: update database with value HERE
@@ -426,6 +431,7 @@ function loadData() {
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 		.then(function (value) {	//value is the json string from start to end
 			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
+			console.log("ausgeführt:" + start + " - " + end);
 			addEntriesToMeetingList();
 		})
 		.catch(function (err) {
@@ -616,7 +622,6 @@ let initHandlers = function () {
 
 let createMeetingList = function () {
 	let serverItems = displayingItems;
-	let meetingList = [];
 	let meeting;
 	for (let i = 0; i < serverItems.length; i++) {
 		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, serverItems[i].coordinates, serverItems[i].objects);
