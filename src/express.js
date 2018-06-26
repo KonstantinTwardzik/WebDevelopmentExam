@@ -67,9 +67,9 @@ server.get("/editMeeting", (request, response) => {
 	for (let index = 0; index < objects.length; index++) {
 		objectToEdit.objects.push = objects[index];
 	}
-	console.log("objectToEdit.name: " + objectToEdit.name);
 	db.meetings[id] = objectToEdit;	//
-	response.json(db.meetings);
+	console.log("objekt: " + db.meetings[id].id);	//doesn't work with id?
+	response.json(db.meetings[id]);
 });
 
 server.get("/addNewMeeting", (request, response) => {
@@ -88,21 +88,20 @@ server.get("/addNewMeeting", (request, response) => {
 		name: name,
 		date: date,
 		location: location,
-		coordinates: {
-			latitude, longitude
-		},
+		coordinates: coordinates,
 		objects: objects
 	};
 	db.meetings[id] = objectToAdd;	//Y U WORK!?
+	console.log("objekt: " + db.meetings[id].coordinates[0]);	//doesn't work with id?
 	response.json(db.meetings);
 });
 
 server.get("/returnRange", (request, response) => {
 	let start = request.query.start;			//nimmt sich den wert der id "start" in der url
 	let end = request.query.end;				//nimmt sich den wert der id "end" in der url
-	// if (end > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
-	// 	end = Object.keys(db.meetings).length - 1;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
-	// }
+	if (end > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
+		end = Object.keys(db.meetings).length - 1;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
+	}
 	var responseArray = [];						//neues leeres Array erstellen, das letztendlich an den client zurückgegeben wird
 	let controlString = "";						//neuen leeren ControlString definieren
 	for (let index = start; index <= end; index++) {	//For loop läuft von start bis end

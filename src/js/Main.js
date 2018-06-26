@@ -402,17 +402,18 @@ function editExistingMeeting() {
 	let coordinates = [latitude.value, longitude.value];
 	let objects = [];
 
-	console.log(id + ", " + title.value + ", " + date.value + ", " + location.value + ", " + coordinates[0] + ", " + coordinates[1]);
 	for (let i = 0; i < 99; i++) {
 		let object = document.getElementById("popupListElement" + i);
 		if (object.value !== "") {
 			objects.push(object.value);
 		}
 	}
+	// console.log(id + ", " + title.value + ", " + date.value + ", " + location.value + ", " + coordinates[0] + ", " + coordinates[1] + ", " + objects);
 	makeRequest("GET", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
 		+ location.value + "&latitude=" + latitude.value + "&longitude=" + longitude.value + "&coordinates=" + coordinates + "&objects=" + objects)
-		.then(function (value) {	//value = db.meetings
+		.then(function (value) {	//value = db.meeting[id]
 			closeDialogue();
+			console.log("loadData");
 			//TODO: update database with value HERE
 		});
 }
