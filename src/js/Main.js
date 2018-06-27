@@ -97,6 +97,16 @@ let createLeftMenuBar = function () {
 };
 
 let createRightMenuBar = function () {
+	let editBtn = document.createElement("i");
+	editBtn.id = "rightEditBtn";
+	editBtn.className = "material-icons";
+	editBtn.innerHTML = "mode_edit";
+
+	let printBtn = document.createElement("i");
+	printBtn.id = "rightPrintBtn";
+	printBtn.className = "material-icons";
+	printBtn.innerHTML = "print";
+
 	let prevPageBtn = document.createElement("i");
 	prevPageBtn.id = "rightPrevPageBtnDisabled";
 	prevPageBtn.className = "material-icons";
@@ -107,11 +117,6 @@ let createRightMenuBar = function () {
 	nextPageBtn.className = "material-icons";
 	nextPageBtn.innerHTML = "keyboard_arrow_right";
 
-	let editBtn = document.createElement("i");
-	editBtn.id = "rightEditBtn";
-	editBtn.className = ("material-icons");
-	editBtn.innerHTML = "mode_edit";
-
 	let pageIndicator = document.createElement("p");
 	pageIndicator.id = "rightPageIndicator";
 
@@ -119,6 +124,7 @@ let createRightMenuBar = function () {
 	menubar.className = "menubar";
 	menubar.id = "menubar";
 	menubar.appendChild(editBtn);
+	menubar.appendChild(printBtn);
 	menubar.appendChild(prevPageBtn);
 	menubar.appendChild(pageIndicator);
 	menubar.appendChild(nextPageBtn);
@@ -383,10 +389,11 @@ function addNewMeeting() {
 	}
 
 	// dann serverseitig hinzufügen
-	makeRequest("GET", "http://localhost:8080/addNewMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
+	makeRequest("GET", "http://localhost:8080/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
 		+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
 		.then(function (value) {	//value = db.meetings
 			dbSize++;
+			updateLists();
 			loadLastMeeting();
 			closeDialogue();
 			//TODO: update database with value HERE
@@ -434,7 +441,7 @@ function editExistingMeeting() {
 }
 
 function removeElement() {
-	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId() + "&end=" + (currentArraySize - 1))	//get the actual Array Size for paginating the left lis
+	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId() + "&end=" + (currentArraySize))	//get the actual Array Size for paginating the left lis
 		.then((value) => {
 			data.length = 0;
 			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
@@ -655,6 +662,18 @@ let initHandlers = function () {
 	let listListener = document.getElementById("leftList");
 	listListener.addEventListener("click", event => updateRightList(event.target.id));
 
+	if (leftCurrentPage >= 2 && document.getElementById("leftPrevPageBtnDisabled")) {
+		let leftPrevPageListener = document.getElementById("leftPrevPageBtnDisabled");
+		leftPrevPageListener.addEventListener("click", leftPrevPage);
+		leftPrevPageListener.id = "leftPrevPageBtn";
+	}
+
+	if (rightCurrentPage >= 2 && document.getElementById("rightPrevPageBtnDisabled")) {
+		let rightPrevPageListener = document.getElementById("rightPrevPageBtnDisabled");
+		rightPrevPageListener.addEventListener("click", rightPrevPage);
+		rightPrevPageListener.id = "rightPrevPageBtn";
+	}
+
 	let leftNextPageListener = document.getElementById("leftNextPageBtn");
 	leftNextPageListener.addEventListener("click", leftNextPage);
 
@@ -671,6 +690,9 @@ let initHandlers = function () {
 
 	let removeMeetingListener = document.getElementById("leftDeleteBtn");
 	removeMeetingListener.addEventListener("click", removeElement);
+
+	let printMeetingListener = document.getElementById("rightPrintBtn");
+	printMeetingListener.addEventListener("click", printMeeting);
 };
 
 let createData = function () {
@@ -682,6 +704,57 @@ let createData = function () {
 	}
 };
 
+function printMeeting() {
+	deleteAll();
+
+	let main = document.getElementById("main");
+
+	let site = document.createElement("section");
+	site.id = "site";
+	site.className = "page-break";
+
+	let title = document.createElement("h1");
+	title.innerHTML = curMeeting.getName();
+
+	let dateAndLocation = document.createElement("p");
+	dateAndLocation.id = "dateAndLocation";
+	dateAndLocation.innerHTML = curMeeting.getDate() + ", " + curMeeting.getLocation();
+
+	site.appendChild(title);
+	site.appendChild(dateAndLocation);
+
+	let objects = curMeeting.getObjects();
+	for (let index = 0; index < objects.length; index++) {
+		let object = document.createElement("p");
+		object.innerHTML = (index + 1) + ". " + objects[index];
+		site.appendChild(object);
+	}
+
+	main.appendChild(site);
+
+	window.print();
+
+	addAll();
+	main.removeChild(site);
+}
+
+function deleteAll() {
+	let main = document.getElementById("main");
+	let mapWrapper = document.getElementById("mapWrapper");
+	let leftList = document.getElementById("leftListSec");
+	let rightList = document.getElementById("rightListSec");
+
+	main.removeChild(mapWrapper);
+	main.removeChild(leftList);
+	main.removeChild(rightList);
+}
+
+function addAll() {
+	map = new Maps.Maps();
+	initView();
+	initHandlers();
+}
+
 // IIFE as start
 (function () {
 	leftCurrentPage = 1;
@@ -692,14 +765,19 @@ let createData = function () {
 	initiateData();
 })();
 
-//TODO
-//Druckansicht
-//Datum handeln
 //Regex - formular
 
 //Code beautifien
 //Namensgebung
 //Firefox testen
 //Einheitliche funktionen
-//+ und -1 überall ausbessern
+//+1 und -1 überall ausbessern
 //packages.json und files ordnen
+//Restkonformität
+//google besser einbinden
+//letztes meeting kann nicht gelöscht werden - dabei geht auch alles andere kaputt
+//besserer datensatz
+//less aufräumen
+//datum richtig ausgeben
+//überfliessen der texte verhindern
+//falls keine koordinaten -> error

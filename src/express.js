@@ -65,11 +65,9 @@ server.delete("/deleteMeeting", (request, response) => {
 			db.meetings.splice(i, 1);
 			makePersistent();
 			var responseArray = [];						//neues leeres Array erstellen, das letztendlich an den client zurückgegeben wird
-			let controlString = "";						//neuen leeren ControlString definieren
 			for (let index = start; index < end; index++) {	//For loop läuft von start bis end
 				responseArray.push(db.meetings[index]);			//füllt das responseArray mit den entsprechenden meetings.json's
 			}
-			// response.sendStatus(200);
 			response.json(responseArray);
 			return;
 		}
@@ -107,13 +105,13 @@ function makePersistent() {
 	// eslint-disable-next-line
 		function (err) {
 			//eslint-disable-next-line
-			if (err) return console.log(err);
+			if (err) return console.error(err);
 		});
 }
 
 server.get("/addNewMeeting", (request, response) => {
 	//Attributes for the object:
-	let id = parseInt(request.query.id);	//increasing
+	let id = parseInt(db.meetings[db.meetings.length - 1].id + 1);
 	let name = request.query.name;	//name of the meeting
 	let date = request.query.date;	//YYYY-MM-DD
 	let coordinates = [];
@@ -130,19 +128,19 @@ server.get("/addNewMeeting", (request, response) => {
 		coordinates: coordinates,
 		objects: objects
 	};
-	db.meetings[id] = objectToAdd;	//Y U WORK!?
+	db.meetings[db.meetings.length] = objectToAdd;	//Y U WORK!?
 	makePersistent();
 	response.json(db.meetings);
 });
 
 server.get("/returnRange", (request, response) => {
-	let start = request.query.start;			//nimmt sich den wert der id "start" in der url
-	let end = request.query.end;				//nimmt sich den wert der id "end" in der url
+	let start = parseInt(request.query.start);			//nimmt sich den wert der id "start" in der url
+	let end = parseInt(request.query.end);				//nimmt sich den wert der id "end" in der url
 	if (end > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
 		end = Object.keys(db.meetings).length - 1;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
 	}
 	if (start > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
-		start = Object.keys(db.meetings).length - 1;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
+		return;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
 	}
 	var responseArray = [];						//neues leeres Array erstellen, das letztendlich an den client zurückgegeben wird
 	for (let index = start; index <= end; index++) {	//For loop läuft von start bis end
@@ -154,7 +152,7 @@ server.get("/returnRange", (request, response) => {
 		//eslint-disable-next-line
 		function (err) {
 			//eslint-disable-next-line
-			if (err) return console.log(err);
+			if (err) return console.error(err);
 		});
 	response.json(responseArray);				//Alternativ das responseArray
 });

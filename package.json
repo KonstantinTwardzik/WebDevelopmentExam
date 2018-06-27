@@ -14,8 +14,7 @@
         "less": "latest",
         "browserify": "latest",
         "babel-minify": "latest",
-        "less-plugin-clean-css": "latest",
-        "express": "4.16."
+        "less-plugin-clean-css": "latest"
     },
     "scripts": {
         "clean": "rm -rf dist && rm -rf node_modules",
