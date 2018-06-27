@@ -283,12 +283,6 @@ let createDialogue = function (fill) {
 
 	plane.addEventListener("click", closeDialogue);
 	cancelBtn.addEventListener("click", closeDialogue);
-	if (fill) {
-		okBtn.addEventListener("click", editExistingMeeting);
-	}
-	else {
-		okBtn.addEventListener("click", addNewMeeting);
-	}
 
 	if (fill) {
 		titleTF.value = curMeeting.getName();
@@ -302,6 +296,10 @@ let createDialogue = function (fill) {
 			let lE = document.getElementById("popupListElement" + i);
 			lE.value = objects[i];
 		}
+		okBtn.addEventListener("click", editExistingMeeting);
+	}
+	else {
+		okBtn.addEventListener("click", addNewMeeting);
 	}
 };
 
@@ -371,8 +369,6 @@ function initiateData() {
 }
 
 function addNewMeeting() {
-	//zugriff auf die werte über .value, also z.b title.value
-	let id = dbSize; // bei id gilt das nicht
 	let title = document.getElementById("titleTF");
 	let date = document.getElementById("dateTF");
 	let location = document.getElementById("locationTF");
@@ -388,16 +384,27 @@ function addNewMeeting() {
 		}
 	}
 
-	// dann serverseitig hinzufügen
-	makeRequest("GET", "http://localhost:8080/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
+	var dateReg = /^\d{2}([./-])\d{2}\1\d{4}$/;
+	var textReg = /(^[a-z ]+$)/i;
+	var floatReg = /^[+-]?\d+(\.\d+)?$/;
+
+	if (objects.length > 0 && date.value.match(dateReg) && title.value.match(textReg) && location.value.match(textReg) && latitude.value.match(floatReg) && longitude.value.match(floatReg)) {
+		makeRequest("GET", "http://localhost:8080/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
 		+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
-		.then(function (value) {	//value = db.meetings
-			dbSize++;
-			updateLists();
-			loadLastMeeting();
-			closeDialogue();
-			//TODO: update database with value HERE
-		});
+			.then(function (value) {	//value = db.meetings
+				dbSize++;
+				updateLists();
+				loadLastMeeting();
+				closeDialogue();
+			});
+	}
+	else {
+		showErrorDialogue();
+	}
+}
+
+function showErrorDialogue() {
+	console.log("not ok");
 }
 
 function editExistingMeeting() {
@@ -418,26 +425,39 @@ function editExistingMeeting() {
 		}
 	}
 
-	makeRequest("GET", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
+	var dateReg = /^\d{2}([./-])\d{2}\1\d{4}$/;
+	var textReg = /(^[a-z ]+$)/i;
+	var floatReg = /^[+-]?\d+(\.\d+)?$/;
+
+	if (objects.length > 0 && date.value.match(dateReg) && title.value.match(textReg) && location.value.match(textReg) && latitude.value.match(floatReg) && longitude.value.match(floatReg)) {
+		makeRequest("GET", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
 		+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
-		.then(function (value) {
-			value = JSON.parse(value);
-			let meeting = new Meeting.Meeting(value.id, value.name, value.date, value.location, value.coordinates, value.objects);
+			.then(function (value) {
+				value = JSON.parse(value);
+				let meeting = new Meeting.Meeting(value.id, value.name, value.date, value.location, value.coordinates, value.objects);
 
-			if (parseFloat(value.coordinates[0]) !== parseFloat(curMeeting.getCoordinates()[0]) || parseFloat(value.coordinates[1]) !== parseFloat(curMeeting.getCoordinates()[1])) {
-				curMeeting = meeting;
-				let mapWrapper = document.getElementById("mapWrapper");
-				mapWrapper.replaceChild(map.updateMap(curMeeting), document.getElementById("map"));
-			}
-			else {
-				curMeeting = meeting;
-			}
+				if (parseFloat(value.coordinates[0]) !== parseFloat(curMeeting.getCoordinates()[0]) || parseFloat(value.coordinates[1]) !== parseFloat(curMeeting.getCoordinates()[1])) {
+					curMeeting = meeting;
+					let mapWrapper = document.getElementById("mapWrapper");
+					mapWrapper.replaceChild(map.updateMap(curMeeting), document.getElementById("map"));
+				}
+				else {
+					curMeeting = meeting;
+				}
+				let MeetingTitle = document.getElementById("MeetingTitle");
+				MeetingTitle.innerHTML = curMeeting.getName();
 
-			updateLists();
-			closeDialogue();
-		}).catch(function (err) {
-			console.error("editMeetingError: ", err.statusText);
-		});
+				let MeetingTimeLoc = document.getElementById("MeetingTimeLoc");
+				MeetingTimeLoc.innerHTML = curMeeting.getDate() + ", " + curMeeting.getLocation();
+
+				data[targetHelper] = meeting;
+
+				updateLists();
+				closeDialogue();
+			}).catch(function (err) {
+				console.error("editMeetingError: ", err.statusText);
+			});
+	}
 }
 
 function removeElement() {
@@ -764,8 +784,6 @@ function addAll() {
 	ListObject = new Lists.Lists();
 	initiateData();
 })();
-
-//Regex - formular
 
 //Code beautifien
 //Namensgebung
