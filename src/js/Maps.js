@@ -18,7 +18,7 @@ class Maps {
 
 		GoogleMapsLoader.KEY = "AIzaSyCIXJRNCkfv7Sg5948vYfoiCtgnazWoNJw";
 
-		GoogleMapsLoader.load(function (google) {
+		GoogleMapsLoader.load(function (google) {	//TODO: google ist nicht definiert!Firefox error
 			var map = new google.maps.Map(mapSec, {
 				center: coordinates,
 				zoom: 12,

@@ -384,13 +384,9 @@ function addNewMeeting() {
 		}
 	}
 
-	var dateReg = /^\d{2}([./-])\d{2}\1\d{4}$/;
-	var textReg = /(^[a-z ]+$)/i;
-	var floatReg = /^[+-]?\d+(\.\d+)?$/;
-
-	if (objects.length > 0 && date.value.match(dateReg) && title.value.match(textReg) && location.value.match(textReg) && latitude.value.match(floatReg) && longitude.value.match(floatReg)) {
+	if (objects.length > 0 && checkRegex(date, title, location, latitude, longitude)) {
 		makeRequest("GET", "http://localhost:8080/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
-		+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
+			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
 			.then(function (value) {	//value = db.meetings
 				dbSize++;
 				updateLists();
@@ -399,12 +395,8 @@ function addNewMeeting() {
 			});
 	}
 	else {
-		showErrorDialogue();
+		checkRegex(date, title, location, latitude, longitude);
 	}
-}
-
-function showErrorDialogue() {
-	console.log("not ok");
 }
 
 function editExistingMeeting() {
@@ -424,14 +416,11 @@ function editExistingMeeting() {
 			objects.push(object.value);
 		}
 	}
+	// checkRegex(date, title, location, latitude, longitude);
 
-	var dateReg = /^\d{2}([./-])\d{2}\1\d{4}$/;
-	var textReg = /(^[a-z ]+$)/i;
-	var floatReg = /^[+-]?\d+(\.\d+)?$/;
-
-	if (objects.length > 0 && date.value.match(dateReg) && title.value.match(textReg) && location.value.match(textReg) && latitude.value.match(floatReg) && longitude.value.match(floatReg)) {
+	if (objects.length > 0 && checkRegex(date, title, location, latitude, longitude)) {
 		makeRequest("GET", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
-		+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
+			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
 			.then(function (value) {
 				value = JSON.parse(value);
 				let meeting = new Meeting.Meeting(value.id, value.name, value.date, value.location, value.coordinates, value.objects);
@@ -773,6 +762,26 @@ function addAll() {
 	map = new Maps.Maps();
 	initView();
 	initHandlers();
+}
+
+function checkRegex(date, title, location, latitude, longitude) {
+	let indicator = true;
+	var dateReg = /^\d{2}([./-])\d{2}\1\d{4}$/;
+	var textReg = /(^[a-z ä ö ü ß']+$)/i;
+	var floatReg = /^[+-]?\d+(\.\d+)?$/;
+	if (!date.value.match(dateReg)) {
+		alert("Field date must match the pattern \n 16.12.1993 \n you typed\n " + date.value);
+		indicator = false;
+	}
+	if (!title.value.match(textReg) || !location.value.match(textReg)) {
+		alert("Field with text must not contain special characters like Ý, etc. and no numbers!");
+		indicator = false;
+	}
+	if (!latitude.value.match(floatReg) || !longitude.value.match(floatReg)) {
+		alert("Field Latitude and Logitude must match the pattern 63.251524\n!");
+		indicator = false;
+	}
+	return indicator;
 }
 
 // IIFE as start
