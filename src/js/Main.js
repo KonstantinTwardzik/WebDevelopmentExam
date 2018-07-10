@@ -401,7 +401,7 @@ function addNewMeeting() {
 
 function editExistingMeeting() {
 	//zugriff auf die werte über .value, also z.b title.value
-	let id = curMeeting.getId(); 	//TODO: add currently seleted id here.
+	let id = curMeeting.getId();
 	let title = document.getElementById("titleTF");
 	let date = document.getElementById("dateTF");
 	let location = document.getElementById("locationTF");
