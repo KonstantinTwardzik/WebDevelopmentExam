@@ -18,7 +18,7 @@ let arraySize;
 let currentArraySize;
 let targetHelper = 0;
 
-let initView = function () {
+function initView() {
 	let main = document.getElementById("main");
 	let mapWrapper = document.createElement("section");
 	let mapSec = map.updateMap(curMeeting);
@@ -32,9 +32,9 @@ let initView = function () {
 	main.appendChild(mapWrapper);
 	main.appendChild(leftList);
 	main.appendChild(rightList);
-};
+}
 
-let createLeftList = function () {
+function createLeftList() {
 	let logoWrapper = document.createElement("div");
 	logoWrapper.id = "logoWrapper";
 
@@ -58,9 +58,9 @@ let createLeftList = function () {
 	leftListSec.appendChild(menubar);
 
 	return leftListSec;
-};
+}
 
-let createLeftMenuBar = function () {
+function createLeftMenuBar() {
 	let deleteBtn = document.createElement("i");
 	deleteBtn.id = "leftDeleteBtn";
 	deleteBtn.className = "material-icons";
@@ -94,9 +94,9 @@ let createLeftMenuBar = function () {
 	menubar.appendChild(nextPageBtn);
 
 	return menubar;
-};
+}
 
-let createRightMenuBar = function () {
+function createRightMenuBar() {
 	let editBtn = document.createElement("i");
 	editBtn.id = "rightEditBtn";
 	editBtn.className = "material-icons";
@@ -130,9 +130,9 @@ let createRightMenuBar = function () {
 	menubar.appendChild(nextPageBtn);
 
 	return menubar;
-};
+}
 
-let createRightList = function () {
+function createRightList() {
 	rightList = document.createElement("ul");
 	rightList.id = "rightList";
 
@@ -160,9 +160,9 @@ let createRightList = function () {
 	rightListSec.appendChild(rightListMenubar);
 
 	return rightListSec;
-};
+}
 
-let createDialogue = function (fill) {
+function createDialogue(fill) {
 	let main = document.getElementById("main");
 
 	let plane = document.createElement("section");
@@ -301,17 +301,17 @@ let createDialogue = function (fill) {
 	else {
 		okBtn.addEventListener("click", addNewMeeting);
 	}
-};
+}
 
-let showFilledDialogue = function () {
+function showFilledDialogue() {
 	createDialogue(true);
-};
+}
 
-let showEmptyDialogue = function () {
+function showEmptyDialogue() {
 	createDialogue(false);
-};
+}
 
-let updateRightList = function (target) {
+function updateRightList(target) {
 	updateCurMeeting(target);
 	updateLists();
 
@@ -323,7 +323,7 @@ let updateRightList = function (target) {
 
 	let MeetingTimeLoc = document.getElementById("MeetingTimeLoc");
 	MeetingTimeLoc.innerHTML = curMeeting.getDate() + ", " + curMeeting.getLocation();
-};
+}
 
 function makeRequest(method, url) {
 	return new Promise(function (resolve, reject) {
@@ -511,14 +511,14 @@ function getArraySize() {
 }
 
 // Pagination on window-resize
-window.onresize = function () {
+window.onresize = function () {	//TODO: Naming
 	while (ListObject.getCurrentPageSize() * leftCurrentPage > currentArraySize - 20) {
 		loadData();
 	}
 	updateLists();
 };
 
-let updateLists = function () {
+function updateLists() {
 	//redraw all lists
 	ListObject.clearLists();
 	ListObject.fillLeftList(leftList, leftCurrentPage, data);
@@ -585,14 +585,14 @@ let updateLists = function () {
 		rightNextPageListener.removeEventListener("click", rightNextPage);
 		rightNextPageListener.id = "rightNextPageBtnDisabled";
 	}
-};
+}
 
-let updateCurMeeting = function (target) {
+function updateCurMeeting(target) {
 	curMeeting = data[parseInt(target)];
 	targetHelper = target;
-};
+}
 
-let leftNextPage = function () {
+function leftNextPage() {
 	leftCurrentPage++;
 	if (leftCurrentPage === 2 && document.getElementById("leftPrevPageBtnDisabled")) {
 		let leftPrevPageListener = document.getElementById("leftPrevPageBtnDisabled");
@@ -608,9 +608,9 @@ let leftNextPage = function () {
 		loadData();
 	}
 	updateLists();
-};
+}
 
-let leftPrevPage = function () {
+function leftPrevPage() {
 	leftCurrentPage--;
 	if (leftCurrentPage === 1 && document.getElementById("leftPrevPageBtn")) {
 		let leftPrevPageListener = document.getElementById("leftPrevPageBtn");
@@ -623,9 +623,9 @@ let leftPrevPage = function () {
 		leftNextPageListener.id = "leftNextPageBtn";
 	}
 	updateLists();
-};
+}
 
-let rightNextPage = function () {
+function rightNextPage() {
 	rightCurrentPage++;
 	if (rightCurrentPage === 2 && document.getElementById("rightPrevPageBtnDisabled")) {
 		let rightPrevPageListener = document.getElementById("rightPrevPageBtnDisabled");
@@ -638,9 +638,9 @@ let rightNextPage = function () {
 		rightNextPageListener.id = "rightNextPageBtnDisabled";
 	}
 	updateLists();
-};
+}
 
-let rightPrevPage = function () {
+function rightPrevPage() {
 	rightCurrentPage--;
 	if (rightCurrentPage === 1 && document.getElementById("rightPrevPageBtn")) {
 		let rightPrevPageListener = document.getElementById("rightPrevPageBtn");
@@ -653,9 +653,9 @@ let rightPrevPage = function () {
 		rightNextPageListener.id = "rightNextPageBtn";
 	}
 	updateLists();
-};
+}
 
-let closeDialogue = function () {
+function closeDialogue() {
 	let main = document.getElementById("main");
 	let deletableItem = document.getElementById("window");
 
@@ -664,10 +664,10 @@ let closeDialogue = function () {
 	deletableItem = document.getElementById("plane");
 
 	main.removeChild(deletableItem);
-};
+}
 
 // Initiates most of the click-handlers
-let initHandlers = function () {
+function initHandlers() {
 	let listListener = document.getElementById("leftList");
 	listListener.addEventListener("click", event => updateRightList(event.target.id));
 
@@ -702,16 +702,16 @@ let initHandlers = function () {
 
 	let printMeetingListener = document.getElementById("rightPrintBtn");
 	printMeetingListener.addEventListener("click", printMeeting);
-};
+}
 
-let createData = function () {
+function createData() {
 	let serverItems = displayingItems;
 	let meeting;
 	for (let i = 0; i < serverItems.length; i++) {
 		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, serverItems[i].coordinates, serverItems[i].objects);
 		data.push(meeting);
 	}
-};
+}
 
 function printMeeting() {
 	deleteAll();

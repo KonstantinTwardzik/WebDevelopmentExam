@@ -13,9 +13,9 @@ let port = process.argv[2];
 const BASE_URI = "http://localhost:${port}";
 server.use(bodyParser.json());
 
-var dateLogger = function (req, res, next) {	//wird immer getriggert, wenn eine getanfrage kommt
-	next();										//damit nicht hiernach abgebrochen wird
-};
+// var dateLogger = function (req, res, next) {	//wird immer getriggert, wenn eine getanfrage kommt
+// 	next();										//damit nicht hiernach abgebrochen wird
+// };
 
 server.use(express.static(__dirname + "/public"));	//nutze alles, was im ordern /public liegt
 
