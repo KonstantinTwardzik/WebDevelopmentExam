@@ -2,6 +2,8 @@
 let Lists = require("./Lists");
 let Maps = require("./Maps");
 let Meeting = require("./Meeting");
+let List;
+let Map;
 let allMeetingSize;
 let leftCurrentPage = 1;
 let rightCurrentPage = 1;
@@ -10,17 +12,16 @@ let rightAllPages;
 let leftList;
 let rightList;
 let curMeeting;
-let List;
 let meetingList = [];
-let map;
 let currentMeetingListSize;
 let meetingListPointer = 0;
 
+// Create Logic & Views
 function initView() {
 	// initiates foundation of page
 	let main = document.getElementById("main");
 	let mapWrapper = document.createElement("section");
-	let mapSec = map.updateMap(curMeeting);
+	let mapSec = Map.updateMap(curMeeting);
 	let leftList = createLeftList();
 	let rightList = createRightList();
 
@@ -32,6 +33,33 @@ function initView() {
 	main.appendChild(mapWrapper);
 	main.appendChild(leftList);
 	main.appendChild(rightList);
+}
+
+function initHandlers() {
+	window.addEventListener("resize", onResize);
+
+	let listListener = document.getElementById("leftList");
+	listListener.addEventListener("click", event => updateCurMeeting(event.target.id));
+
+	let leftNextPageListener = document.getElementById("leftNextPageBtn");
+	leftNextPageListener.addEventListener("click", leftNextPage);
+
+	let newMeetingListener = document.getElementById("leftAddBtn");
+	newMeetingListener.addEventListener("click", showAddDialog);
+
+	let editMeetingListener = document.getElementById("rightEditBtn");
+	editMeetingListener.addEventListener("click", showEditDialog);
+
+	let removeMeetingListener = document.getElementById("leftDeleteBtn");
+	removeMeetingListener.addEventListener("click", deleteMeeting);
+
+	let printMeetingListener = document.getElementById("rightPrintBtn");
+	printMeetingListener.addEventListener("click", printMeeting);
+
+	if (rightCurrentPage < curMeeting.objects.length) {
+		let rightNextPageListener = document.getElementById("rightNextPageBtn");
+		rightNextPageListener.addEventListener("click", rightNextPage);
+	}
 }
 
 function createLeftList() {
@@ -96,6 +124,37 @@ function createLeftMenuBar() {
 	return menubar;
 }
 
+function createRightList() {
+	let rightHeader = document.createElement("section");
+	rightHeader.id = "rightHeader";
+
+	let MeetingTitle = document.createElement("h1");
+	MeetingTitle.id = "MeetingTitle";
+	MeetingTitle.innerHTML = curMeeting.getName();
+
+	let MeetingTimeLoc = document.createElement("p");
+	MeetingTimeLoc.id = "MeetingTimeLoc";
+	MeetingTimeLoc.innerHTML = curMeeting.getDate() + ", " + curMeeting.getLocation();
+
+	let rightListSec = document.createElement("section");
+	rightListSec.className = "listSec";
+	rightListSec.id = "rightListSec";
+
+	rightList = document.createElement("ul");
+	rightList.id = "rightList";
+
+	let rightListMenubar = createRightMenuBar();
+	rightListMenubar.className = "menubar";
+
+	rightHeader.appendChild(MeetingTitle);
+	rightHeader.appendChild(MeetingTimeLoc);
+	rightListSec.appendChild(rightHeader);
+	rightListSec.appendChild(rightList);
+	rightListSec.appendChild(rightListMenubar);
+
+	return rightListSec;
+}
+
 function createRightMenuBar() {
 	let editBtn = document.createElement("i");
 	editBtn.id = "rightEditBtn";
@@ -133,37 +192,22 @@ function createRightMenuBar() {
 	return menubar;
 }
 
-function createRightList() {
-	let rightHeader = document.createElement("section");
-	rightHeader.id = "rightHeader";
-
-	let MeetingTitle = document.createElement("h1");
-	MeetingTitle.id = "MeetingTitle";
-	MeetingTitle.innerHTML = curMeeting.getName();
-
-	let MeetingTimeLoc = document.createElement("p");
-	MeetingTimeLoc.id = "MeetingTimeLoc";
-	MeetingTimeLoc.innerHTML = curMeeting.getDate() + ", " + curMeeting.getLocation();
-
-	let rightListSec = document.createElement("section");
-	rightListSec.className = "listSec";
-	rightListSec.id = "rightListSec";
-
-	rightList = document.createElement("ul");
-	rightList.id = "rightList";
-
-	let rightListMenubar = createRightMenuBar();
-	rightListMenubar.className = "menubar";
-
-	rightHeader.appendChild(MeetingTitle);
-	rightHeader.appendChild(MeetingTimeLoc);
-	rightListSec.appendChild(rightHeader);
-	rightListSec.appendChild(rightList);
-	rightListSec.appendChild(rightListMenubar);
-
-	return rightListSec;
+// Logic
+function updateCurMeeting(pointer) {
+	curMeeting = meetingList[parseInt(pointer)];
+	meetingListPointer = pointer;
+	updateView();
 }
 
+function parseClientMeetings(clientMeetings) {
+	let meeting;
+	for (let i = 0; i < clientMeetings.length; i++) {
+		meeting = new Meeting.Meeting(clientMeetings[i].id, clientMeetings[i].name, clientMeetings[i].date, clientMeetings[i].location, clientMeetings[i].coordinates, clientMeetings[i].objects);
+		meetingList.push(meeting);
+	}
+}
+
+// Add and Edit function
 function createAddAndEditDialog(fill) {
 	let main = document.getElementById("main");
 
@@ -350,26 +394,183 @@ function showAddDialog() {
 	createAddAndEditDialog(false);
 }
 
-function updateCurMeeting(pointer) {
-	curMeeting = meetingList[parseInt(pointer)];
-	meetingListPointer = pointer;
-	updateView();
-}
-
+// Update Views functions
 function updateView() {
-	updateLists();
-	updateMenubar();
+	updateLeftView();
+	updateRightView();
 
 	let mapWrapper = document.getElementById("mapWrapper");
-	mapWrapper.replaceChild(map.updateMap(curMeeting), document.getElementById("map"));
+	mapWrapper.replaceChild(Map.updateMap(curMeeting), document.getElementById("map"));
+}
 
+function updateLeftView() {
+	updateLeftList();
+	updateLeftMenubar();
+}
+
+function updateRightView() {
 	let MeetingTitle = document.getElementById("MeetingTitle");
 	MeetingTitle.innerHTML = curMeeting.getName();
 
 	let MeetingTimeLoc = document.getElementById("MeetingTimeLoc");
 	MeetingTimeLoc.innerHTML = curMeeting.getDate() + ", " + curMeeting.getLocation();
+
+	updateRightList();
+	updateRightMenubar();
 }
 
+function updateLists() {
+	updateLeftList();
+	updateRightList();
+}
+
+function updateLeftList() {
+	List.clearLeftList();
+	List.fillLeftList(leftList, leftCurrentPage, meetingList);
+}
+
+function updateRightList() {
+	List.clearRightList();
+	List.fillRightList(rightList, rightCurrentPage, curMeeting);
+}
+
+function updateMenubars() {
+	updateLeftMenubar();
+	updateRightMenubar();
+}
+
+function updateLeftMenubar() {
+	//calculate how many pages there are
+	let currentPageSize = List.getCurrentPageSize();
+	let minimum = 1;
+	leftAllPages = Math.max(minimum, Math.ceil(allMeetingSize / currentPageSize));
+
+	//redraw which page is selected
+	let leftPageIndicator = document.getElementById("leftPageIndicator");
+	leftPageIndicator.innerHTML = leftCurrentPage + " of " + leftAllPages;
+
+	//if the leftAllPage = 1 disable nextPageBtn - same for rightList
+	if (leftAllPages === 1 && document.getElementById("leftNextPageBtn")) {
+		let leftNextPageListener = document.getElementById("leftNextPageBtn");
+		leftNextPageListener.removeEventListener("click", leftNextPage);
+		leftNextPageListener.id = "leftNextPageBtnDisabled";
+	}
+
+	//if the leftAllPages size is smaller then the leftCurrentPage, jump to previousPage - same for rightList
+	if (leftAllPages < leftCurrentPage) {
+		leftPrevPage();
+	}
+
+	//if the leftCurrentPage gets smaller then the leftAllPage, enable nextBtn - same for rightList
+	if (leftCurrentPage !== leftAllPages && document.getElementById("leftNextPageBtnDisabled")) {
+		let leftNextPageListener = document.getElementById("leftNextPageBtnDisabled");
+		leftNextPageListener.addEventListener("click", leftNextPage);
+		leftNextPageListener.id = "leftNextPageBtn";
+	}
+
+	//if the leftAllPage is as big as the leftCurrentPage disable nextBtn - same for rightList
+	if (leftAllPages === leftCurrentPage && document.getElementById("leftNextPageBtn")) {
+		let leftNextPageListener = document.getElementById("leftNextPageBtn");
+		leftNextPageListener.removeEventListener("click", leftNextPage);
+		leftNextPageListener.id = "leftNextPageBtnDisabled";
+	}
+
+	if (leftCurrentPage === 2 && document.getElementById("leftPrevPageBtnDisabled")) {
+		let leftPrevPageListener = document.getElementById("leftPrevPageBtnDisabled");
+		leftPrevPageListener.addEventListener("click", leftPrevPage);
+		leftPrevPageListener.id = "leftPrevPageBtn";
+	}
+
+	if (leftCurrentPage === leftAllPages && document.getElementById("leftNextPageBtn")) {
+		let leftNextPageListener = document.getElementById("leftNextPageBtn");
+		leftNextPageListener.removeEventListener("click", leftNextPage);
+		leftNextPageListener.id = "leftNextPageBtnDisabled";
+	}
+
+	if (List.getCurrentPageSize() * leftCurrentPage > currentMeetingListSize - 20) {
+		increaseMeetingList();
+	}
+
+	if (leftCurrentPage === 1 && document.getElementById("leftPrevPageBtn")) {
+		let leftPrevPageListener = document.getElementById("leftPrevPageBtn");
+		leftPrevPageListener.removeEventListener("click", leftPrevPage);
+		leftPrevPageListener.id = "leftPrevPageBtnDisabled";
+	}
+
+	if (leftCurrentPage === (leftAllPages - 1) && document.getElementById("leftNextPageBtnDisabled")) {
+		let leftNextPageListener = document.getElementById("leftNextPageBtnDisabled");
+		leftNextPageListener.addEventListener("click", leftNextPage);
+		leftNextPageListener.id = "leftNextPageBtn";
+	}
+	//mark selected item (if it is visible)
+	if (document.getElementById(meetingListPointer)) {
+		let active = document.getElementById("" + meetingListPointer);
+		active.className = "active";
+	}
+}
+
+function updateRightMenubar() {
+	//calculate how many pages there are
+	let currentPageSize = List.getCurrentPageSize();
+	let minimum = 1;
+	rightAllPages = Math.max(minimum, Math.ceil(curMeeting.getObjects().length / currentPageSize));
+
+	//redraw which page is selected
+	let rightPageIndicator = document.getElementById("rightPageIndicator");
+	rightPageIndicator.innerHTML = rightCurrentPage + " of " + rightAllPages;
+
+	//if the leftAllPage = 1 disable nextPageBtn - same for rightList
+	if (rightAllPages === 1 && document.getElementById("rightNextPageBtn")) {
+		let rightNextPageListener = document.getElementById("rightNextPageBtn");
+		rightNextPageListener.removeEventListener("click", rightNextPage);
+		rightNextPageListener.id = "rightNextPageBtnDisabled";
+	}
+
+	//if the leftAllPages size is smaller then the leftCurrentPage, jump to previousPage - same for rightList
+	if (rightAllPages < rightCurrentPage) {
+		rightPrevPage();
+	}
+
+	//if the leftCurrentPage gets smaller then the leftAllPage, enable nextBtn - same for rightList
+	if (rightCurrentPage !== rightAllPages && document.getElementById("rightNextPageBtnDisabled")) {
+		let rightNextPageListener = document.getElementById("rightNextPageBtnDisabled");
+		rightNextPageListener.addEventListener("click", rightNextPage);
+		rightNextPageListener.id = "rightNextPageBtn";
+	}
+
+	//if the leftAllPage is as big as the leftCurrentPage disable nextBtn - same for rightList
+	if (rightAllPages === rightCurrentPage && document.getElementById("rightNextPageBtn")) {
+		let rightNextPageListener = document.getElementById("rightNextPageBtn");
+		rightNextPageListener.removeEventListener("click", rightNextPage);
+		rightNextPageListener.id = "rightNextPageBtnDisabled";
+	}
+
+	if (rightCurrentPage === 2 && document.getElementById("rightPrevPageBtnDisabled")) {
+		let rightPrevPageListener = document.getElementById("rightPrevPageBtnDisabled");
+		rightPrevPageListener.addEventListener("click", rightPrevPage);
+		rightPrevPageListener.id = "rightPrevPageBtn";
+	}
+
+	if (rightCurrentPage === rightAllPages && document.getElementById("rightNextPageBtn")) {
+		let rightNextPageListener = document.getElementById("rightNextPageBtn");
+		rightNextPageListener.removeEventListener("click", rightNextPage);
+		rightNextPageListener.id = "rightNextPageBtnDisabled";
+	}
+
+	if (rightCurrentPage === 1 && document.getElementById("rightPrevPageBtn")) {
+		let rightPrevPageListener = document.getElementById("rightPrevPageBtn");
+		rightPrevPageListener.removeEventListener("click", rightPrevPage);
+		rightPrevPageListener.id = "rightPrevPageBtnDisabled";
+	}
+
+	if (rightCurrentPage === (rightAllPages - 1) && document.getElementById("rightNextPageBtnDisabled")) {
+		let rightNextPageListener = document.getElementById("rightNextPageBtnDisabled");
+		rightNextPageListener.addEventListener("click", rightNextPage);
+		rightNextPageListener.id = "rightNextPageBtn";
+	}
+}
+
+// Client-Server functions
 function makeRequest(method, url) {
 	return new Promise(function (resolve, reject) {
 		let request = new XMLHttpRequest();
@@ -395,7 +596,7 @@ function makeRequest(method, url) {
 	});
 }
 
-function init() {
+function initMeetings() {
 	let start = 0;
 	let end = 99;
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
@@ -405,7 +606,7 @@ function init() {
 			curMeeting = meetingList[0];
 			initView();
 			updateLists();
-			updateMenubar();
+			updateMenubars();
 			initHandlers();
 			currentMeetingListSize = meetingList.length;
 		})
@@ -472,7 +673,7 @@ function editExistingMeeting() {
 				if (parseFloat(editedMeeting.coordinates[0]) !== parseFloat(curMeeting.getCoordinates()[0]) || parseFloat(editedMeeting.coordinates[1]) !== parseFloat(curMeeting.getCoordinates()[1])) {
 					curMeeting = editedMeeting;
 					let mapWrapper = document.getElementById("mapWrapper");
-					mapWrapper.replaceChild(map.updateMap(curMeeting), document.getElementById("map"));
+					mapWrapper.replaceChild(Map.updateMap(curMeeting), document.getElementById("map"));
 				}
 				else {
 					curMeeting = editedMeeting;
@@ -486,7 +687,7 @@ function editExistingMeeting() {
 	}
 }
 
-function removeElement() {
+function deleteMeeting() {
 	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId() + "&end=" + (currentMeetingListSize))	//get the actual Array Size for paginating the left lis
 		.then((value) => {
 			meetingList.length = 0;
@@ -544,196 +745,37 @@ function getAllMeetingsSize() {
 		});
 }
 
-function updateLists() {
-	//redraw all lists
-	List.clearLists();
-	List.fillLeftList(leftList, leftCurrentPage, meetingList);
-	List.fillRightList(rightList, rightCurrentPage, curMeeting);
-}
-
-function updateMenubar() {
-	//calculate how many pages there are
-	let currentPageSize = List.getCurrentPageSize();
-	let minimum = 1;
-	leftAllPages = Math.max(minimum, Math.ceil(allMeetingSize / currentPageSize));
-	rightAllPages = Math.max(minimum, Math.ceil(curMeeting.getObjects().length / currentPageSize));
-
-	//redraw which page is selected
-	let leftPageIndicator = document.getElementById("leftPageIndicator");
-	leftPageIndicator.innerHTML = leftCurrentPage + " of " + leftAllPages;
-	let rightPageIndicator = document.getElementById("rightPageIndicator");
-	rightPageIndicator.innerHTML = rightCurrentPage + " of " + rightAllPages;
-
-	//mark selected item (if it is visible)
-	if (document.getElementById(meetingListPointer)) {
-		let active = document.getElementById("" + meetingListPointer);
-		active.className = "active";
-	}
-
-	//if the leftAllPage = 1 disable nextPageBtn - same for rightList
-	if (leftAllPages === 1 && document.getElementById("leftNextPageBtn")) {
-		let leftNextPageListener = document.getElementById("leftNextPageBtn");
-		leftNextPageListener.removeEventListener("click", leftNextPage);
-		leftNextPageListener.id = "leftNextPageBtnDisabled";
-	}
-	if (rightAllPages === 1 && document.getElementById("rightNextPageBtn")) {
-		let rightNextPageListener = document.getElementById("rightNextPageBtn");
-		rightNextPageListener.removeEventListener("click", rightNextPage);
-		rightNextPageListener.id = "rightNextPageBtnDisabled";
-	}
-
-	//if the leftAllPages size is smaller then the leftCurrentPage, jump to previousPage - same for rightList
-	if (leftAllPages < leftCurrentPage) {
-		leftPrevPage();
-	}
-	if (rightAllPages < rightCurrentPage) {
-		rightPrevPage();
-	}
-
-	//if the leftCurrentPage gets smaller then the leftAllPage, enable nextBtn - same for rightList
-	if (leftCurrentPage !== leftAllPages && document.getElementById("leftNextPageBtnDisabled")) {
-		let leftNextPageListener = document.getElementById("leftNextPageBtnDisabled");
-		leftNextPageListener.addEventListener("click", leftNextPage);
-		leftNextPageListener.id = "leftNextPageBtn";
-	}
-	if (rightCurrentPage !== rightAllPages && document.getElementById("rightNextPageBtnDisabled")) {
-		let rightNextPageListener = document.getElementById("rightNextPageBtnDisabled");
-		rightNextPageListener.addEventListener("click", rightNextPage);
-		rightNextPageListener.id = "rightNextPageBtn";
-	}
-
-	//if the leftAllPage is as big as the leftCurrentPage disable nextBtn - same for rightList
-	if (leftAllPages === leftCurrentPage && document.getElementById("leftNextPageBtn")) {
-		let leftNextPageListener = document.getElementById("leftNextPageBtn");
-		leftNextPageListener.removeEventListener("click", leftNextPage);
-		leftNextPageListener.id = "leftNextPageBtnDisabled";
-	}
-	if (rightAllPages === rightCurrentPage && document.getElementById("rightNextPageBtn")) {
-		let rightNextPageListener = document.getElementById("rightNextPageBtn");
-		rightNextPageListener.removeEventListener("click", rightNextPage);
-		rightNextPageListener.id = "rightNextPageBtnDisabled";
-	}
-	if (leftCurrentPage === 2 && document.getElementById("leftPrevPageBtnDisabled")) {
-		let leftPrevPageListener = document.getElementById("leftPrevPageBtnDisabled");
-		leftPrevPageListener.addEventListener("click", leftPrevPage);
-		leftPrevPageListener.id = "leftPrevPageBtn";
-	}
-	if (leftCurrentPage === leftAllPages && document.getElementById("leftNextPageBtn")) {
-		let leftNextPageListener = document.getElementById("leftNextPageBtn");
-		leftNextPageListener.removeEventListener("click", leftNextPage);
-		leftNextPageListener.id = "leftNextPageBtnDisabled";
-	}
-	if (List.getCurrentPageSize() * leftCurrentPage > currentMeetingListSize - 20) {
-		increaseMeetingList();
-	}
-	if (leftCurrentPage === 1 && document.getElementById("leftPrevPageBtn")) {
-		let leftPrevPageListener = document.getElementById("leftPrevPageBtn");
-		leftPrevPageListener.removeEventListener("click", leftPrevPage);
-		leftPrevPageListener.id = "leftPrevPageBtnDisabled";
-	}
-	if (leftCurrentPage === (leftAllPages - 1) && document.getElementById("leftNextPageBtnDisabled")) {
-		let leftNextPageListener = document.getElementById("leftNextPageBtnDisabled");
-		leftNextPageListener.addEventListener("click", leftNextPage);
-		leftNextPageListener.id = "leftNextPageBtn";
-	}
-	if (rightCurrentPage === 2 && document.getElementById("rightPrevPageBtnDisabled")) {
-		let rightPrevPageListener = document.getElementById("rightPrevPageBtnDisabled");
-		rightPrevPageListener.addEventListener("click", rightPrevPage);
-		rightPrevPageListener.id = "rightPrevPageBtn";
-	}
-	if (rightCurrentPage === rightAllPages && document.getElementById("rightNextPageBtn")) {
-		let rightNextPageListener = document.getElementById("rightNextPageBtn");
-		rightNextPageListener.removeEventListener("click", rightNextPage);
-		rightNextPageListener.id = "rightNextPageBtnDisabled";
-	}
-	if (rightCurrentPage === 1 && document.getElementById("rightPrevPageBtn")) {
-		let rightPrevPageListener = document.getElementById("rightPrevPageBtn");
-		rightPrevPageListener.removeEventListener("click", rightPrevPage);
-		rightPrevPageListener.id = "rightPrevPageBtnDisabled";
-	}
-	if (rightCurrentPage === (rightAllPages - 1) && document.getElementById("rightNextPageBtnDisabled")) {
-		let rightNextPageListener = document.getElementById("rightNextPageBtnDisabled");
-		rightNextPageListener.addEventListener("click", rightNextPage);
-		rightNextPageListener.id = "rightNextPageBtn";
-	}
-}
-
+// Paginating function
 function leftNextPage() {
 	leftCurrentPage++;
-	updateView();
+	updateLeftView();
 }
 
 function leftPrevPage() {
 	leftCurrentPage--;
-	updateView();
+	updateLeftView();
 }
 
 function rightNextPage() {
 	rightCurrentPage++;
-	updateView();
+	updateRightView();
 }
 
 function rightPrevPage() {
 	rightCurrentPage--;
-	updateView();
+	updateRightView();
 }
 
+// Resizes function
 function onResize() {
 	//load data if necessary
 	while (List.getCurrentPageSize() * leftCurrentPage > currentMeetingListSize - 20) {
 		increaseMeetingList();
 	}
-	updateMenubar();
+	updateMenubars();
 }
 
-// Initiates most of the click-handlers
-function initHandlers() {
-	window.addEventListener("resize", onResize);
-
-	let listListener = document.getElementById("leftList");
-	listListener.addEventListener("click", event => updateCurMeeting(event.target.id));
-
-	if (leftCurrentPage >= 2 && document.getElementById("leftPrevPageBtnDisabled")) {
-		let leftPrevPageListener = document.getElementById("leftPrevPageBtnDisabled");
-		leftPrevPageListener.addEventListener("click", leftPrevPage);
-		leftPrevPageListener.id = "leftPrevPageBtn";
-	}
-
-	if (rightCurrentPage >= 2 && document.getElementById("rightPrevPageBtnDisabled")) {
-		let rightPrevPageListener = document.getElementById("rightPrevPageBtnDisabled");
-		rightPrevPageListener.addEventListener("click", rightPrevPage);
-		rightPrevPageListener.id = "rightPrevPageBtn";
-	}
-
-	let leftNextPageListener = document.getElementById("leftNextPageBtn");
-	leftNextPageListener.addEventListener("click", leftNextPage);
-
-	if (rightCurrentPage < curMeeting.objects.length) {
-		let rightNextPageListener = document.getElementById("rightNextPageBtn");
-		rightNextPageListener.addEventListener("click", rightNextPage);
-	}
-
-	let newMeetingListener = document.getElementById("leftAddBtn");
-	newMeetingListener.addEventListener("click", showAddDialog);
-
-	let editMeetingListener = document.getElementById("rightEditBtn");
-	editMeetingListener.addEventListener("click", showEditDialog);
-
-	let removeMeetingListener = document.getElementById("leftDeleteBtn");
-	removeMeetingListener.addEventListener("click", removeElement);
-
-	let printMeetingListener = document.getElementById("rightPrintBtn");
-	printMeetingListener.addEventListener("click", printMeeting);
-}
-
-function parseClientMeetings(clientMeetings) {
-	let meeting;
-	for (let i = 0; i < clientMeetings.length; i++) {
-		meeting = new Meeting.Meeting(clientMeetings[i].id, clientMeetings[i].name, clientMeetings[i].date, clientMeetings[i].location, clientMeetings[i].coordinates, clientMeetings[i].objects);
-		meetingList.push(meeting);
-	}
-}
-
+// Printing function
 function printMeeting() {
 	deleteAll();
 
@@ -780,17 +822,18 @@ function deleteAll() {
 }
 
 function addAll() {
-	map = new Maps.Maps();
+	Map = new Maps.Maps();
 	initView();
 	initHandlers();
+	updateView();
 }
 
 // IIFE as start
 (function () {
 	getAllMeetingsSize();
-	map = new Maps.Maps();
+	Map = new Maps.Maps();
 	List = new Lists.Lists();
-	init();
+	initMeetings();
 })();
 
 //Code beautifien

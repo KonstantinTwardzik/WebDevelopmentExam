@@ -22,7 +22,7 @@ class Lists {
 		this.currentPageSize = Math.ceil(listSize - 2);
 	}
 
-	clearLists() {
+	clearLeftList() {
 		let list = document.getElementById("leftList");
 		let length = list.childElementCount;
 
@@ -33,14 +33,18 @@ class Lists {
 			}
 		}
 
+		this.calculateListSize();
+	}
+
+	clearRightList() {
 		let detailObjectList = document.getElementById("rightList");
 		let detailLength = detailObjectList.childElementCount;
+
 		for (let index = 0; index < detailLength; ++index) {
 			let detailListElement = document.getElementById("rightListElement" + (index + this.rightRealOffset));
 			detailObjectList.removeChild(detailListElement);
 		}
 
-		// calculates new listsize
 		this.calculateListSize();
 	}
 
