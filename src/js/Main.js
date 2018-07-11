@@ -797,13 +797,11 @@ function checkRegex(date, title, location, latitude, longitude) {
 //Code beautifien
 //Namensgebung
 //Firefox testen
-//Einheitliche funktionen
 //+1 und -1 überall ausbessern
 //packages.json und files ordnen
 //Restkonformität
 //google besser einbinden
 //letztes meeting kann nicht gelöscht werden - dabei geht auch alles andere kaputt
-//besserer datensatz
 //less aufräumen
 //datum richtig ausgeben
 //überfliessen der texte verhindern

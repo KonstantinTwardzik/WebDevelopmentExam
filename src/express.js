@@ -100,13 +100,12 @@ server.get("/editMeeting", (request, response) => {
 });
 
 function makePersistent() {
-	fs.writeFile("./meetings.json", JSON.stringify(db),
-	//TODO:
-	// eslint-disable-next-line
-		function (err) {
-			//eslint-disable-next-line
-			if (err) return console.error(err);
-		});
+	fs.writeFile("./meetings.json", JSON.stringify(db), (err) => {
+		if (err) {
+			console.log("The file has been saved!");
+			throw err;
+		}
+	});
 }
 
 server.get("/addNewMeeting", (request, response) => {
