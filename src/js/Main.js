@@ -1,24 +1,25 @@
 // IIFE as start of the js-part thats needed in the webapplication
-var Lists = require("./Lists");
-var Maps = require("./Maps");
-var Meeting = require("./Meeting");
-var dbSize;
-var leftCurrentPage;
-var rightCurrentPage;
-var leftAllPages;
-var rightAllPages;
-var leftList;
-var rightList;
-var curMeeting;
-var ListObject;
-var data = [];
-var map;
+let Lists = require("./Lists");
+let Maps = require("./Maps");
+let Meeting = require("./Meeting");
+let dbSize;
+let leftCurrentPage = 1;
+let rightCurrentPage = 1;
+let leftAllPages;
+let rightAllPages;
+let leftList;
+let rightList;
+let curMeeting;
+let List;
+let data = [];
+let map;
 let displayingItems;
 let arraySize;
 let currentArraySize;
 let targetHelper = 0;
 
 function initView() {
+	// initiates foundation of page
 	let main = document.getElementById("main");
 	let mapWrapper = document.createElement("section");
 	let mapSec = map.updateMap(curMeeting);
@@ -28,6 +29,7 @@ function initView() {
 	// needed for correct gmaps-integration
 	mapWrapper.id = "mapWrapper";
 
+	// builds foundation of page
 	mapWrapper.appendChild(mapSec);
 	main.appendChild(mapWrapper);
 	main.appendChild(leftList);
@@ -41,7 +43,7 @@ function createLeftList() {
 	let logo = document.createElement("img");
 	logo.id = "logo";
 	logo.src = "comet_logo.svg";
-	logo.alt = "logo_comet";
+	logo.alt = "comet_logo";
 
 	leftList = document.createElement("ul");
 	leftList.id = "leftList";
@@ -165,8 +167,8 @@ function createRightList() {
 function createDialogue(fill) {
 	let main = document.getElementById("main");
 
-	let plane = document.createElement("section");
-	plane.id = "plane";
+	let coverPlane = document.createElement("section");
+	coverPlane.id = "coverPlane";
 
 	let window = document.createElement("section");
 	window.id = "window";
@@ -247,7 +249,7 @@ function createDialogue(fill) {
 
 	let list = document.createElement("ol");
 	list.id = "objectList";
-	ListObject.fillPopupList(list);
+	List.fillPopupList(list);
 
 	listDiv.appendChild(list);
 	window.appendChild(listDiv);
@@ -278,10 +280,10 @@ function createDialogue(fill) {
 	window.appendChild(header);
 	window.appendChild(toolbar);
 
-	main.appendChild(plane);
+	main.appendChild(coverPlane);
 	main.appendChild(window);
 
-	plane.addEventListener("click", closeDialogue);
+	coverPlane.addEventListener("click", closeDialogue);
 	cancelBtn.addEventListener("click", closeDialogue);
 
 	if (fill) {
@@ -301,6 +303,37 @@ function createDialogue(fill) {
 	else {
 		okBtn.addEventListener("click", addNewMeeting);
 	}
+}
+
+function closeDialogue() {
+	let main = document.getElementById("main");
+	let deletableItem = document.getElementById("window");
+
+	main.removeChild(deletableItem);
+
+	deletableItem = document.getElementById("coverPlane");
+
+	main.removeChild(deletableItem);
+}
+
+function checkRegex(date, title, location, latitude, longitude) {
+	let indicator = true;
+	let dateReg = /^\d{2}([./-])\d{2}\1\d{4}$/;
+	let textReg = /(^[a-z ä ö ü ß']+$)/i;
+	let floatReg = /^[+-]?\d+(\.\d+)?$/;
+	if (!date.value.match(dateReg)) {
+		alert("Field date must match the pattern \n 16.12.1993 \n you typed\n " + date.value);
+		indicator = false;
+	}
+	if (!title.value.match(textReg) || !location.value.match(textReg)) {
+		alert("Field with text must not contain special characters like Ý, etc. and no numbers!");
+		indicator = false;
+	}
+	if (!latitude.value.match(floatReg) || !longitude.value.match(floatReg)) {
+		alert("Field Latitude and Logitude must match the pattern 63.251524\n!");
+		indicator = false;
+	}
+	return indicator;
 }
 
 function showFilledDialogue() {
@@ -510,22 +543,19 @@ function getArraySize() {
 	return arraySize;
 }
 
-// Pagination on window-resize
-window.onresize = function () {	//TODO: Naming
-	while (ListObject.getCurrentPageSize() * leftCurrentPage > currentArraySize - 20) {
+function updateLists() {
+	//load data if necessary
+	while (List.getCurrentPageSize() * leftCurrentPage > currentArraySize - 20) {
 		loadData();
 	}
-	updateLists();
-};
 
-function updateLists() {
 	//redraw all lists
-	ListObject.clearLists();
-	ListObject.fillLeftList(leftList, leftCurrentPage, data);
-	ListObject.fillRightList(rightList, rightCurrentPage, curMeeting);
+	List.clearLists();
+	List.fillLeftList(leftList, leftCurrentPage, data);
+	List.fillRightList(rightList, rightCurrentPage, curMeeting);
 
 	//calculate how many pages there are
-	let currentPageSize = ListObject.getCurrentPageSize();
+	let currentPageSize = List.getCurrentPageSize();
 	let minimum = 1;
 	leftAllPages = Math.max(minimum, Math.ceil(dbSize / currentPageSize));
 	rightAllPages = Math.max(minimum, Math.ceil(curMeeting.getObjects().length / currentPageSize));
@@ -604,7 +634,7 @@ function leftNextPage() {
 		leftNextPageListener.removeEventListener("click", leftNextPage);
 		leftNextPageListener.id = "leftNextPageBtnDisabled";
 	}
-	if (ListObject.getCurrentPageSize() * leftCurrentPage > currentArraySize - 20) {
+	if (List.getCurrentPageSize() * leftCurrentPage > currentArraySize - 20) {
 		loadData();
 	}
 	updateLists();
@@ -655,19 +685,10 @@ function rightPrevPage() {
 	updateLists();
 }
 
-function closeDialogue() {
-	let main = document.getElementById("main");
-	let deletableItem = document.getElementById("window");
-
-	main.removeChild(deletableItem);
-
-	deletableItem = document.getElementById("plane");
-
-	main.removeChild(deletableItem);
-}
-
 // Initiates most of the click-handlers
 function initHandlers() {
+	window.addEventListener("resize", updateLists);
+
 	let listListener = document.getElementById("leftList");
 	listListener.addEventListener("click", event => updateRightList(event.target.id));
 
@@ -764,33 +785,11 @@ function addAll() {
 	initHandlers();
 }
 
-function checkRegex(date, title, location, latitude, longitude) {
-	let indicator = true;
-	var dateReg = /^\d{2}([./-])\d{2}\1\d{4}$/;
-	var textReg = /(^[a-z ä ö ü ß']+$)/i;
-	var floatReg = /^[+-]?\d+(\.\d+)?$/;
-	if (!date.value.match(dateReg)) {
-		alert("Field date must match the pattern \n 16.12.1993 \n you typed\n " + date.value);
-		indicator = false;
-	}
-	if (!title.value.match(textReg) || !location.value.match(textReg)) {
-		alert("Field with text must not contain special characters like Ý, etc. and no numbers!");
-		indicator = false;
-	}
-	if (!latitude.value.match(floatReg) || !longitude.value.match(floatReg)) {
-		alert("Field Latitude and Logitude must match the pattern 63.251524\n!");
-		indicator = false;
-	}
-	return indicator;
-}
-
 // IIFE as start
 (function () {
-	leftCurrentPage = 1;
-	rightCurrentPage = 1;
 	getArraySize();
 	map = new Maps.Maps();
-	ListObject = new Lists.Lists();
+	List = new Lists.Lists();
 	initiateData();
 })();
 
@@ -806,3 +805,4 @@ function checkRegex(date, title, location, latitude, longitude) {
 //datum richtig ausgeben
 //überfliessen der texte verhindern
 //falls keine koordinaten -> error
+
