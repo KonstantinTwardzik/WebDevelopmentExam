@@ -5,28 +5,25 @@ var db = require("./meetings.json");
 var bodyParser = require("body-parser");
 const fs = require("fs");
 
-let port = process.argv[2];
 // argv[0] = node
 // argv[1] = express.js
-// argv[0] = 1. argument... //in diesem fall der Port, usw
+// argv[2] = 1. argument... //in diesem fall der Port, usw
+let port = process.argv[2];
 
 const BASE_URI = "http://localhost:${port}";
 server.use(bodyParser.json());
 
-// var dateLogger = function (req, res, next) {	//wird immer getriggert, wenn eine getanfrage kommt
-// 	next();										//damit nicht hiernach abgebrochen wird
-// };
-
 server.use(express.static(__dirname + "/public"));	//nutze alles, was im ordern /public liegt
 
+//if port is set in call, then listen on this port, else listen per default on port 8080
 if (port) {
-	server.listen(port, () => console.log("listening on port " + port));	//falls ein port als argument mit angegeben wurde, gib dies aus
+	server.listen(port, () => console.log("listening on port " + port));
 }
 else {
-	server.listen(8080, () => console.log("listening on port 8080"));		//anderenfalls lausche auf port 8080
+	server.listen(8080, () => console.log("listening on port 8080"));
 }
 
-//URLs definieren:
+//define URLs that are callable:
 server.get("", (req, res) => {
 	res.send({
 		__links: {
@@ -37,7 +34,7 @@ server.get("", (req, res) => {
 	res.json({
 		__links: {
 			self: { href: "${BASE_URI}" },
-			returnRange: { href: "${BASE_URI}/returnRange" },			//definiert die URL, die angesprochen werden kann "localhost:8080/returnRange"
+			returnRange: { href: "${BASE_URI}/returnRange" },
 			addNewMeeting: { href: "${BASE_URI}/addNewMeeting" },
 			addNewObjectToMeeting: { href: "${BASE_URI}/addNewObjectToMeeting" },
 			removeMeeting: { href: "${BASE_URI}/removeMeeting" },
@@ -45,47 +42,61 @@ server.get("", (req, res) => {
 	});
 });
 
+//delete a object from database
 server.delete("/deleteMeeting", (request, response) => {
 	let id = parseInt(request.query.id);
 	let start = 0;
 	let end = parseInt(request.query.end);
-	if (end > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
-		end = Object.keys(db.meetings).length - 1;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
+	//check if end is greater than the actual dbSize.
+	if (end > Object.keys(db.meetings).length - 1) {
+		//sets equal for getting rid of memory flood by http://localhost:8080/returnRange?start=0&end=999999999
+		end = Object.keys(db.meetings).length - 1;
 	}
-	if (start > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
-		start = Object.keys(db.meetings).length - 1;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
+	//same here for start variable
+	if (start > Object.keys(db.meetings).length - 1) {
+		start = Object.keys(db.meetings).length - 1;
 	}
+	//checks if there is actuallly an object to delete. If not, send 404
 	if (start === end) {
 		response.sendStatus(404);
 		return;
 	}
-
+	//iterate through whole db
 	for (let i = 0; i < db.meetings.length; i++) {
+		//find that one meeting with the id to look for
 		if (parseInt(db.meetings[i].id) === id) {
+			//splice (delete) the meeting in index i
 			db.meetings.splice(i, 1);
 			makePersistent();
-			var responseArray = [];						//neues leeres Array erstellen, das letztendlich an den client zurückgegeben wird
-			for (let index = start; index < end; index++) {	//For loop läuft von start bis end
-				responseArray.push(db.meetings[index]);			//füllt das responseArray mit den entsprechenden meetings.json's
+			//create empty array for returning to client
+			var responseArray = [];
+			//fill that array with alle meetings from start to end
+			for (let index = start; index < end; index++) {
+				responseArray.push(db.meetings[index]);
 			}
+			//sends the new created array as string to the server
 			response.json(responseArray);
+			//and returns
 			return;
 		}
 	}
+	//in case the return statement is not reached, send a 404
 	response.sendStatus(404);
 });
 
 server.get("/editMeeting", (request, response) => {
-	//Attributes for the object:
+	//getting attributes for the new created object
 	let id = parseInt(request.query.id);
-	let name = request.query.name;	//name of the meeting
-	let date = request.query.date;	//YYYY-MM-DD
+	let name = request.query.name;
+	let date = request.query.date;
 	let coordinates = [];
+	//must be split into two separate values for longitude and langitude, separated by a comma
 	coordinates[0] = parseFloat(request.query.coordinates.split(",")[0]);
 	coordinates[1] = parseFloat(request.query.coordinates.split(",")[1]);
 	let location = request.query.location;
+	//same here as for coordinates
 	let objects = request.query.objects.split(",");
-
+	//creates objectToAdd
 	let objectToAdd = {
 		id: id,
 		name: name,
@@ -94,16 +105,19 @@ server.get("/editMeeting", (request, response) => {
 		coordinates: coordinates,
 		objects: objects
 	};
+	//adds object on the right index
 	for (let i = 0; i < db.meetings.length; i++) {
 		if (parseInt(db.meetings[i].id) === id) {
 			db.meetings[i] = objectToAdd;
 		}
 	}
 	makePersistent();
+	//sends the addedObject to the client
 	response.json(objectToAdd);
 });
 
 function makePersistent() {
+	//writes into ./meetings.json the JSON.stringified value of db to make the db persistent
 	fs.writeFile("./meetings.json", JSON.stringify(db), (err) => {
 		if (err) {
 			console.log("The file has been saved!");
@@ -113,10 +127,11 @@ function makePersistent() {
 }
 
 server.get("/addNewMeeting", (request, response) => {
-	//Attributes for the object:
+	//pretty much the same as if is in editMeeting
+	//always add a new meeting to the end of the JSON data
 	let id = parseInt(db.meetings[db.meetings.length - 1].id + 1);
-	let name = request.query.name;	//name of the meeting
-	let date = request.query.date;	//YYYY-MM-DD
+	let name = request.query.name;
+	let date = request.query.date;
 	let coordinates = [];
 	coordinates[0] = parseFloat(request.query.coordinates.split(",")[0]);
 	coordinates[1] = parseFloat(request.query.coordinates.split(",")[1]);
@@ -133,36 +148,40 @@ server.get("/addNewMeeting", (request, response) => {
 	};
 	db.meetings[db.meetings.length] = objectToAdd;	//Y U WORK!?
 	makePersistent();
-	// response.json(db.meetings);
+	//sends the new size of the JSON Data back to the server for furter calculations
 	response.send("" + (db.meetings.length));
 });
 
 server.get("/returnRange", (request, response) => {
-	let start = parseInt(request.query.start);			//nimmt sich den wert der id "start" in der url
-	let end = parseInt(request.query.end);				//nimmt sich den wert der id "end" in der url
-	if (end > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
-		end = Object.keys(db.meetings).length - 1;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
+	let start = parseInt(request.query.start);
+	let end = parseInt(request.query.end);
+	//memory flood coverage
+	if (end > Object.keys(db.meetings).length - 1) {
+		end = Object.keys(db.meetings).length - 1;
 	}
-	if (start > Object.keys(db.meetings).length - 1) {	//checkt, ob der end-wert die tatsächliche Größe des Arrays nicht pbersteigt
-		return;		//wenn doch,: gleichsetzen --> kein memory flood durch http://localhost:8080/returnRange?start=0&end=999999999
+	//if start value is already greater than the actual JSON data size, return and do nothing
+	if (start > Object.keys(db.meetings).length - 1) {
+		return;
 	}
-	var responseArray = [];						//neues leeres Array erstellen, das letztendlich an den client zurückgegeben wird
-	for (let index = start; index <= end; index++) {	//For loop läuft von start bis end
-		responseArray.push(db.meetings[index]);			//füllt das responseArray mit den entsprechenden meetings.json's
+	//pretty much the same as it is in edit
+	var responseArray = [];
+	for (let i = start; i <= end; i++) {
+		responseArray.push(db.meetings[i]);
 	}
-	// response.send(responseString);				//Als response wird der responseString gewählt
-	// Persitenz
-	fs.writeFile("./meetings.json", JSON.stringify(db),
-		//eslint-disable-next-line
-		function (err) {
-			//eslint-disable-next-line
-			if (err) return console.error(err);
-		});
-	response.json(responseArray);				//Alternativ das responseArray
+	makePersistent();
+	// fs.writeFile("./meetings.json", JSON.stringify(db),
+	// 	//eslint-disable-next-line
+	// 	function (err) {
+	// 		//eslint-disable-next-line
+	// 		if (err) return console.error(err);
+	// 	});
+
+	//returns the requested array as String
+	response.json(responseArray);
 });
 
 //send size ob meetings.json object to client:
 server.get("/returnArraySize", (request, response) => {
-	let arraySize = Object.keys(db.meetings).length;
-	response.send("" + arraySize);	//WTF, express can't send numbers -.-
+	let arraySize = db.meetings.length;
+	response.send("" + arraySize);
 });
