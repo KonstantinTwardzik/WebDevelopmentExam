@@ -94,9 +94,13 @@ server.get("/editMeeting", (request, response) => {
 		coordinates: coordinates,
 		objects: objects
 	};
-	db.meetings[id] = objectToAdd;	//Y U WORK!?
+	for (let i = 0; i < db.meetings.length; i++) {
+		if (parseInt(db.meetings[i].id) === id) {
+			db.meetings[i] = objectToAdd;
+		}
+	}
 	makePersistent();
-	response.json(db.meetings[id]);
+	response.json(objectToAdd);
 });
 
 function makePersistent() {
@@ -129,7 +133,8 @@ server.get("/addNewMeeting", (request, response) => {
 	};
 	db.meetings[db.meetings.length] = objectToAdd;	//Y U WORK!?
 	makePersistent();
-	response.json(db.meetings);
+	// response.json(db.meetings);
+	response.send("" + (db.meetings.length));
 });
 
 server.get("/returnRange", (request, response) => {

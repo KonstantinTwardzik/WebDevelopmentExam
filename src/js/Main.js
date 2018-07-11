@@ -2,7 +2,7 @@
 let Lists = require("./Lists");
 let Maps = require("./Maps");
 let Meeting = require("./Meeting");
-let dbSize;
+let allMeetingSize;
 let leftCurrentPage = 1;
 let rightCurrentPage = 1;
 let leftAllPages;
@@ -11,12 +11,10 @@ let leftList;
 let rightList;
 let curMeeting;
 let List;
-let data = [];
+let meetingList = [];
 let map;
-let displayingItems;
-let arraySize;
-let currentArraySize;
-let targetHelper = 0;
+let currentMeetingListSize;
+let meetingListPointer = 0;
 
 function initView() {
 	// initiates foundation of page
@@ -45,15 +43,14 @@ function createLeftList() {
 	logo.src = "comet_logo.svg";
 	logo.alt = "comet_logo";
 
-	leftList = document.createElement("ul");
-	leftList.id = "leftList";
-
-	let menubar = createLeftMenuBar();
-
 	let leftListSec = document.createElement("section");
 	leftListSec.className = "listSec";
 	leftListSec.id = "leftListSec";
 
+	leftList = document.createElement("ul");
+	leftList.id = "leftList";
+
+	let menubar = createLeftMenuBar();
 	logoWrapper.appendChild(logo);
 	leftListSec.appendChild(logoWrapper);
 	leftListSec.appendChild(leftList);
@@ -89,6 +86,7 @@ function createLeftMenuBar() {
 	let menubar = document.createElement("section");
 	menubar.className = "menubar";
 	menubar.id = "menubar";
+
 	menubar.appendChild(deleteBtn);
 	menubar.appendChild(addBtn);
 	menubar.appendChild(prevPageBtn);
@@ -125,6 +123,7 @@ function createRightMenuBar() {
 	let menubar = document.createElement("section");
 	menubar.className = "menubar";
 	menubar.id = "menubar";
+
 	menubar.appendChild(editBtn);
 	menubar.appendChild(printBtn);
 	menubar.appendChild(prevPageBtn);
@@ -135,8 +134,8 @@ function createRightMenuBar() {
 }
 
 function createRightList() {
-	rightList = document.createElement("ul");
-	rightList.id = "rightList";
+	let rightHeader = document.createElement("section");
+	rightHeader.id = "rightHeader";
 
 	let MeetingTitle = document.createElement("h1");
 	MeetingTitle.id = "MeetingTitle";
@@ -146,17 +145,18 @@ function createRightList() {
 	MeetingTimeLoc.id = "MeetingTimeLoc";
 	MeetingTimeLoc.innerHTML = curMeeting.getDate() + ", " + curMeeting.getLocation();
 
-	let rightListMenubar = createRightMenuBar();
-	rightListMenubar.className = "menubar";
-
-	let rightHeader = document.createElement("section");
-	rightHeader.id = "rightHeader";
-	rightHeader.appendChild(MeetingTitle);
-	rightHeader.appendChild(MeetingTimeLoc);
-
 	let rightListSec = document.createElement("section");
 	rightListSec.className = "listSec";
 	rightListSec.id = "rightListSec";
+
+	rightList = document.createElement("ul");
+	rightList.id = "rightList";
+
+	let rightListMenubar = createRightMenuBar();
+	rightListMenubar.className = "menubar";
+
+	rightHeader.appendChild(MeetingTitle);
+	rightHeader.appendChild(MeetingTimeLoc);
 	rightListSec.appendChild(rightHeader);
 	rightListSec.appendChild(rightList);
 	rightListSec.appendChild(rightListMenubar);
@@ -164,7 +164,7 @@ function createRightList() {
 	return rightListSec;
 }
 
-function createDialogue(fill) {
+function createAddAndEditDialog(fill) {
 	let main = document.getElementById("main");
 
 	let coverPlane = document.createElement("section");
@@ -173,8 +173,8 @@ function createDialogue(fill) {
 	let window = document.createElement("section");
 	window.id = "window";
 
-	let toolbar = document.createElement("section");
-	toolbar.id = "toolbar";
+	let menubar = document.createElement("section");
+	menubar.id = "dialogMenubar";
 
 	let header = document.createElement("section");
 	header.id = "header";
@@ -192,7 +192,7 @@ function createDialogue(fill) {
 
 	let date = document.createElement("p");
 	date.id = "date";
-	date.innerHTML = "Datum: (yyyy-mm-dd)";
+	date.innerHTML = "Datum: (dd.mm.yyyy)";
 
 	let dateDiv = document.createElement("div");
 	dateDiv.id = "dateDiv";
@@ -274,17 +274,17 @@ function createDialogue(fill) {
 	longitudeDiv.appendChild(longitudeTF);
 	header.appendChild(longitudeDiv);
 
-	toolbar.appendChild(cancelBtn);
-	toolbar.appendChild(okBtn);
+	menubar.appendChild(cancelBtn);
+	menubar.appendChild(okBtn);
 
 	window.appendChild(header);
-	window.appendChild(toolbar);
+	window.appendChild(menubar);
 
 	main.appendChild(coverPlane);
 	main.appendChild(window);
 
-	coverPlane.addEventListener("click", closeDialogue);
-	cancelBtn.addEventListener("click", closeDialogue);
+	coverPlane.addEventListener("click", closeAddAndEditDialog);
+	cancelBtn.addEventListener("click", closeAddAndEditDialog);
 
 	if (fill) {
 		titleTF.value = curMeeting.getName();
@@ -305,48 +305,60 @@ function createDialogue(fill) {
 	}
 }
 
-function closeDialogue() {
+function closeAddAndEditDialog() {
 	let main = document.getElementById("main");
 	let deletableItem = document.getElementById("window");
-
 	main.removeChild(deletableItem);
-
 	deletableItem = document.getElementById("coverPlane");
-
 	main.removeChild(deletableItem);
 }
 
-function checkRegex(date, title, location, latitude, longitude) {
+function validationCheck(date, title, location, latitude, longitude, objectlength) {
 	let indicator = true;
 	let dateReg = /^\d{2}([./-])\d{2}\1\d{4}$/;
-	let textReg = /(^[a-z ä ö ü ß']+$)/i;
+	let textReg = /(^[a-z ä ö ü ß'-]+$)/i;
 	let floatReg = /^[+-]?\d+(\.\d+)?$/;
-	if (!date.value.match(dateReg)) {
-		alert("Field date must match the pattern \n 16.12.1993 \n you typed\n " + date.value);
+
+	if (objectlength === 0) {
+		alert("please enter at least one object!");
 		indicator = false;
+		return indicator;
+	}
+	if (!date.value.match(dateReg)) {
+		alert("Field date must match the pattern \n dd.mm.yyyy.");
+		indicator = false;
+		return indicator;
 	}
 	if (!title.value.match(textReg) || !location.value.match(textReg)) {
-		alert("Field with text must not contain special characters like Ý, etc. and no numbers!");
+		alert("Fields Title and Location must not contain special characters or numbers.");
 		indicator = false;
+		return indicator;
 	}
 	if (!latitude.value.match(floatReg) || !longitude.value.match(floatReg)) {
-		alert("Field Latitude and Logitude must match the pattern 63.251524\n!");
+		alert("Field Latitude and Longitude must be numbers.");
 		indicator = false;
+		return indicator;
 	}
 	return indicator;
 }
 
-function showFilledDialogue() {
-	createDialogue(true);
+function showEditDialog() {
+	createAddAndEditDialog(true);
 }
 
-function showEmptyDialogue() {
-	createDialogue(false);
+function showAddDialog() {
+	createAddAndEditDialog(false);
 }
 
-function updateRightList(target) {
-	updateCurMeeting(target);
+function updateCurMeeting(pointer) {
+	curMeeting = meetingList[parseInt(pointer)];
+	meetingListPointer = pointer;
+	updateView();
+}
+
+function updateView() {
 	updateLists();
+	updateMenubar();
 
 	let mapWrapper = document.getElementById("mapWrapper");
 	mapWrapper.replaceChild(map.updateMap(curMeeting), document.getElementById("map"));
@@ -383,18 +395,19 @@ function makeRequest(method, url) {
 	});
 }
 
-function initiateData() {
+function init() {
 	let start = 0;
 	let end = 99;
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 		.then(function (value) {	//value is the json string from start to end
-			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
-			createData();
-			curMeeting = data[0];
+			let clientMeetings = JSON.parse(value);	//value must me JSON.parsed to be an object
+			parseClientMeetings(clientMeetings);
+			curMeeting = meetingList[0];
 			initView();
 			updateLists();
+			updateMenubar();
 			initHandlers();
-			currentArraySize = 100;
+			currentMeetingListSize = meetingList.length;
 		})
 		.catch(function (err) {
 			console.error("updateDataError: ", err.statusText);
@@ -417,18 +430,17 @@ function addNewMeeting() {
 		}
 	}
 
-	if (objects.length > 0 && checkRegex(date, title, location, latitude, longitude)) {
+	if (validationCheck(date, title, location, latitude, longitude, objects.length)) {
 		makeRequest("GET", "http://localhost:8080/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
 			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
-			.then(function (value) {	//value = db.meetings
-				dbSize++;
-				updateLists();
+			.then(function (value) {
+				allMeetingSize = parseInt(value);
 				loadLastMeeting();
-				closeDialogue();
+				closeAddAndEditDialog();
+			})
+			.catch(function (err) {
+				console.error("addNewMeetingError: ", err.statusText);
 			});
-	}
-	else {
-		checkRegex(date, title, location, latitude, longitude);
 	}
 }
 
@@ -449,33 +461,25 @@ function editExistingMeeting() {
 			objects.push(object.value);
 		}
 	}
-	// checkRegex(date, title, location, latitude, longitude);
 
-	if (objects.length > 0 && checkRegex(date, title, location, latitude, longitude)) {
+	if (validationCheck(date, title, location, latitude, longitude, objects.length)) {
 		makeRequest("GET", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
 			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
-			.then(function (value) {
-				value = JSON.parse(value);
-				let meeting = new Meeting.Meeting(value.id, value.name, value.date, value.location, value.coordinates, value.objects);
+			.then(function (editedMeetingJson) {
+				editedMeetingJson = JSON.parse(editedMeetingJson);
+				let editedMeeting = new Meeting.Meeting(editedMeetingJson.id, editedMeetingJson.name, editedMeetingJson.date, editedMeetingJson.location, editedMeetingJson.coordinates, editedMeetingJson.objects);
 
-				if (parseFloat(value.coordinates[0]) !== parseFloat(curMeeting.getCoordinates()[0]) || parseFloat(value.coordinates[1]) !== parseFloat(curMeeting.getCoordinates()[1])) {
-					curMeeting = meeting;
+				if (parseFloat(editedMeeting.coordinates[0]) !== parseFloat(curMeeting.getCoordinates()[0]) || parseFloat(editedMeeting.coordinates[1]) !== parseFloat(curMeeting.getCoordinates()[1])) {
+					curMeeting = editedMeeting;
 					let mapWrapper = document.getElementById("mapWrapper");
 					mapWrapper.replaceChild(map.updateMap(curMeeting), document.getElementById("map"));
 				}
 				else {
-					curMeeting = meeting;
+					curMeeting = editedMeeting;
 				}
-				let MeetingTitle = document.getElementById("MeetingTitle");
-				MeetingTitle.innerHTML = curMeeting.getName();
-
-				let MeetingTimeLoc = document.getElementById("MeetingTimeLoc");
-				MeetingTimeLoc.innerHTML = curMeeting.getDate() + ", " + curMeeting.getLocation();
-
-				data[targetHelper] = meeting;
-
-				updateLists();
-				closeDialogue();
+				meetingList[meetingListPointer] = editedMeeting;
+				updateCurMeeting(meetingListPointer);
+				closeAddAndEditDialog();
 			}).catch(function (err) {
 				console.error("editMeetingError: ", err.statusText);
 			});
@@ -483,32 +487,30 @@ function editExistingMeeting() {
 }
 
 function removeElement() {
-	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId() + "&end=" + (currentArraySize))	//get the actual Array Size for paginating the left lis
+	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId() + "&end=" + (currentMeetingListSize))	//get the actual Array Size for paginating the left lis
 		.then((value) => {
-			data.length = 0;
-			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
-			createData();
-			if (parseInt(targetHelper) === parseInt(data.length)) {
-				--targetHelper;
+			meetingList.length = 0;
+			let clientMeetings = JSON.parse(value);	//value must me JSON.parsed to be an object
+			parseClientMeetings(clientMeetings);
+			if (parseInt(meetingListPointer) === parseInt(meetingList.length)) {
+				--meetingListPointer;
 			}
-			updateRightList(targetHelper);
-			dbSize--;
-			updateLists();
+			allMeetingSize--;
+			updateCurMeeting(meetingListPointer);
 		})
 		.catch(function (err) {
 			console.error("DeleteError: ", err.statusText);
 		});
 }
 
-function loadData() {
-	let start = currentArraySize;
-	currentArraySize += 99;
-	let end = currentArraySize;
-	++currentArraySize;
+function increaseMeetingList() {
+	let start = currentMeetingListSize;
+	let end = 99 + start;
+	currentMeetingListSize += 100;
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 		.then(function (value) {	//value is the json string from start to end
-			displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
-			createData();
+			let clientMeetings = JSON.parse(value);	//value must me JSON.parsed to be an object
+			parseClientMeetings(clientMeetings);
 		})
 		.catch(function (err) {
 			console.error("loadDataError: ", err.statusText);
@@ -516,13 +518,13 @@ function loadData() {
 }
 
 function loadLastMeeting() {
-	if ((data.length + 1) === dbSize) {
-		let start = data.length;
-		let end = dbSize;
+	if ((meetingList.length + 1) === allMeetingSize) {
+		let start = meetingList.length;
+		let end = allMeetingSize;
 		makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 			.then(function (value) {	//value is the json string from start to end
-				displayingItems = JSON.parse(value);	//value must me JSON.parsed to be an object
-				createData();
+				let clientMeetings = JSON.parse(value);	//value must me JSON.parsed to be an object
+				parseClientMeetings(clientMeetings);
 				updateLists();
 			})
 			.catch(function (err) {
@@ -531,33 +533,29 @@ function loadLastMeeting() {
 	}
 }
 
-function getArraySize() {
+function getAllMeetingsSize() {
 	// getFeed().then(data => vm.feed = data);
 	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left lis
 		.then((value) => {					//its actually a string but it works
-			dbSize = value;		//assign value to a variable
+			allMeetingSize = value;		//assign value to a variable
 		})
 		.catch(function (err) {
 			console.error("returnArraySize Error: ", err.statusText);
 		});
-	return arraySize;
 }
 
 function updateLists() {
-	//load data if necessary
-	while (List.getCurrentPageSize() * leftCurrentPage > currentArraySize - 20) {
-		loadData();
-	}
-
 	//redraw all lists
 	List.clearLists();
-	List.fillLeftList(leftList, leftCurrentPage, data);
+	List.fillLeftList(leftList, leftCurrentPage, meetingList);
 	List.fillRightList(rightList, rightCurrentPage, curMeeting);
+}
 
+function updateMenubar() {
 	//calculate how many pages there are
 	let currentPageSize = List.getCurrentPageSize();
 	let minimum = 1;
-	leftAllPages = Math.max(minimum, Math.ceil(dbSize / currentPageSize));
+	leftAllPages = Math.max(minimum, Math.ceil(allMeetingSize / currentPageSize));
 	rightAllPages = Math.max(minimum, Math.ceil(curMeeting.getObjects().length / currentPageSize));
 
 	//redraw which page is selected
@@ -567,12 +565,12 @@ function updateLists() {
 	rightPageIndicator.innerHTML = rightCurrentPage + " of " + rightAllPages;
 
 	//mark selected item (if it is visible)
-	if (document.getElementById(targetHelper)) {
-		let active = document.getElementById("" + targetHelper);
+	if (document.getElementById(meetingListPointer)) {
+		let active = document.getElementById("" + meetingListPointer);
 		active.className = "active";
 	}
 
-	//if the leftAllPage = 1 disable next Page Btn - same for rightList
+	//if the leftAllPage = 1 disable nextPageBtn - same for rightList
 	if (leftAllPages === 1 && document.getElementById("leftNextPageBtn")) {
 		let leftNextPageListener = document.getElementById("leftNextPageBtn");
 		leftNextPageListener.removeEventListener("click", leftNextPage);
@@ -584,7 +582,7 @@ function updateLists() {
 		rightNextPageListener.id = "rightNextPageBtnDisabled";
 	}
 
-	//if the leftAllPages size is smaller then the leftCurrentPage - same for rightList
+	//if the leftAllPages size is smaller then the leftCurrentPage, jump to previousPage - same for rightList
 	if (leftAllPages < leftCurrentPage) {
 		leftPrevPage();
 	}
@@ -592,7 +590,7 @@ function updateLists() {
 		rightPrevPage();
 	}
 
-	//if the leftCurrentPage gets smaller then the leftAllPage - same for rightList
+	//if the leftCurrentPage gets smaller then the leftAllPage, enable nextBtn - same for rightList
 	if (leftCurrentPage !== leftAllPages && document.getElementById("leftNextPageBtnDisabled")) {
 		let leftNextPageListener = document.getElementById("leftNextPageBtnDisabled");
 		leftNextPageListener.addEventListener("click", leftNextPage);
@@ -615,15 +613,6 @@ function updateLists() {
 		rightNextPageListener.removeEventListener("click", rightNextPage);
 		rightNextPageListener.id = "rightNextPageBtnDisabled";
 	}
-}
-
-function updateCurMeeting(target) {
-	curMeeting = data[parseInt(target)];
-	targetHelper = target;
-}
-
-function leftNextPage() {
-	leftCurrentPage++;
 	if (leftCurrentPage === 2 && document.getElementById("leftPrevPageBtnDisabled")) {
 		let leftPrevPageListener = document.getElementById("leftPrevPageBtnDisabled");
 		leftPrevPageListener.addEventListener("click", leftPrevPage);
@@ -634,14 +623,9 @@ function leftNextPage() {
 		leftNextPageListener.removeEventListener("click", leftNextPage);
 		leftNextPageListener.id = "leftNextPageBtnDisabled";
 	}
-	if (List.getCurrentPageSize() * leftCurrentPage > currentArraySize - 20) {
-		loadData();
+	if (List.getCurrentPageSize() * leftCurrentPage > currentMeetingListSize - 20) {
+		increaseMeetingList();
 	}
-	updateLists();
-}
-
-function leftPrevPage() {
-	leftCurrentPage--;
 	if (leftCurrentPage === 1 && document.getElementById("leftPrevPageBtn")) {
 		let leftPrevPageListener = document.getElementById("leftPrevPageBtn");
 		leftPrevPageListener.removeEventListener("click", leftPrevPage);
@@ -652,11 +636,6 @@ function leftPrevPage() {
 		leftNextPageListener.addEventListener("click", leftNextPage);
 		leftNextPageListener.id = "leftNextPageBtn";
 	}
-	updateLists();
-}
-
-function rightNextPage() {
-	rightCurrentPage++;
 	if (rightCurrentPage === 2 && document.getElementById("rightPrevPageBtnDisabled")) {
 		let rightPrevPageListener = document.getElementById("rightPrevPageBtnDisabled");
 		rightPrevPageListener.addEventListener("click", rightPrevPage);
@@ -667,11 +646,6 @@ function rightNextPage() {
 		rightNextPageListener.removeEventListener("click", rightNextPage);
 		rightNextPageListener.id = "rightNextPageBtnDisabled";
 	}
-	updateLists();
-}
-
-function rightPrevPage() {
-	rightCurrentPage--;
 	if (rightCurrentPage === 1 && document.getElementById("rightPrevPageBtn")) {
 		let rightPrevPageListener = document.getElementById("rightPrevPageBtn");
 		rightPrevPageListener.removeEventListener("click", rightPrevPage);
@@ -682,15 +656,42 @@ function rightPrevPage() {
 		rightNextPageListener.addEventListener("click", rightNextPage);
 		rightNextPageListener.id = "rightNextPageBtn";
 	}
-	updateLists();
+}
+
+function leftNextPage() {
+	leftCurrentPage++;
+	updateView();
+}
+
+function leftPrevPage() {
+	leftCurrentPage--;
+	updateView();
+}
+
+function rightNextPage() {
+	rightCurrentPage++;
+	updateView();
+}
+
+function rightPrevPage() {
+	rightCurrentPage--;
+	updateView();
+}
+
+function onResize() {
+	//load data if necessary
+	while (List.getCurrentPageSize() * leftCurrentPage > currentMeetingListSize - 20) {
+		increaseMeetingList();
+	}
+	updateMenubar();
 }
 
 // Initiates most of the click-handlers
 function initHandlers() {
-	window.addEventListener("resize", updateLists);
+	window.addEventListener("resize", onResize);
 
 	let listListener = document.getElementById("leftList");
-	listListener.addEventListener("click", event => updateRightList(event.target.id));
+	listListener.addEventListener("click", event => updateCurMeeting(event.target.id));
 
 	if (leftCurrentPage >= 2 && document.getElementById("leftPrevPageBtnDisabled")) {
 		let leftPrevPageListener = document.getElementById("leftPrevPageBtnDisabled");
@@ -713,10 +714,10 @@ function initHandlers() {
 	}
 
 	let newMeetingListener = document.getElementById("leftAddBtn");
-	newMeetingListener.addEventListener("click", showEmptyDialogue);
+	newMeetingListener.addEventListener("click", showAddDialog);
 
 	let editMeetingListener = document.getElementById("rightEditBtn");
-	editMeetingListener.addEventListener("click", showFilledDialogue);
+	editMeetingListener.addEventListener("click", showEditDialog);
 
 	let removeMeetingListener = document.getElementById("leftDeleteBtn");
 	removeMeetingListener.addEventListener("click", removeElement);
@@ -725,12 +726,11 @@ function initHandlers() {
 	printMeetingListener.addEventListener("click", printMeeting);
 }
 
-function createData() {
-	let serverItems = displayingItems;
+function parseClientMeetings(clientMeetings) {
 	let meeting;
-	for (let i = 0; i < serverItems.length; i++) {
-		meeting = new Meeting.Meeting(serverItems[i].id, serverItems[i].name, serverItems[i].date, serverItems[i].location, serverItems[i].coordinates, serverItems[i].objects);
-		data.push(meeting);
+	for (let i = 0; i < clientMeetings.length; i++) {
+		meeting = new Meeting.Meeting(clientMeetings[i].id, clientMeetings[i].name, clientMeetings[i].date, clientMeetings[i].location, clientMeetings[i].coordinates, clientMeetings[i].objects);
+		meetingList.push(meeting);
 	}
 }
 
@@ -787,10 +787,10 @@ function addAll() {
 
 // IIFE as start
 (function () {
-	getArraySize();
+	getAllMeetingsSize();
 	map = new Maps.Maps();
 	List = new Lists.Lists();
-	initiateData();
+	init();
 })();
 
 //Code beautifien
