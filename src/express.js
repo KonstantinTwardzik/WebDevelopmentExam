@@ -84,7 +84,7 @@ server.delete("/deleteMeeting", (request, response) => {
 	response.sendStatus(404);
 });
 
-server.get("/editMeeting", (request, response) => {
+server.put("/editMeeting", (request, response) => {
 	//getting attributes for the new created object
 	let id = parseInt(request.query.id);
 	let name = request.query.name;
@@ -126,7 +126,7 @@ function makePersistent() {
 	});
 }
 
-server.get("/addNewMeeting", (request, response) => {
+server.post("/addNewMeeting", (request, response) => {
 	//pretty much the same as if is in editMeeting
 	//always add a new meeting to the end of the JSON data
 	let id = parseInt(db.meetings[db.meetings.length - 1].id + 1);

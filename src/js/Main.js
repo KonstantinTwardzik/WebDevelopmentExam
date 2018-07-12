@@ -632,7 +632,7 @@ function addNewMeeting() {
 	}
 
 	if (validationCheck(date, title, location, latitude, longitude, objects.length)) {
-		makeRequest("GET", "http://localhost:8080/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
+		makeRequest("POST", "http://localhost:8080/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
 			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
 			.then(function (value) {
 				allMeetingSize = parseInt(value);
@@ -664,7 +664,7 @@ function editExistingMeeting() {
 	}
 
 	if (validationCheck(date, title, location, latitude, longitude, objects.length)) {
-		makeRequest("GET", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
+		makeRequest("PUT", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
 			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
 			.then(function (editedMeetingJson) {
 				editedMeetingJson = JSON.parse(editedMeetingJson);
