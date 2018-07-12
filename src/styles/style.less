@@ -119,6 +119,11 @@ ul {
 #leftListSec {
     left: 0px;
 
+    //TODO: make text wrap properly or show "..."
+    white-space: nowrap; 
+    overflow: auto;
+    text-overflow: ellipsis;    // should actually show the three dots -.-
+
     li {
         &:hover {
             background-color: @grey;

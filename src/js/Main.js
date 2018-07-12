@@ -886,7 +886,6 @@ function showAllViews() {
 
 //update menubars methoden aufräumen
 
-//database with coordinates from -90 to +90
 //favicon.ico won't be found if its not port 8080
 //packages.json und files ordnen
 //less aufräumen
