@@ -1,5 +1,5 @@
 {
-    "$schema": "./.meetings.schema",
+    "$schema": "./meetings.schema",
     "meetings": [
         {
             "id": 0,
@@ -385,7 +385,7 @@
             "date": "21.08.2025",
             "location": "Gorzyczki",
             "coordinates": [
-                "-8.7918",
+                -8.7918,
                 36.886546
             ],
             "objects": [
@@ -1142,7 +1142,7 @@
             "location": "Gyumri",
             "coordinates": [
                 -15.1266347,
-                "-10.4555"
+                -10.4555
             ],
             "objects": [
                 "Korey",
@@ -1520,7 +1520,7 @@
             "location": "Yasothon",
             "coordinates": [
                 7.8272014,
-                "15.60223"
+                15.60223
             ],
             "objects": [
                 "Marshal",
@@ -1982,7 +1982,7 @@
             "location": "Ipoti",
             "coordinates": [
                 29.8867778,
-                "-6.8961"
+                -6.8961
             ],
             "objects": [
                 "Javier",
@@ -2653,8 +2653,8 @@
             "date": "01.02.2021",
             "location": "Hartford",
             "coordinates": [
-                "35.54729",
-                "-8.0138"
+                35.54729,
+                -8.0138
             ],
             "objects": [
                 "Raddy",
@@ -2696,7 +2696,7 @@
             "location": "Nurmo",
             "coordinates": [
                 52.4460804,
-                "42.71194"
+                42.71194
             ],
             "objects": [
                 "Geoffrey",
@@ -2947,7 +2947,7 @@
             "date": "08.06.2018",
             "location": "Artur Nogueira",
             "coordinates": [
-                "35.68206",
+                35.68206,
                 43.4945737
             ],
             "objects": [
@@ -3536,7 +3536,7 @@
             "location": "Uppsala",
             "coordinates": [
                 49.4648362,
-                "-8.3052"
+                -8.3052
             ],
             "objects": [
                 "Pieter",
@@ -3871,7 +3871,7 @@
             "date": "17.04.2031",
             "location": "Riangbaring",
             "coordinates": [
-                "-6.9936",
+                -6.9936,
                 -0.4993281
             ],
             "objects": [
@@ -3913,7 +3913,7 @@
             "date": "23.02.2020",
             "location": "Zgłobień",
             "coordinates": [
-                "-7.2324",
+                -7.2324,
                 -51.6211286
             ],
             "objects": [
@@ -4250,7 +4250,7 @@
             "location": "Darkovice",
             "coordinates": [
                 16.503112,
-                "16.99885"
+                16.99885
             ],
             "objects": [
                 "Skipp",
@@ -4375,7 +4375,7 @@
             "date": "31.03.2024",
             "location": "Jäppilä",
             "coordinates": [
-                "53.31611",
+                53.31611,
                 40.0856412
             ],
             "objects": [
@@ -4502,7 +4502,7 @@
             "location": "Aihua",
             "coordinates": [
                 25.797931,
-                "-6.57018"
+                -6.57018
             ],
             "objects": [
                 "Huntlee",
@@ -4670,7 +4670,7 @@
             "location": "Yecun",
             "coordinates": [
                 11.229568,
-                "50.65009"
+                50.65009
             ],
             "objects": [
                 "Dani",
@@ -5972,7 +5972,7 @@
             "location": "Guiset East",
             "coordinates": [
                 21.2573126,
-                "5.0214"
+                5.0214
             ],
             "objects": [
                 "Merle",
@@ -6307,7 +6307,7 @@
             "date": "22.04.2029",
             "location": "Renhe",
             "coordinates": [
-                "-7.0062",
+                -7.0062,
                 11.5731051
             ],
             "objects": [
@@ -6518,7 +6518,7 @@
             "location": "Ramat Gan",
             "coordinates": [
                 10.266893,
-                "28.85816"
+                28.85816
             ],
             "objects": [
                 "Camey",
@@ -7315,7 +7315,7 @@
             "date": "09.03.2031",
             "location": "Shanhaiguan",
             "coordinates": [
-                "53.9865",
+                53.9865,
                 -18.3269371
             ],
             "objects": [
@@ -7400,7 +7400,7 @@
             "location": "Hénin-Beaumont",
             "coordinates": [
                 27.4140682,
-                "-6.562"
+                -6.562
             ],
             "objects": [
                 "Forrest",
@@ -7820,7 +7820,7 @@
             "location": "Nombre de Jesús",
             "coordinates": [
                 36.0941745,
-                "-7.1108"
+                -7.1108
             ],
             "objects": [
                 "Sampson",
@@ -7945,7 +7945,7 @@
             "date": "06.02.2023",
             "location": "Pakenjeng",
             "coordinates": [
-                "49.73333",
+                49.73333,
                 1.8786869
             ],
             "objects": [
@@ -8492,7 +8492,7 @@
             "location": "Phak Hai",
             "coordinates": [
                 -18.2898667,
-                "6.53333"
+                6.53333
             ],
             "objects": [
                 "Ambrosio",
@@ -8575,7 +8575,7 @@
             "date": "15.05.2024",
             "location": "Jajarkrajan",
             "coordinates": [
-                "15.85",
+                15.85,
                 59.76039
             ],
             "objects": [
@@ -9835,7 +9835,7 @@
             "date": "16.11.2025",
             "location": "Ipirá",
             "coordinates": [
-                "-8.2394",
+                -8.2394,
                 -22.7712817
             ],
             "objects": [
@@ -10256,7 +10256,7 @@
             "location": "Nakano",
             "coordinates": [
                 50.1837815,
-                "36.23154"
+                36.23154
             ],
             "objects": [
                 "Elvin",
@@ -10759,7 +10759,7 @@
             "date": "30.03.2022",
             "location": "Al Quţayfah",
             "coordinates": [
-                "34.94873",
+                34.94873,
                 19.2987683
             ],
             "objects": [
@@ -11515,7 +11515,7 @@
             "date": "14.05.2033",
             "location": "Besao",
             "coordinates": [
-                "32.14237",
+                32.14237,
                 53.5313317
             ],
             "objects": [
@@ -12104,7 +12104,7 @@
             "location": "Hele",
             "coordinates": [
                 -20.2883705,
-                "63.06101"
+                63.06101
             ],
             "objects": [
                 "Pen",
@@ -12565,7 +12565,7 @@
             "date": "13.04.2028",
             "location": "Ntungamo",
             "coordinates": [
-                "-8.8993",
+                -8.8993,
                 14.4693883
             ],
             "objects": [

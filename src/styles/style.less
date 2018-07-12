@@ -66,6 +66,7 @@ ul {
     width: @listWidth;
     height: 100vh;
     background-color: @darkGrey;
+    
     .box-shadow(0px, 0px, 5px, 1);
 
     p {
@@ -119,12 +120,13 @@ ul {
 #leftListSec {
     left: 0px;
 
-    //TODO: make text wrap properly or show "..."
-    white-space: nowrap; 
-    overflow: auto;
-    text-overflow: ellipsis;    // should actually show the three dots -.-
-
     li {
+        p {
+            //TODO: vielleicht noch bisschen hübscher machen...
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis; 
+        }
         &:hover {
             background-color: @grey;
         }
@@ -173,6 +175,10 @@ ul {
             margin: 0px;
             font-size: 2rem;
             color: @white;
+            //TODO: vielleicht noch bisschen hübscher machen...
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis; 
         }
     
         p {

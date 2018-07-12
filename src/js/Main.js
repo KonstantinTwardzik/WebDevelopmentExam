@@ -662,7 +662,7 @@ function addMeetingServer() {
 	if (validationCheck(date, title, location, latitude, longitude, objects.length)) {
 		makeRequest("POST", "http://localhost:" + PORT + "/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
 			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
-			.then(function (newDbSize) {	//TODO: value change
+			.then(function (newDbSize) {
 				allMeetingSizeServer = parseInt(newDbSize);
 				loadLastMeetingServer();
 				closeAddAndEditDialog();
