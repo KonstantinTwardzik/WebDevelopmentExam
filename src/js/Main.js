@@ -625,6 +625,7 @@ function makeRequest(method, url) {
 function initMeetings() {
 	let start = 0;
 	let end = 99;
+	//TODO: port should be variable and not hardcoded 8080
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 		.then(function (value) {	//value is the json string from start to end
 			let clientMeetings = JSON.parse(value);	//value must me JSON.parsed to be an object

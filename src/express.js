@@ -24,6 +24,7 @@ else {
 }
 
 //define URLs that are callable:
+//TODO:
 server.get("", (req, res) => {
 	res.send({
 		__links: {
@@ -36,7 +37,7 @@ server.get("", (req, res) => {
 			self: { href: "${BASE_URI}" },
 			returnRange: { href: "${BASE_URI}/returnRange" },
 			addNewMeeting: { href: "${BASE_URI}/addNewMeeting" },
-			addNewObjectToMeeting: { href: "${BASE_URI}/addNewObjectToMeeting" },
+			editMeeting: { href: "${BASE_URI}/editMeeting" },
 			removeMeeting: { href: "${BASE_URI}/removeMeeting" },
 		}
 	});
