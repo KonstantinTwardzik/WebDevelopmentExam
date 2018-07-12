@@ -1,6 +1,5 @@
 const express = require("express");
 let server = express();
-var path = require("path");
 var db = require("./meetings.json");
 var bodyParser = require("body-parser");
 const fs = require("fs");

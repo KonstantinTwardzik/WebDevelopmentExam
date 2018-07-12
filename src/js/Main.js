@@ -15,6 +15,7 @@ let meetingList = [];
 let currentMeetingListSize;
 let meetingListPointer = 0;
 let curMeeting;
+let PORT = window.location.port;
 
 // Create Logic & Views
 function initView() {
@@ -627,7 +628,7 @@ function initMeetingsServer() {
 	let start = 0;
 	let end = 99;
 	//TODO: port should be variable and not hardcoded 8080
-	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
+	makeRequest("GET", "http://localhost:" + PORT + "/returnRange?start=" + start + "&end=" + end)
 		.then(function (DatabaseSnippet) {	//value is the json string from start to end
 			let jsonArray = JSON.parse(DatabaseSnippet);	//value must me JSON.parsed to be an object
 			fillMeetingList(jsonArray);
@@ -660,7 +661,7 @@ function addMeetingServer() {
 	}
 
 	if (validationCheck(date, title, location, latitude, longitude, objects.length)) {
-		makeRequest("POST", "http://localhost:8080/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
+		makeRequest("POST", "http://localhost:" + PORT + "/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
 			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
 			.then(function (newDbSize) {	//TODO: value change
 				allMeetingSizeServer = parseInt(newDbSize);
@@ -691,7 +692,7 @@ function editMeetingServer() {
 	}
 
 	if (validationCheck(date, title, location, latitude, longitude, objects.length)) {
-		makeRequest("PUT", "http://localhost:8080/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
+		makeRequest("PUT", "http://localhost:" + PORT + "/editMeeting?id=" + id + "&name=" + title.value + "&date=" + date.value + "&location="
 			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
 			.then(function (editedMeetingJson) {
 				editedMeetingJson = JSON.parse(editedMeetingJson);
@@ -714,7 +715,7 @@ function editMeetingServer() {
 }
 
 function deleteMeetingServer() {
-	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId() + "&end=" + (currentMeetingListSize))	//get the actual Array Size for paginating the left lis
+	makeRequest("DELETE", "http://localhost:" + PORT + "/deleteMeeting?id=" + curMeeting.getId() + "&end=" + (currentMeetingListSize))	//get the actual Array Size for paginating the left lis
 		.then((newCompleteDb) => {
 			meetingList.length = 0;
 			let jsonArray = JSON.parse(newCompleteDb);	//db must me JSON.parsed to be an object
@@ -734,7 +735,7 @@ function increaseMeetingList() {
 	let start = currentMeetingListSize;
 	let end = 99 + start;
 	currentMeetingListSize += 100;
-	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
+	makeRequest("GET", "http://localhost:" + PORT + "/returnRange?start=" + start + "&end=" + end)
 		.then(function (DatabaseSnippet) {	//value is the json string from start to end
 			let jsonArray = JSON.parse(DatabaseSnippet);	//value must me JSON.parsed to be an object
 			fillMeetingList(jsonArray);
@@ -748,7 +749,7 @@ function loadLastMeetingServer() {
 	if ((meetingList.length + 1) === allMeetingSizeServer) {
 		let start = meetingList.length;
 		let end = allMeetingSizeServer;
-		makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
+		makeRequest("GET", "http://localhost:" + PORT + "/returnRange?start=" + start + "&end=" + end)
 			.then(function (DatabaseSnippet) {	//value is the json string from start to end
 				let jsonArray = JSON.parse(DatabaseSnippet);	//value must me JSON.parsed to be an object
 				fillMeetingList(jsonArray);
@@ -762,7 +763,7 @@ function loadLastMeetingServer() {
 
 function getAllMeetingsSize() {
 	// getFeed().then(data => vm.feed = data);
-	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left lis
+	makeRequest("GET", "http://localhost:" + PORT + "/returnArraySize")	//get the actual Array Size for paginating the left lis
 		.then((DatabaseSize) => {					//its actually a string but it works
 			allMeetingSizeServer = DatabaseSize;		//assign value to a variable
 		})
@@ -886,12 +887,11 @@ function showAllViews() {
 
 //update menubars methoden aufräumen
 
+//database with coordinates from -90 to +90
+//favicon.ico won't be found if its not port 8080
 //packages.json und files ordnen
 //less aufräumen
 //Firefox testen
-
-//Restkonformität
-//datum richtig ausgeben
 
 //überfliessen der texte verhindern
 //man hat nur 1 element fügt eins hinzu, bei seite neu laden - kaputt
