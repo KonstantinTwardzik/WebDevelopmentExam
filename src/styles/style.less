@@ -111,6 +111,9 @@ ul {
     #rightNextPageBtnDisabled {
         color: @lightGrey;
     }
+    #leftDeleteBtnDisabled {
+        color: @lightGrey;
+    }
 }
 
 #leftListSec {
@@ -370,9 +373,23 @@ ul {
     }
 }
 
-#site {
+@media print {
+
+}
+
+.Print  {  
+    display:block;  
+    page-break-before:always;  
+    background-color: @white;
+    align-items: flex-start;
+    // width: 21cm;
+    // height: 29.7cm;
+    width: 100vh / 1.414;
+    height: 100vh;
+
     p {
         margin: 2px;
+        width: 32%;
     }
 
     #dateAndLocation {
@@ -384,14 +401,30 @@ ul {
         font-weight: bolder;
         margin-bottom: 4px;
     }
-}
 
+    #objectsSection {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        justify-content: left;
+        height: 30%;
+        margin-bottom: 2%;
+    }
 
-@media print {
-    .page-break  {  
-        display:block;  
-        page-break-before:always;  
-        background-color: @white;
+    #titleSection {
+        height: 8%;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-content: space-between;
+    }
+    
+    #mapWrapperPrint {
+        height: 60%;
+        width: 100%;
+    }
+
+    #logoPrint {
+        width: 35%;
     }
 }
-

@@ -21,7 +21,7 @@ function initView() {
 	// initiates foundation of page
 	let main = document.getElementById("main");
 	let mapWrapper = document.createElement("section");
-	let mapSec = Map.updateMap(curMeeting);
+	let mapSec = Map.createMap(curMeeting);
 	let leftList = createLeftList();
 	let rightList = createRightList();
 
@@ -41,8 +41,10 @@ function initHandlers() {
 	let listListener = document.getElementById("leftList");
 	listListener.addEventListener("click", event => updateCurMeeting(event.target.id));
 
-	let leftNextPageListener = document.getElementById("leftNextPageBtn");
-	leftNextPageListener.addEventListener("click", leftNextPage);
+	if (leftCurrentPage < leftAllPages) {
+		let leftNextPageListener = document.getElementById("leftNextPageBtn");
+		leftNextPageListener.addEventListener("click", leftNextPage);
+	}
 
 	let newMeetingListener = document.getElementById("leftAddBtn");
 	newMeetingListener.addEventListener("click", showAddDialog);
@@ -51,12 +53,17 @@ function initHandlers() {
 	editMeetingListener.addEventListener("click", showEditDialog);
 
 	let removeMeetingListener = document.getElementById("leftDeleteBtn");
-	removeMeetingListener.addEventListener("click", deleteMeeting);
+	if (allMeetingSize > 1) {
+		removeMeetingListener.addEventListener("click", deleteMeeting);
+	}
+	else {
+		removeMeetingListener.id = "leftDeleteBtnDisabled";
+	}
 
 	let printMeetingListener = document.getElementById("rightPrintBtn");
 	printMeetingListener.addEventListener("click", printMeeting);
 
-	if (rightCurrentPage < curMeeting.objects.length) {
+	if (rightCurrentPage < rightAllPages) {
 		let rightNextPageListener = document.getElementById("rightNextPageBtn");
 		rightNextPageListener.addEventListener("click", rightNextPage);
 	}
@@ -207,7 +214,28 @@ function parseClientMeetings(clientMeetings) {
 	}
 }
 
-// Add and Edit function
+function deleteMeeting() {
+	if (allMeetingSize === 2) {
+		let deleteBtn = document.getElementById("leftDeleteBtn");
+		deleteBtn.id = "leftDeleteBtnDisabled";
+		deleteBtn.removeEventListener("click", deleteMeeting);
+		deleteMeetingServer();
+	}
+	else {
+		deleteMeetingServer();
+	}
+}
+
+function addMeeting() {
+	addMeetingServer();
+	let deleteBtn = document.getElementById("leftDeleteBtnDisabled");
+	if (deleteBtn) {
+		deleteBtn.id = "leftDeleteBtn";
+		deleteBtn.addEventListener("click", deleteMeeting);
+	}
+}
+
+// Add and Edit Dialog
 function createAddAndEditDialog(fill) {
 	let main = document.getElementById("main");
 
@@ -345,7 +373,7 @@ function createAddAndEditDialog(fill) {
 		okBtn.addEventListener("click", editExistingMeeting);
 	}
 	else {
-		okBtn.addEventListener("click", addNewMeeting);
+		okBtn.addEventListener("click", addMeeting);
 	}
 }
 
@@ -398,9 +426,7 @@ function showAddDialog() {
 function updateView() {
 	updateLeftView();
 	updateRightView();
-
-	let mapWrapper = document.getElementById("mapWrapper");
-	mapWrapper.replaceChild(Map.updateMap(curMeeting), document.getElementById("map"));
+	Map.updateMap(curMeeting);
 }
 
 function updateLeftView() {
@@ -609,13 +635,13 @@ function initMeetings() {
 			updateMenubars();
 			initHandlers();
 			currentMeetingListSize = meetingList.length;
-		})
-		.catch(function (err) {
-			console.error("updateDataError: ", err.statusText);
 		});
+	// .catch(function (err) {
+	// 	console.error("updateDataError: ", err.statusText);
+	// });
 }
 
-function addNewMeeting() {
+function addMeetingServer() {
 	let title = document.getElementById("titleTF");
 	let date = document.getElementById("dateTF");
 	let location = document.getElementById("locationTF");
@@ -636,8 +662,14 @@ function addNewMeeting() {
 			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
 			.then(function (value) {
 				allMeetingSize = parseInt(value);
+				console.log("ServerSize: " + allMeetingSize);
+				console.log("CurrenMeetingListSize: " + currentMeetingListSize);
+				console.log("MeetingList.length: " + meetingList.length);
 				loadLastMeeting();
 				closeAddAndEditDialog();
+				console.log("ServerSize2: " + allMeetingSize);
+				console.log("CurrenMeetingListSize2: " + currentMeetingListSize);
+				console.log("MeetingList.length2: " + meetingList.length);
 			})
 			.catch(function (err) {
 				console.error("addNewMeetingError: ", err.statusText);
@@ -687,7 +719,7 @@ function editExistingMeeting() {
 	}
 }
 
-function deleteMeeting() {
+function deleteMeetingServer() {
 	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId() + "&end=" + (currentMeetingListSize))	//get the actual Array Size for paginating the left lis
 		.then((value) => {
 			meetingList.length = 0;
@@ -777,13 +809,25 @@ function onResize() {
 
 // Printing function
 function printMeeting() {
-	deleteAll();
+	hideAllViews();
+
+	let leftListSec = document.getElementById("leftListSec");
+
+	let mapWrapper = document.getElementById("mapWrapper");
+	mapWrapper.id = "mapWrapperPrint";
+
+	let logo = document.createElement("img");
+	logo.id = "logoPrint";
+	logo.src = "comet_logo.svg";
+	logo.alt = "comet_logo";
 
 	let main = document.getElementById("main");
 
 	let site = document.createElement("section");
-	site.id = "site";
-	site.className = "page-break";
+	site.className = "Print";
+
+	let titleSection = document.createElement("section");
+	titleSection.id = "titleSection";
 
 	let title = document.createElement("h1");
 	title.innerHTML = curMeeting.getName();
@@ -792,40 +836,49 @@ function printMeeting() {
 	dateAndLocation.id = "dateAndLocation";
 	dateAndLocation.innerHTML = curMeeting.getDate() + ", " + curMeeting.getLocation();
 
-	site.appendChild(title);
-	site.appendChild(dateAndLocation);
+	let objectsSection = document.createElement("section");
+	objectsSection.id = "objectsSection";
 
 	let objects = curMeeting.getObjects();
 	for (let index = 0; index < objects.length; index++) {
 		let object = document.createElement("p");
 		object.innerHTML = (index + 1) + ". " + objects[index];
-		site.appendChild(object);
+		objectsSection.appendChild(object);
 	}
 
+	titleSection.appendChild(title);
+	titleSection.appendChild(dateAndLocation);
+	titleSection.appendChild(logo);
+	site.appendChild(titleSection);
+	site.appendChild(objectsSection);
+	site.appendChild(mapWrapper);
 	main.appendChild(site);
 
-	window.print();
+	Map.updateMap(curMeeting);
 
-	addAll();
-	main.removeChild(site);
+	setTimeout(() => {
+		window.print();
+		mapWrapper.id = "mapWrapper";
+		main.insertBefore(mapWrapper, leftListSec);
+		showAllViews();
+		main.removeChild(site);
+	}, 300);
 }
 
-function deleteAll() {
-	let main = document.getElementById("main");
-	let mapWrapper = document.getElementById("mapWrapper");
+function hideAllViews() {
 	let leftList = document.getElementById("leftListSec");
 	let rightList = document.getElementById("rightListSec");
 
-	main.removeChild(mapWrapper);
-	main.removeChild(leftList);
-	main.removeChild(rightList);
+	leftList.style.display = "none";
+	rightList.style.display = "none";
 }
 
-function addAll() {
-	Map = new Maps.Maps();
-	initView();
-	initHandlers();
-	updateView();
+function showAllViews() {
+	let leftList = document.getElementById("leftListSec");
+	let rightList = document.getElementById("rightListSec");
+
+	leftList.style.display = "block";
+	rightList.style.display = "block";
 }
 
 // IIFE as start
@@ -842,10 +895,8 @@ function addAll() {
 //+1 und -1 überall ausbessern
 //packages.json und files ordnen
 //Restkonformität
-//google besser einbinden
-//letztes meeting kann nicht gelöscht werden - dabei geht auch alles andere kaputt
 //less aufräumen
 //datum richtig ausgeben
 //überfliessen der texte verhindern
-//falls keine koordinaten -> error
+//man hat nur 1 element fügt eins hinzu - kaputt
 
