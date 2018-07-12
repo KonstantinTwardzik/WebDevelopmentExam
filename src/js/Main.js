@@ -465,6 +465,7 @@ function updateMenubars() {
 	updateRightMenubar();
 }
 
+//TODO:
 function updateLeftMenubar() {
 	//calculate how many pages there are
 	let currentPageSize = List.getCurrentPageSize();
@@ -534,6 +535,7 @@ function updateLeftMenubar() {
 	}
 }
 
+//TODO:
 function updateRightMenubar() {
 	//calculate how many pages there are
 	let currentPageSize = List.getCurrentPageSize();
@@ -660,7 +662,7 @@ function addMeetingServer() {
 	if (validationCheck(date, title, location, latitude, longitude, objects.length)) {
 		makeRequest("POST", "http://localhost:8080/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
 			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
-			.then(function (value) {
+			.then(function (value) {	//TODO: value change
 				allMeetingSizeServer = parseInt(value);
 				loadLastMeetingServer();
 				closeAddAndEditDialog();
