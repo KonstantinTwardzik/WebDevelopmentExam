@@ -121,7 +121,7 @@ function makePersistent() {
 	//writes into ./meetings.json the JSON.stringified value of db to make the db persistent
 	fs.writeFile("./meetings.json", JSON.stringify(db), (err) => {
 		if (err) {
-			console.log("The file has been saved!");
+			console.log("The file hasn't been saved!");
 			throw err;
 		}
 	});
