@@ -628,8 +628,8 @@ function initMeetingsServer() {
 	let end = 99;
 	//TODO: port should be variable and not hardcoded 8080
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
-		.then(function (value) {	//value is the json string from start to end
-			let jsonArray = JSON.parse(value);	//value must me JSON.parsed to be an object
+		.then(function (DatabaseSnippet) {	//value is the json string from start to end
+			let jsonArray = JSON.parse(DatabaseSnippet);	//value must me JSON.parsed to be an object
 			fillMeetingList(jsonArray);
 			curMeeting = meetingList[0];
 			initView();
@@ -662,8 +662,8 @@ function addMeetingServer() {
 	if (validationCheck(date, title, location, latitude, longitude, objects.length)) {
 		makeRequest("POST", "http://localhost:8080/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
 			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
-			.then(function (value) {	//TODO: value change
-				allMeetingSizeServer = parseInt(value);
+			.then(function (newDbSize) {	//TODO: value change
+				allMeetingSizeServer = parseInt(newDbSize);
 				loadLastMeetingServer();
 				closeAddAndEditDialog();
 			})
@@ -715,9 +715,9 @@ function editMeetingServer() {
 
 function deleteMeetingServer() {
 	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId() + "&end=" + (currentMeetingListSize))	//get the actual Array Size for paginating the left lis
-		.then((value) => {
+		.then((newCompleteDb) => {
 			meetingList.length = 0;
-			let jsonArray = JSON.parse(value);	//value must me JSON.parsed to be an object
+			let jsonArray = JSON.parse(newCompleteDb);	//db must me JSON.parsed to be an object
 			fillMeetingList(jsonArray);
 			if (parseInt(meetingListPointer) === parseInt(meetingList.length)) {
 				--meetingListPointer;
@@ -735,8 +735,8 @@ function increaseMeetingList() {
 	let end = 99 + start;
 	currentMeetingListSize += 100;
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
-		.then(function (value) {	//value is the json string from start to end
-			let jsonArray = JSON.parse(value);	//value must me JSON.parsed to be an object
+		.then(function (DatabaseSnippet) {	//value is the json string from start to end
+			let jsonArray = JSON.parse(DatabaseSnippet);	//value must me JSON.parsed to be an object
 			fillMeetingList(jsonArray);
 		})
 		.catch(function (err) {
@@ -749,8 +749,8 @@ function loadLastMeetingServer() {
 		let start = meetingList.length;
 		let end = allMeetingSizeServer;
 		makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
-			.then(function (value) {	//value is the json string from start to end
-				let jsonArray = JSON.parse(value);	//value must me JSON.parsed to be an object
+			.then(function (DatabaseSnippet) {	//value is the json string from start to end
+				let jsonArray = JSON.parse(DatabaseSnippet);	//value must me JSON.parsed to be an object
 				fillMeetingList(jsonArray);
 				updateLists();
 			})
@@ -763,8 +763,8 @@ function loadLastMeetingServer() {
 function getAllMeetingsSize() {
 	// getFeed().then(data => vm.feed = data);
 	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left lis
-		.then((value) => {					//its actually a string but it works
-			allMeetingSizeServer = value;		//assign value to a variable
+		.then((DatabaseSize) => {					//its actually a string but it works
+			allMeetingSizeServer = DatabaseSize;		//assign value to a variable
 		})
 		.catch(function (err) {
 			console.error("GetAllMeetingSize: ", err.statusText);
