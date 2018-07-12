@@ -86,12 +86,12 @@ class Lists {
 			currentRightPageSize = object.getObjects().length - (((offset - 1) * this.currentPageSize));
 		}
 
-		for (let index = 1; index <= currentRightPageSize; index++) {
+		for (let index = 0; index < currentRightPageSize; index++) {
 			let detailListElement = document.createElement("li");
 			let detailObject = document.createElement("p");
 
-			detailObject.innerHTML += object.getObjects()[(index - 1) + this.rightRealOffset];
-			detailListElement.id = "rightListElement" + ((index - 1) + this.rightRealOffset);
+			detailObject.innerHTML += object.getObjects()[index + this.rightRealOffset];
+			detailListElement.id = "rightListElement" + (index + this.rightRealOffset);
 
 			detailListElement.appendChild(detailObject);
 			list.appendChild(detailListElement);

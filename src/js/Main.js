@@ -4,17 +4,17 @@ let Maps = require("./Maps");
 let Meeting = require("./Meeting");
 let List;
 let Map;
-let allMeetingSize;
 let leftCurrentPage = 1;
 let rightCurrentPage = 1;
 let leftAllPages;
 let rightAllPages;
 let leftList;
 let rightList;
-let curMeeting;
+let allMeetingSizeServer;
 let meetingList = [];
 let currentMeetingListSize;
 let meetingListPointer = 0;
+let curMeeting;
 
 // Create Logic & Views
 function initView() {
@@ -35,11 +35,11 @@ function initView() {
 	main.appendChild(rightList);
 }
 
-function initHandlers() {
+function initEventListener() {
 	window.addEventListener("resize", onResize);
 
 	let listListener = document.getElementById("leftList");
-	listListener.addEventListener("click", event => updateCurMeeting(event.target.id));
+	listListener.addEventListener("click", event => updateCurrentMeeting(event.target.id));
 
 	if (leftCurrentPage < leftAllPages) {
 		let leftNextPageListener = document.getElementById("leftNextPageBtn");
@@ -53,7 +53,7 @@ function initHandlers() {
 	editMeetingListener.addEventListener("click", showEditDialog);
 
 	let removeMeetingListener = document.getElementById("leftDeleteBtn");
-	if (allMeetingSize > 1) {
+	if (allMeetingSizeServer > 1) {
 		removeMeetingListener.addEventListener("click", deleteMeeting);
 	}
 	else {
@@ -200,22 +200,22 @@ function createRightMenuBar() {
 }
 
 // Logic
-function updateCurMeeting(pointer) {
+function updateCurrentMeeting(pointer) {
 	curMeeting = meetingList[parseInt(pointer)];
 	meetingListPointer = pointer;
 	updateView();
 }
 
-function parseClientMeetings(clientMeetings) {
+function fillMeetingList(jsonArray) {
 	let meeting;
-	for (let i = 0; i < clientMeetings.length; i++) {
-		meeting = new Meeting.Meeting(clientMeetings[i].id, clientMeetings[i].name, clientMeetings[i].date, clientMeetings[i].location, clientMeetings[i].coordinates, clientMeetings[i].objects);
+	for (let i = 0; i < jsonArray.length; i++) {
+		meeting = new Meeting.Meeting(jsonArray[i].id, jsonArray[i].name, jsonArray[i].date, jsonArray[i].location, jsonArray[i].coordinates, jsonArray[i].objects);
 		meetingList.push(meeting);
 	}
 }
 
 function deleteMeeting() {
-	if (allMeetingSize === 2) {
+	if (allMeetingSizeServer === 2) {
 		let deleteBtn = document.getElementById("leftDeleteBtn");
 		deleteBtn.id = "leftDeleteBtnDisabled";
 		deleteBtn.removeEventListener("click", deleteMeeting);
@@ -370,7 +370,7 @@ function createAddAndEditDialog(fill) {
 			let lE = document.getElementById("popupListElement" + i);
 			lE.value = objects[i];
 		}
-		okBtn.addEventListener("click", editExistingMeeting);
+		okBtn.addEventListener("click", editMeetingServer);
 	}
 	else {
 		okBtn.addEventListener("click", addMeeting);
@@ -392,22 +392,22 @@ function validationCheck(date, title, location, latitude, longitude, objectlengt
 	let floatReg = /^[+-]?\d+(\.\d+)?$/;
 
 	if (objectlength === 0) {
-		alert("please enter at least one object!");
+		alert("Mindestens ein zu beobachtendes Objekt einfügen.");
 		indicator = false;
 		return indicator;
 	}
 	if (!date.value.match(dateReg)) {
-		alert("Field date must match the pattern \n dd.mm.yyyy.");
+		alert("Datumsformat muss dd.mm.yyyy entsprechen.");
 		indicator = false;
 		return indicator;
 	}
 	if (!title.value.match(textReg) || !location.value.match(textReg)) {
-		alert("Fields Title and Location must not contain special characters or numbers.");
+		alert("Titel und Ort dürfen keine Zahlen oder Sonderzeichen enthalten.");
 		indicator = false;
 		return indicator;
 	}
 	if (!latitude.value.match(floatReg) || !longitude.value.match(floatReg)) {
-		alert("Field Latitude and Longitude must be numbers.");
+		alert("Längen- und Breitengrad müssen Zahlen sein.");
 		indicator = false;
 		return indicator;
 	}
@@ -468,8 +468,7 @@ function updateMenubars() {
 function updateLeftMenubar() {
 	//calculate how many pages there are
 	let currentPageSize = List.getCurrentPageSize();
-	let minimum = 1;
-	leftAllPages = Math.max(minimum, Math.ceil(allMeetingSize / currentPageSize));
+	leftAllPages = Math.max(1, Math.ceil(allMeetingSizeServer / currentPageSize));
 
 	//redraw which page is selected
 	let leftPageIndicator = document.getElementById("leftPageIndicator");
@@ -552,7 +551,7 @@ function updateRightMenubar() {
 		rightNextPageListener.id = "rightNextPageBtnDisabled";
 	}
 
-	//if the leftAllPages size is smaller then the leftCurrentPage, jump to previousPage - same for rightList
+	//if the rightAllPages size is smaller then the rightCurrentPage, jump to previousPage
 	if (rightAllPages < rightCurrentPage) {
 		rightPrevPage();
 	}
@@ -622,24 +621,24 @@ function makeRequest(method, url) {
 	});
 }
 
-function initMeetings() {
+function initMeetingsServer() {
 	let start = 0;
 	let end = 99;
 	//TODO: port should be variable and not hardcoded 8080
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 		.then(function (value) {	//value is the json string from start to end
-			let clientMeetings = JSON.parse(value);	//value must me JSON.parsed to be an object
-			parseClientMeetings(clientMeetings);
+			let jsonArray = JSON.parse(value);	//value must me JSON.parsed to be an object
+			fillMeetingList(jsonArray);
 			curMeeting = meetingList[0];
 			initView();
 			updateLists();
 			updateMenubars();
-			initHandlers();
+			initEventListener();
 			currentMeetingListSize = meetingList.length;
+		})
+		.catch(function (err) {
+			console.error("initMeetingsServer: ", err.statusText);
 		});
-	// .catch(function (err) {
-	// 	console.error("updateDataError: ", err.statusText);
-	// });
 }
 
 function addMeetingServer() {
@@ -662,24 +661,17 @@ function addMeetingServer() {
 		makeRequest("POST", "http://localhost:8080/addNewMeeting?name=" + title.value + "&date=" + date.value + "&location="
 			+ location.value + "&coordinates=" + coordinates + "&objects=" + objects)
 			.then(function (value) {
-				allMeetingSize = parseInt(value);
-				console.log("ServerSize: " + allMeetingSize);
-				console.log("CurrenMeetingListSize: " + currentMeetingListSize);
-				console.log("MeetingList.length: " + meetingList.length);
-				loadLastMeeting();
+				allMeetingSizeServer = parseInt(value);
+				loadLastMeetingServer();
 				closeAddAndEditDialog();
-				console.log("ServerSize2: " + allMeetingSize);
-				console.log("CurrenMeetingListSize2: " + currentMeetingListSize);
-				console.log("MeetingList.length2: " + meetingList.length);
 			})
 			.catch(function (err) {
-				console.error("addNewMeetingError: ", err.statusText);
+				console.error("addMeetingServer: ", err.statusText);
 			});
 	}
 }
 
-function editExistingMeeting() {
-	//zugriff auf die werte über .value, also z.b title.value
+function editMeetingServer() {
 	let id = curMeeting.getId();
 	let title = document.getElementById("titleTF");
 	let date = document.getElementById("dateTF");
@@ -705,17 +697,16 @@ function editExistingMeeting() {
 
 				if (parseFloat(editedMeeting.coordinates[0]) !== parseFloat(curMeeting.getCoordinates()[0]) || parseFloat(editedMeeting.coordinates[1]) !== parseFloat(curMeeting.getCoordinates()[1])) {
 					curMeeting = editedMeeting;
-					let mapWrapper = document.getElementById("mapWrapper");
-					mapWrapper.replaceChild(Map.updateMap(curMeeting), document.getElementById("map"));
+					Map.updateMap(curMeeting);
 				}
 				else {
 					curMeeting = editedMeeting;
 				}
 				meetingList[meetingListPointer] = editedMeeting;
-				updateCurMeeting(meetingListPointer);
+				updateCurrentMeeting(meetingListPointer);
 				closeAddAndEditDialog();
 			}).catch(function (err) {
-				console.error("editMeetingError: ", err.statusText);
+				console.error("editMeetingServer: ", err.statusText);
 			});
 	}
 }
@@ -724,16 +715,16 @@ function deleteMeetingServer() {
 	makeRequest("DELETE", "http://localhost:8080/deleteMeeting?id=" + curMeeting.getId() + "&end=" + (currentMeetingListSize))	//get the actual Array Size for paginating the left lis
 		.then((value) => {
 			meetingList.length = 0;
-			let clientMeetings = JSON.parse(value);	//value must me JSON.parsed to be an object
-			parseClientMeetings(clientMeetings);
+			let jsonArray = JSON.parse(value);	//value must me JSON.parsed to be an object
+			fillMeetingList(jsonArray);
 			if (parseInt(meetingListPointer) === parseInt(meetingList.length)) {
 				--meetingListPointer;
 			}
-			allMeetingSize--;
-			updateCurMeeting(meetingListPointer);
+			allMeetingSizeServer--;
+			updateCurrentMeeting(meetingListPointer);
 		})
 		.catch(function (err) {
-			console.error("DeleteError: ", err.statusText);
+			console.error("deleteMeetingServer: ", err.statusText);
 		});
 }
 
@@ -743,26 +734,26 @@ function increaseMeetingList() {
 	currentMeetingListSize += 100;
 	makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 		.then(function (value) {	//value is the json string from start to end
-			let clientMeetings = JSON.parse(value);	//value must me JSON.parsed to be an object
-			parseClientMeetings(clientMeetings);
+			let jsonArray = JSON.parse(value);	//value must me JSON.parsed to be an object
+			fillMeetingList(jsonArray);
 		})
 		.catch(function (err) {
-			console.error("loadDataError: ", err.statusText);
+			console.error("increaseMeetingListServer: ", err.statusText);
 		});
 }
 
-function loadLastMeeting() {
-	if ((meetingList.length + 1) === allMeetingSize) {
+function loadLastMeetingServer() {
+	if ((meetingList.length + 1) === allMeetingSizeServer) {
 		let start = meetingList.length;
-		let end = allMeetingSize;
+		let end = allMeetingSizeServer;
 		makeRequest("GET", "http://localhost:8080/returnRange?start=" + start + "&end=" + end)
 			.then(function (value) {	//value is the json string from start to end
-				let clientMeetings = JSON.parse(value);	//value must me JSON.parsed to be an object
-				parseClientMeetings(clientMeetings);
+				let jsonArray = JSON.parse(value);	//value must me JSON.parsed to be an object
+				fillMeetingList(jsonArray);
 				updateLists();
 			})
 			.catch(function (err) {
-				console.error("loadLastMeetingError: ", err.statusText);
+				console.error("loadLastMeetingServer: ", err.statusText);
 			});
 	}
 }
@@ -771,10 +762,10 @@ function getAllMeetingsSize() {
 	// getFeed().then(data => vm.feed = data);
 	makeRequest("GET", "http://localhost:8080/returnArraySize")	//get the actual Array Size for paginating the left lis
 		.then((value) => {					//its actually a string but it works
-			allMeetingSize = value;		//assign value to a variable
+			allMeetingSizeServer = value;		//assign value to a variable
 		})
 		.catch(function (err) {
-			console.error("returnArraySize Error: ", err.statusText);
+			console.error("GetAllMeetingSize: ", err.statusText);
 		});
 }
 
@@ -805,6 +796,7 @@ function onResize() {
 	while (List.getCurrentPageSize() * leftCurrentPage > currentMeetingListSize - 20) {
 		increaseMeetingList();
 	}
+	updateLists();
 	updateMenubars();
 }
 
@@ -887,17 +879,18 @@ function showAllViews() {
 	getAllMeetingsSize();
 	Map = new Maps.Maps();
 	List = new Lists.Lists();
-	initMeetings();
+	initMeetingsServer();
 })();
 
-//Code beautifien
-//Namensgebung
-//Firefox testen
-//+1 und -1 überall ausbessern
+//update menubars methoden aufräumen
+
 //packages.json und files ordnen
-//Restkonformität
 //less aufräumen
+//Firefox testen
+
+//Restkonformität
 //datum richtig ausgeben
+
 //überfliessen der texte verhindern
-//man hat nur 1 element fügt eins hinzu - kaputt
+//man hat nur 1 element fügt eins hinzu, bei seite neu laden - kaputt
 
