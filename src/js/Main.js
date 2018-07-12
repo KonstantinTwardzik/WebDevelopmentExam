@@ -627,7 +627,6 @@ function makeRequest(method, url) {
 function initMeetingsServer() {
 	let start = 0;
 	let end = 99;
-	//TODO: port should be variable and not hardcoded 8080
 	makeRequest("GET", "http://localhost:" + PORT + "/returnRange?start=" + start + "&end=" + end)
 		.then(function (DatabaseSnippet) {	//value is the json string from start to end
 			let jsonArray = JSON.parse(DatabaseSnippet);	//value must me JSON.parsed to be an object
