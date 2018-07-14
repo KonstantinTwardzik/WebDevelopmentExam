@@ -389,7 +389,7 @@ function closeAddAndEditDialog() {
 function validationCheck(date, title, location, latitude, longitude, objectlength) {
 	let indicator = true;
 	let dateReg = /^\d{2}([./-])\d{2}\1\d{4}$/;
-	let textReg = /(^[a-z ä ö ü ß'-]+$)/i;
+	let textReg = /(^[a-z ä ö ü ß'0-9]+$)/i;
 	let floatReg = /^[+-]?\d+(\.\d+)?$/;
 
 	if (objectlength === 0) {
