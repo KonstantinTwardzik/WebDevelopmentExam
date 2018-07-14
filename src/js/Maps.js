@@ -2,6 +2,7 @@ var GoogleMapsLoader = require("google-maps");
 
 class Maps {
 	createMap(currentMeeting) {
+		//release for loading new Map on initialize and returning from print mode
 		GoogleMapsLoader.release();
 		let mapSec = document.createElement("section");
 		mapSec.id = "map";
@@ -9,6 +10,7 @@ class Maps {
 		return mapSec;
 	}
 
+	//when selecting another meeting
 	updateMap(currentMeeting) {
 		let mapSec = document.getElementById("map");
 		this.loadMap(mapSec, currentMeeting);
@@ -19,12 +21,14 @@ class Maps {
 			lat: currentMeeting.getCoordinates()[0],
 			lng: currentMeeting.getCoordinates()[1]
 		};
-
+		//needed for verification
 		GoogleMapsLoader.KEY = "AIzaSyCIXJRNCkfv7Sg5948vYfoiCtgnazWoNJw";
 		GoogleMapsLoader.load(function (google) {
 			var map = new google.maps.Map(mapSec, {
+				//sets map focus on coordinates
 				center: coordinates,
 				zoom: 12,
+				//style for fitting into the black theme
 				styles: [
 					{
 						elementType: "geometry",
@@ -234,7 +238,7 @@ class Maps {
 			var marker = new google.maps.Marker({
 				position: coordinates,
 				map: map,
-				title: "Treffen"
+				title: currentMeeting.getName()
 			});
 		});
 	}
