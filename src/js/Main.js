@@ -40,7 +40,7 @@ function initEventListener() {
 	window.addEventListener("resize", onResize);
 
 	let listListener = document.getElementById("leftList");
-	listListener.addEventListener("click", event => updateCurrentMeeting(event.target.id));
+	listListener.addEventListener("mousedown", event => updateCurrentMeeting(event.target.id));
 
 	if (leftCurrentPage < leftAllPages) {
 		let leftNextPageListener = document.getElementById("leftNextPageBtn");
