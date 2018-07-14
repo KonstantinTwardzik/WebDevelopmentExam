@@ -6,6 +6,8 @@ class Maps {
 	}
 
 	createMap(curMeeting) {
+		GoogleMapsLoader.release();
+
 		let coordinates = {
 			lat: curMeeting.getCoordinates()[0],
 			lng: curMeeting.getCoordinates()[1]

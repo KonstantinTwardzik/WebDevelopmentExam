@@ -856,6 +856,7 @@ function printMeeting() {
 		mapWrapper.id = "mapWrapper";
 		main.insertBefore(mapWrapper, leftListSec);
 		showAllViews();
+		updateView();
 		main.removeChild(site);
 	}, 300);
 }
@@ -889,7 +890,10 @@ function showAllViews() {
 //favicon.ico won't be found if its not port 8080
 //packages.json und files ordnen
 //less aufräumen
-//Firefox testen
+
+//Restkonformität
+
+//Kommentieren
 
 //überfliessen der texte verhindern
 //man hat nur 1 element fügt eins hinzu, bei seite neu laden - kaputt
