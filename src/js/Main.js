@@ -241,8 +241,8 @@ function createAddAndEditDialog(fill) {
 	let coverPlane = document.createElement("section");
 	coverPlane.id = "coverPlane";
 
-	let window = document.createElement("section");
-	window.id = "window";
+	let dialog = document.createElement("section");
+	dialog.id = "dialog";
 
 	let menubar = document.createElement("section");
 	menubar.id = "dialogMenubar";
@@ -315,15 +315,14 @@ function createAddAndEditDialog(fill) {
 	cancelBtn.id = "cancelBtn";
 	cancelBtn.innerHTML = "Abbrechen";
 
-	let listDiv = document.createElement("div");
-	listDiv.id = "listDiv";
+	let objectsList = document.createElement("div");
+	objectsList.id = "objectsList";
 
 	let list = document.createElement("ol");
 	list.id = "objectList";
 	List.fillPopupList(list);
 
-	listDiv.appendChild(list);
-	window.appendChild(listDiv);
+	objectsList.appendChild(list);
 
 	header.appendChild(title);
 	titleDiv.appendChild(titleTF);
@@ -348,11 +347,12 @@ function createAddAndEditDialog(fill) {
 	menubar.appendChild(cancelBtn);
 	menubar.appendChild(okBtn);
 
-	window.appendChild(header);
-	window.appendChild(menubar);
+	dialog.appendChild(header);
+	dialog.appendChild(objectsList);
+	dialog.appendChild(menubar);
 
 	main.appendChild(coverPlane);
-	main.appendChild(window);
+	main.appendChild(dialog);
 
 	coverPlane.addEventListener("click", closeAddAndEditDialog);
 	cancelBtn.addEventListener("click", closeAddAndEditDialog);
@@ -377,7 +377,7 @@ function createAddAndEditDialog(fill) {
 }
 
 function closeAddAndEditDialog() {
-	main.removeChild(document.getElementById("window"));
+	main.removeChild(document.getElementById("dialog"));
 	main.removeChild(document.getElementById("coverPlane"));
 }
 
@@ -842,9 +842,6 @@ function showAllViews() {
 	List = new Lists.Lists();
 	initMeetingsServer();
 })();
-
-//update menubars methoden aufräumen
-
 //less aufräumen
 
 //Kommentieren
