@@ -16,11 +16,11 @@ let currentMeetingListSize;
 let meetingListPointer = 0;
 let curMeeting;
 let PORT = window.location.port;
+let main = document.getElementById("main");
 
 // Create Logic & Views
 function initView() {
 	// initiates foundation of page
-	let main = document.getElementById("main");
 	let mapWrapper = document.createElement("section");
 	let mapSec = Map.createMap(curMeeting);
 	let leftList = createLeftList();
@@ -238,8 +238,6 @@ function addMeeting() {
 
 // Add and Edit Dialog
 function createAddAndEditDialog(fill) {
-	let main = document.getElementById("main");
-
 	let coverPlane = document.createElement("section");
 	coverPlane.id = "coverPlane";
 
@@ -379,11 +377,8 @@ function createAddAndEditDialog(fill) {
 }
 
 function closeAddAndEditDialog() {
-	let main = document.getElementById("main");
-	let deletableItem = document.getElementById("window");
-	main.removeChild(deletableItem);
-	deletableItem = document.getElementById("coverPlane");
-	main.removeChild(deletableItem);
+	main.removeChild(document.getElementById("window"));
+	main.removeChild(document.getElementById("coverPlane"));
 }
 
 function validationCheck(date, title, location, latitude, longitude, objectlength) {
@@ -466,7 +461,6 @@ function updateMenubars() {
 	updateRightMenubar();
 }
 
-//TODO:
 function updateLeftMenubar() {
 	//calculate how many pages there are
 	let currentPageSize = List.getCurrentPageSize();
@@ -476,125 +470,91 @@ function updateLeftMenubar() {
 	let leftPageIndicator = document.getElementById("leftPageIndicator");
 	leftPageIndicator.innerHTML = leftCurrentPage + " of " + leftAllPages;
 
-	//if the leftAllPage = 1 disable nextPageBtn - same for rightList
-	if (leftAllPages === 1 && document.getElementById("leftNextPageBtn")) {
-		let leftNextPageListener = document.getElementById("leftNextPageBtn");
-		leftNextPageListener.removeEventListener("click", leftNextPage);
-		leftNextPageListener.id = "leftNextPageBtnDisabled";
+	//mark selected item (if it is visible)
+	if (document.getElementById(meetingListPointer)) {
+		let active = document.getElementById("" + meetingListPointer);
+		active.className = "active";
 	}
 
-	//if the leftAllPages size is smaller then the leftCurrentPage, jump to previousPage - same for rightList
-	if (leftAllPages < leftCurrentPage) {
-		leftPrevPage();
-	}
-
-	//if the leftCurrentPage gets smaller then the leftAllPage, enable nextBtn - same for rightList
-	if (leftCurrentPage !== leftAllPages && document.getElementById("leftNextPageBtnDisabled")) {
-		let leftNextPageListener = document.getElementById("leftNextPageBtnDisabled");
-		leftNextPageListener.addEventListener("click", leftNextPage);
-		leftNextPageListener.id = "leftNextPageBtn";
-	}
-
-	//if the leftAllPage is as big as the leftCurrentPage disable nextBtn - same for rightList
-	if (leftAllPages === leftCurrentPage && document.getElementById("leftNextPageBtn")) {
-		let leftNextPageListener = document.getElementById("leftNextPageBtn");
-		leftNextPageListener.removeEventListener("click", leftNextPage);
-		leftNextPageListener.id = "leftNextPageBtnDisabled";
-	}
-
-	if (leftCurrentPage === 2 && document.getElementById("leftPrevPageBtnDisabled")) {
-		let leftPrevPageListener = document.getElementById("leftPrevPageBtnDisabled");
-		leftPrevPageListener.addEventListener("click", leftPrevPage);
-		leftPrevPageListener.id = "leftPrevPageBtn";
-	}
-
-	if (leftCurrentPage === leftAllPages && document.getElementById("leftNextPageBtn")) {
-		let leftNextPageListener = document.getElementById("leftNextPageBtn");
-		leftNextPageListener.removeEventListener("click", leftNextPage);
-		leftNextPageListener.id = "leftNextPageBtnDisabled";
-	}
-
-	if (List.getCurrentPageSize() * leftCurrentPage > currentMeetingListSize - 20) {
-		increaseMeetingList();
-	}
-
+	// disable PrevPageButton if necessary
 	if (leftCurrentPage === 1 && document.getElementById("leftPrevPageBtn")) {
 		let leftPrevPageListener = document.getElementById("leftPrevPageBtn");
 		leftPrevPageListener.removeEventListener("click", leftPrevPage);
 		leftPrevPageListener.id = "leftPrevPageBtnDisabled";
 	}
 
-	if (leftCurrentPage === (leftAllPages - 1) && document.getElementById("leftNextPageBtnDisabled")) {
+	// enable PrevPageButton if necessary
+	if (leftCurrentPage === 2 && document.getElementById("leftPrevPageBtnDisabled")) {
+		let leftPrevPageListener = document.getElementById("leftPrevPageBtnDisabled");
+		leftPrevPageListener.addEventListener("click", leftPrevPage);
+		leftPrevPageListener.id = "leftPrevPageBtn";
+	}
+
+	// disable NextPageButton if necessary
+	if ((leftAllPages === leftCurrentPage) && document.getElementById("leftNextPageBtn")) {
+		let leftNextPageListener = document.getElementById("leftNextPageBtn");
+		leftNextPageListener.removeEventListener("click", leftNextPage);
+		leftNextPageListener.id = "leftNextPageBtnDisabled";
+	}
+
+	// enable NextPageButton if necessary
+	if (leftCurrentPage !== leftAllPages && document.getElementById("leftNextPageBtnDisabled")) {
 		let leftNextPageListener = document.getElementById("leftNextPageBtnDisabled");
 		leftNextPageListener.addEventListener("click", leftNextPage);
 		leftNextPageListener.id = "leftNextPageBtn";
 	}
-	//mark selected item (if it is visible)
-	if (document.getElementById(meetingListPointer)) {
-		let active = document.getElementById("" + meetingListPointer);
-		active.className = "active";
+
+	// if the leftAllPages size is smaller then the leftCurrentPage, jump to previousPage
+	if (leftAllPages < leftCurrentPage) {
+		leftPrevPage();
+	}
+
+	// loads additionalData if it is necesarry
+	if (List.getCurrentPageSize() * leftCurrentPage > currentMeetingListSize - 20) {
+		increaseMeetingList();
 	}
 }
 
-//TODO:
 function updateRightMenubar() {
 	//calculate how many pages there are
 	let currentPageSize = List.getCurrentPageSize();
-	let minimum = 1;
-	rightAllPages = Math.max(minimum, Math.ceil(curMeeting.getObjects().length / currentPageSize));
+	rightAllPages = Math.max(1, Math.ceil(curMeeting.getObjects().length / currentPageSize));
 
 	//redraw which page is selected
 	let rightPageIndicator = document.getElementById("rightPageIndicator");
 	rightPageIndicator.innerHTML = rightCurrentPage + " of " + rightAllPages;
 
-	//if the leftAllPage = 1 disable nextPageBtn - same for rightList
-	if (rightAllPages === 1 && document.getElementById("rightNextPageBtn")) {
-		let rightNextPageListener = document.getElementById("rightNextPageBtn");
-		rightNextPageListener.removeEventListener("click", rightNextPage);
-		rightNextPageListener.id = "rightNextPageBtnDisabled";
-	}
-
-	//if the rightAllPages size is smaller then the rightCurrentPage, jump to previousPage
-	if (rightAllPages < rightCurrentPage) {
-		rightPrevPage();
-	}
-
-	//if the leftCurrentPage gets smaller then the leftAllPage, enable nextBtn - same for rightList
-	if (rightCurrentPage !== rightAllPages && document.getElementById("rightNextPageBtnDisabled")) {
-		let rightNextPageListener = document.getElementById("rightNextPageBtnDisabled");
-		rightNextPageListener.addEventListener("click", rightNextPage);
-		rightNextPageListener.id = "rightNextPageBtn";
-	}
-
-	//if the leftAllPage is as big as the leftCurrentPage disable nextBtn - same for rightList
-	if (rightAllPages === rightCurrentPage && document.getElementById("rightNextPageBtn")) {
-		let rightNextPageListener = document.getElementById("rightNextPageBtn");
-		rightNextPageListener.removeEventListener("click", rightNextPage);
-		rightNextPageListener.id = "rightNextPageBtnDisabled";
-	}
-
-	if (rightCurrentPage === 2 && document.getElementById("rightPrevPageBtnDisabled")) {
-		let rightPrevPageListener = document.getElementById("rightPrevPageBtnDisabled");
-		rightPrevPageListener.addEventListener("click", rightPrevPage);
-		rightPrevPageListener.id = "rightPrevPageBtn";
-	}
-
-	if (rightCurrentPage === rightAllPages && document.getElementById("rightNextPageBtn")) {
-		let rightNextPageListener = document.getElementById("rightNextPageBtn");
-		rightNextPageListener.removeEventListener("click", rightNextPage);
-		rightNextPageListener.id = "rightNextPageBtnDisabled";
-	}
-
+	// disables rightPrevPageBtn if necessary
 	if (rightCurrentPage === 1 && document.getElementById("rightPrevPageBtn")) {
 		let rightPrevPageListener = document.getElementById("rightPrevPageBtn");
 		rightPrevPageListener.removeEventListener("click", rightPrevPage);
 		rightPrevPageListener.id = "rightPrevPageBtnDisabled";
 	}
 
-	if (rightCurrentPage === (rightAllPages - 1) && document.getElementById("rightNextPageBtnDisabled")) {
+	// enables rightPrevPageBtn if necessary
+	if (rightCurrentPage === 2 && document.getElementById("rightPrevPageBtnDisabled")) {
+		let rightPrevPageListener = document.getElementById("rightPrevPageBtnDisabled");
+		rightPrevPageListener.addEventListener("click", rightPrevPage);
+		rightPrevPageListener.id = "rightPrevPageBtn";
+	}
+
+	//disables rightNextPageBtn if necessary
+	if (rightAllPages === rightCurrentPage && document.getElementById("rightNextPageBtn")) {
+		let rightNextPageListener = document.getElementById("rightNextPageBtn");
+		rightNextPageListener.removeEventListener("click", rightNextPage);
+		rightNextPageListener.id = "rightNextPageBtnDisabled";
+	}
+
+	// enables rightNextPageBtn if necessary
+	if (rightCurrentPage !== rightAllPages && document.getElementById("rightNextPageBtnDisabled")) {
 		let rightNextPageListener = document.getElementById("rightNextPageBtnDisabled");
 		rightNextPageListener.addEventListener("click", rightNextPage);
 		rightNextPageListener.id = "rightNextPageBtn";
+	}
+
+	//if the rightAllPages size is smaller then the rightCurrentPage, jump to previousPage
+	if (rightAllPages < rightCurrentPage) {
+		rightPrevPage();
 	}
 }
 
@@ -815,8 +775,6 @@ function printMeeting() {
 	logo.id = "logoPrint";
 	logo.src = "comet_logo.svg";
 	logo.alt = "comet_logo";
-
-	let main = document.getElementById("main");
 
 	let site = document.createElement("section");
 	site.className = "Print";
