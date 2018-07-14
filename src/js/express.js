@@ -11,8 +11,8 @@ let port = process.argv[2];
 
 const BASE_URI = "http://localhost:${port}";
 server.use(bodyParser.json());
-//use everything that is in public folder
-server.use(express.static(__dirname + "/public"));
+//use everything that is in client folder
+server.use(express.static("../client"));
 //if port is set in call, then listen on this port, else listen per default on port 8080
 if (port) {
 	server.listen(port, () => console.log("listening on port " + port));

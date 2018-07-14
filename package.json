@@ -2,37 +2,36 @@
     "name": "web_development_exam",
     "repository": "https://github.com/KonstantinTwardzik/WebDevelopmentExam",
     "license": "UNLICENSED",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "dependencies": {
-        "http-server": "latest",
         "express": "4.16.3",
-        "npm": "^6.0.0",
-        "google-maps": "3.3.0"
+        "google-maps": "3.3.0",
+        "http-server": "0.11.1",
+        "npm": "^6.2.0"
     },
     "devDependencies": {
-        "eslint": "latest",
-        "less": "latest",
-        "browserify": "latest",
-        "babel-minify": "latest",
-        "less-plugin-clean-css": "latest"
+        "eslint": "5.1.0",
+        "less": "3.7.1",
+        "browserify": "16.2.2",
+        "babel-minify": "0.4.3",
+        "less-plugin-clean-css": "1.5.1"
     },
     "scripts": {
         "clean": "rm -rf dist && rm -rf node_modules",
         "clean:dist": "rm -rf dist",
-        "express": "cp -r src/express.js dist/express.js",
-        "dist": "npm run clean:dist && mkdir dist && cd ./dist && mkdir public && cd ../",
+        "dist": "npm run clean:dist && mkdir dist && cd ./dist && mkdir client && mkdir server && cd ../",
         "lint": "eslint -c .eslintrc.json src/js/**",
-        "html": "cp -r src/index.html dist/public",
-        "assets": "cp -r src/assets/public/* dist/public",
-        "db": "cp -r src/assets/db/* dist",
-        "css": "lessc src/styles/style.less dist/public/style.min.css",
-        "css:min": "lessc --clean-css src/styles/style.less dist/public/style.min.css",
-        "js": "npm run lint && browserify src/js/Main.js > dist/public/main.js",
-        "postjs": "cp -r dist/public/main.js dist/public/main.min.js && rm -f dist/main.js",
-        "js:min": "npm run lint && browserify src/js/Main.js > dist/public/main.js && minify dist/public/main.js > dist/public/main.min.js",
-        "postjs:min": "rm -f dist/public/main.js",
-        "debug": "npm run dist && npm run assets && npm run html && npm run css && npm run js && npm run db &&npm run express",
-        "build": "npm run dist && npm run assets && npm run html && npm run css:min && npm run js:min && npm run db && npm run express",
-        "start": "cd ./dist && node express.js"
+        "html": "cp -r src/index.html dist/client",
+        "clientAssets": "cp -r src/assets/client/* dist/client",
+        "serverAssets": "cp -r src/assets/server/* dist/server",
+        "less": "lessc src/styles/style.less dist/client/style.min.css",
+        "less:min": "lessc --clean-css src/styles/style.less dist/client/style.min.css",
+        "clientJs": "npm run lint && browserify src/js/Main.js > dist/client/main.min.js",
+        "clientJs:min": "npm run lint && browserify src/js/Main.js > dist/client/main.js && minify dist/client/main.js > dist/client/main.min.js && rm dist/client/main.js",
+        "serverJs": "cp -r src/js/express.js dist/server/express.js",
+        "serverJs:min": "minify src/js/express.js > dist/server/express.js",
+        "debug": "npm run dist && npm run clientAssets && npm run html && npm run less && npm run clientJs && npm run serverAssets && npm run serverJs",
+        "build": "npm install && npm run dist && npm run clientAssets && npm run html && npm run less:min && npm run clientJs:min && npm run serverAssets && npm run serverJs:min",
+        "start": "cd ./dist/server && node express.js"
     }
 }
