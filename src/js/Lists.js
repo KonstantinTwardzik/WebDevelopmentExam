@@ -1,7 +1,7 @@
 class Lists {
 	constructor() {
-		this.leftRealOffset = 0;
-		this.rightRealOffset = 0;
+		this.leftOffset = 0;
+		this.rightOffset = 0;
 		this.currentPageSize = 0;
 	}
 
@@ -9,11 +9,6 @@ class Lists {
 		this.calculateListSize();
 		return this.currentPageSize;
 	}
-	//THOMAS:
-	getLeftRealOffset() {
-		return this.leftRealOffset;
-	}
-	//:THOMAS
 
 	// sets regular page listsize
 	calculateListSize() {
@@ -23,77 +18,65 @@ class Lists {
 	}
 
 	clearLeftList() {
-		let list = document.getElementById("leftList");
-		let length = list.childElementCount;
-
+		let leftList = document.getElementById("leftList");
+		let length = leftList.childElementCount;
+		let listElement;
 		for (let index = 0; index < length; ++index) {
-			let listElement = document.getElementById("arr" + (index + this.leftRealOffset));
-			if (listElement) {
-				list.removeChild(listElement);
-			}
+			listElement = document.getElementById(index + this.leftOffset);
+			leftList.removeChild(listElement);
 		}
 
 		this.calculateListSize();
 	}
 
 	clearRightList() {
-		let detailObjectList = document.getElementById("rightList");
-		let detailLength = detailObjectList.childElementCount;
+		let rightList = document.getElementById("rightList");
+		let length = rightList.childElementCount;
+		let listElement;
 
-		for (let index = 0; index < detailLength; ++index) {
-			let detailListElement = document.getElementById("rightListElement" + (index + this.rightRealOffset));
-			detailObjectList.removeChild(detailListElement);
+		for (let index = 0; index < length; ++index) {
+			listElement = document.getElementById("r" + (index + this.rightOffset));
+			rightList.removeChild(listElement);
 		}
 
 		this.calculateListSize();
 	}
 
-	fillLeftList(list, offset, data) {
+	fillLeftList(list, leftPageNumber, data) {
 		// calculates the offset of the page
-		this.leftRealOffset = ((offset - 1) * this.currentPageSize);
+		this.leftOffset = ((leftPageNumber - 1) * this.currentPageSize);
 		let currentLeftPageSize = this.currentPageSize;
 
 		// sets last page listsize
-		if ((offset * this.currentPageSize) >= data.length) {
-			currentLeftPageSize = data.length - (((offset - 1) * this.currentPageSize));
+		if ((leftPageNumber * this.currentPageSize) >= data.length) {
+			currentLeftPageSize = data.length - (this.leftOffset);
 		}
 
 		// fills left list
 		for (let index = 0; index < currentLeftPageSize; index++) {
-			let meeting = data[(index) + this.leftRealOffset];
+			let meeting = data[index + this.leftOffset];
 			let listElement = document.createElement("li");
-			let title = document.createElement("p");
-			listElement.id = "arr" + (index + this.leftRealOffset);
-			// for (let index2 = 0; index2 < data.length; index++) {
-			// 	if (data[index2].id === listElement.id) {
-			// 		title.id = "" + index2;
-			// 	}
-			// }
-			title.id = (index + this.leftRealOffset);
-			title.innerHTML = meeting.getName();
-			listElement.appendChild(title);
+			listElement.id = (index + this.leftOffset);
+			listElement.innerHTML = meeting.getName();
 			list.appendChild(listElement);
 		}
 	}
 
-	fillRightList(list, offset, object) {
+	fillRightList(list, rightPageNumber, object) {
 		//calculates the offset of the page
-		this.rightRealOffset = ((offset - 1) * this.currentPageSize);
+		this.rightOffset = ((rightPageNumber - 1) * this.currentPageSize);
 		let currentRightPageSize = this.currentPageSize;
 
 		// sets last page listsize
-		if ((offset * this.currentPageSize) >= object.getObjects().length) {
-			currentRightPageSize = object.getObjects().length - (((offset - 1) * this.currentPageSize));
+		if ((rightPageNumber * this.currentPageSize) >= object.getObjects().length) {
+			currentRightPageSize = object.getObjects().length - this.rightOffset;
 		}
 
+		// fills right list
 		for (let index = 0; index < currentRightPageSize; index++) {
 			let detailListElement = document.createElement("li");
-			let detailObject = document.createElement("p");
-
-			detailObject.innerHTML += object.getObjects()[index + this.rightRealOffset];
-			detailListElement.id = "rightListElement" + (index + this.rightRealOffset);
-
-			detailListElement.appendChild(detailObject);
+			detailListElement.innerHTML += object.getObjects()[index + this.rightOffset];
+			detailListElement.id = ("r" + (index + this.rightOffset));
 			list.appendChild(detailListElement);
 		}
 	}

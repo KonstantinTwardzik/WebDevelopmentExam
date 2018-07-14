@@ -887,14 +887,6 @@ function showAllViews() {
 
 //update menubars methoden aufräumen
 
-//favicon.ico won't be found if its not port 8080
-//packages.json und files ordnen
 //less aufräumen
 
-//Restkonformität
-
 //Kommentieren
-
-//überfliessen der texte verhindern
-//man hat nur 1 element fügt eins hinzu, bei seite neu laden - kaputt
-
